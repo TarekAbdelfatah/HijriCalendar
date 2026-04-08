@@ -381,6 +381,23 @@ export function hijriDayOfWeek(year: number, month: number, day: number): number
   return dayOfWeekForJD(hijriToJD(year, month, day));
 }
 
+/** Returns Arabic day name for a Hijri date string "yyyy/mm/dd".
+ *  Direct replacement for $.calendars.instance("UmmAlQura","ar").dayOfWeek() */
+export function hijriDayName(dateStr: string): string {
+  if (!dateStr) return '';
+  const p = dateStr.split('/').map(Number);
+  if (p.length !== 3 || p.some(isNaN)) return '';
+  return DAY_NAMES_AR[hijriDayOfWeek(p[0], p[1], p[2])];
+}
+
+/** Returns Arabic day name for a Gregorian date string "yyyy/mm/dd" */
+export function gregDayName(dateStr: string): string {
+  if (!dateStr) return '';
+  const p = dateStr.split('/').map(Number);
+  if (p.length !== 3 || p.some(isNaN)) return '';
+  return DAY_NAMES_AR[gregDayOfWeek(p[0], p[1], p[2])];
+}
+
 export function gregIsLeapYear(year: number): boolean {
   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 }

@@ -479,68 +479,187 @@ function pick(hijri: string) {
 
 ## 3. مرجع API الكامل · Full API Reference
 
-### دوال التحويل النصي
+> جميع الدوال والثوابت مصدّرة من `hijri-calendar.lib.ts`
+
+---
+
+### الأنواع / Types
 
 ```typescript
+interface HijriDateObj {
+  year:      number;   // 1446
+  month:     number;   // 9
+  day:       number;   // 15
+  formatted: string;   // "15 رمضان 1446"
+}
+
+interface GregDateObj {
+  year:      number;   // 2025
+  month:     number;   // 3
+  day:       number;   // 15
+  formatted: string;   // "2025/03/15"
+}
+```
+
+---
+
+### التاريخ الحالي / Today
+
+```typescript
+todayHijri(): HijriDateObj
+// { year:1446, month:9, day:15, formatted:"15 رمضان 1446" }
+
+todayHijriStr(): string
+// "1446/09/15"
+// بديل مباشر لـ: $.calendars.instance("ummalqura","ar").newDate()
+
+todayGregorian(): GregDateObj
+// { year:2025, month:3, day:15, formatted:"2025/03/15" }
+
+todayGregorianStr(): string
+// "2025/03/15"
+```
+
+**مثال:**
+```typescript
+import { todayHijriStr, todayGregorianStr } from './hijri-calendar.lib';
+
+console.log(todayHijriStr());     // "1446/09/15"
+console.log(todayGregorianStr()); // "2025/03/15"
+```
+
+---
+
+### تحويل هجري ↔ ميلادي / Conversion
+
+```typescript
+// نصي (الأسهل)
 hijriToGregorianStr(hijriStr: string): string
-// الإدخال:  "1446/09/15"  أو  "1446-09-15"  أو  "15/09/1446"
+// الإدخال: "1446/09/15"  أو "1446-09-15"  أو "15/09/1446"
 // الإخراج: "2025/03/15"
 
 gregorianToHijriStr(gregStr: string): string
-// الإدخال:  "2025/03/15"
+// الإدخال: "2025/03/15"
 // الإخراج: "1446/09/15"
-```
 
-### دوال التحويل بالأرقام
-
-```typescript
+// بالأرقام (مع object كامل)
 hijriToGregorian(hYear: number, hMonth: number, hDay: number): GregDateObj
-// { year: 2025, month: 3, day: 15, formatted: "2025/03/15" }
-
 gregorianToHijri(gYear: number, gMonth: number, gDay: number): HijriDateObj
-// { year: 1446, month: 9, day: 15, formatted: "15 رمضان 1446" }
 ```
 
-### التاريخ الحالي
-
+**مثال:**
 ```typescript
-todayHijri(): HijriDateObj        // { year:1446, month:9, day:15, formatted:"15 رمضان 1446" }
-todayHijriStr(): string           // "1446/09/15"  ← بديل مباشر لـ getCurrentHijriDate() بدون jQuery
+import { hijriToGregorianStr, gregorianToHijriStr,
+         hijriToGregorian, gregorianToHijri } from './hijri-calendar.lib';
 
-todayGregorian(): GregDateObj     // { year:2025, month:3, day:15, formatted:"2025/03/15" }
-todayGregorianStr(): string       // "2025/03/15"
+hijriToGregorianStr("1446/09/01")          // "2025/03/01"
+gregorianToHijriStr("2025/03/01")          // "1446/09/01"
+
+const g = hijriToGregorian(1446, 9, 15);
+// { year:2025, month:3, day:15, formatted:"2025/03/15" }
+
+const h = gregorianToHijri(2025, 3, 15);
+// { year:1446, month:9, day:15, formatted:"15 رمضان 1446" }
 ```
 
-### معلومات الشهر والسنة
+---
+
+### اسم يوم الأسبوع / Day Name
 
 ```typescript
-hijriDaysInMonth(year: number, month: number): number  // 29 أو 30
-gregDaysInMonth(year: number, month: number): number   // 28–31
+hijriDayName(dateStr: string): string
+// الإدخال: "1446/09/15"  →  "السبت"
+// بديل مباشر لـ: $.calendars.instance("UmmAlQura","ar").dayOfWeek(y,m,d)
 
-hijriIsLeapYear(year: number): boolean   // السنة الكبيسة الهجرية (12 شهراً، آخرها 30 يوم)
+gregDayName(dateStr: string): string
+// الإدخال: "2025/03/15"  →  "السبت"
+
+// بالأرقام (يرجع 0–6)
+hijriDayOfWeek(year: number, month: number, day: number): number
+gregDayOfWeek(year: number, month: number, day: number): number
+// 0=الأحد  1=الاثنين  2=الثلاثاء  3=الأربعاء  4=الخميس  5=الجمعة  6=السبت
+```
+
+**مثال — بديل getDayNameHijri():**
+```typescript
+import { hijriDayName } from './hijri-calendar.lib';
+
+// قبل (jQuery):
+// weekdays[$.calendars.instance("UmmAlQura","ar").dayOfWeek(y, m, d)]
+
+// بعد:
+hijriDayName("1446/09/15")  // "السبت"
+hijriDayName("")            // ""  (safe — لا يرمي error)
+```
+
+---
+
+### أيام الشهر / Days in Month
+
+```typescript
+hijriDaysInMonth(year: number, month: number): number
+// يرجع 29 أو 30 حسب جدول أم القرى الفعلي
+
+gregDaysInMonth(year: number, month: number): number
+// يرجع 28 / 29 / 30 / 31
+```
+
+**مثال:**
+```typescript
+import { hijriDaysInMonth, gregDaysInMonth } from './hijri-calendar.lib';
+
+hijriDaysInMonth(1446, 9)   // 29  (رمضان 1446)
+hijriDaysInMonth(1446, 12)  // 30  (ذو الحجة — سنة كبيسة)
+gregDaysInMonth(2024, 2)    // 29  (فبراير سنة كبيسة)
+```
+
+---
+
+### السنة الكبيسة / Leap Year
+
+```typescript
+hijriIsLeapYear(year: number): boolean
+// السنة الهجرية الكبيسة: ذو الحجة يكون 30 يوماً بدل 29
+
 gregIsLeapYear(year: number): boolean
 ```
 
-### يوم الأسبوع
-
+**مثال:**
 ```typescript
-hijriDayOfWeek(year: number, month: number, day: number): number
-gregDayOfWeek(year: number, month: number, day: number): number
-// 0 = الأحد، 1 = الاثنين، ... 6 = السبت
+import { hijriIsLeapYear, gregIsLeapYear } from './hijri-calendar.lib';
+
+hijriIsLeapYear(1446)  // true
+hijriIsLeapYear(1445)  // false
+gregIsLeapYear(2024)   // true
+gregIsLeapYear(2025)   // false
 ```
 
-### التحقق من الصحة
+---
+
+### التحقق من الصحة / Validation
 
 ```typescript
 hijriIsValid(year: number, month: number, day: number): boolean
 ```
 
-### الثوابت
+**مثال:**
+```typescript
+import { hijriIsValid } from './hijri-calendar.lib';
+
+hijriIsValid(1446, 9, 15)   // true
+hijriIsValid(1446, 13, 1)   // false  (شهر 13 غير موجود)
+hijriIsValid(1446, 9, 31)   // false  (أكثر من أيام الشهر)
+```
+
+---
+
+### الثوابت / Constants
 
 ```typescript
 HIJRI_MONTH_NAMES: string[]
-// ['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة',
-//  'رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة']
+// ['محرم','صفر','ربيع الأول','ربيع الآخر',
+//  'جمادى الأولى','جمادى الآخرة','رجب','شعبان',
+//  'رمضان','شوال','ذو القعدة','ذو الحجة']
 
 HIJRI_MONTH_NAMES_EN: string[]
 // ['Muharram','Safar','Rabi al-Awwal','Rabi al-Thani',
@@ -548,7 +667,7 @@ HIJRI_MONTH_NAMES_EN: string[]
 //  'Ramadan','Shawwal','Dhul Qadah','Dhul Hijjah']
 
 GREG_MONTH_NAMES_AR: string[]
-// ['يناير','فبراير','مارس','أبريل','مايو','يونيو',
+// ['يناير','فبراير','مارس','إبريل','مايو','يونيو',
 //  'يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر']
 
 DAY_NAMES_AR: string[]
@@ -556,27 +675,65 @@ DAY_NAMES_AR: string[]
 
 DAY_NAMES_SHORT_AR: string[]
 // ['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت']
-
-pad2(n: number): string   // pad2(5) → "05"
 ```
 
-### الأنواع
+**مثال:**
+```typescript
+import { HIJRI_MONTH_NAMES, DAY_NAMES_AR } from './hijri-calendar.lib';
+
+const monthName = HIJRI_MONTH_NAMES[8];   // "رمضان"  (index = month - 1)
+const dayName   = DAY_NAMES_AR[6];        // "السبت"
+```
+
+---
+
+### دالة مساعدة / Utility
 
 ```typescript
-interface HijriDateObj {
-  year: number;
-  month: number;
-  day: number;
-  formatted: string;  // "15 رمضان 1446"
-}
-
-interface GregDateObj {
-  year: number;
-  month: number;
-  day: number;
-  formatted: string;  // "2025/03/15"
-}
+pad2(n: number): string
+// يضيف صفر في البداية للأرقام < 10
 ```
+
+**مثال:**
+```typescript
+import { pad2 } from './hijri-calendar.lib';
+
+pad2(5)   // "05"
+pad2(12)  // "12"
+
+// استخدام شائع لتكوين string تاريخ:
+const { year, month, day } = todayHijri();
+const dateStr = `${year}/${pad2(month)}/${pad2(day)}`; // "1446/09/05"
+```
+
+---
+
+### Julian Day (للاستخدام المتقدم)
+
+```typescript
+hijriToJD(year: number, month: number, day: number): number
+// تحويل تاريخ هجري إلى Julian Day Number
+
+jdToHijri(jd: number): { year: number; month: number; day: number }
+// تحويل Julian Day Number إلى هجري
+
+dayOfWeekForJD(jd: number): number
+// يوم الأسبوع من Julian Day (0=الأحد)
+```
+
+---
+
+### جدول المقارنة مع jQuery Calendars
+
+| jQuery (قديم) | مكتبتنا (جديد) |
+|--------------|----------------|
+| `$.calendars.instance("ummalqura","ar").newDate()` | `todayHijri()` |
+| `getCurrentHijriDate()` (custom) | `todayHijriStr()` |
+| `.dayOfWeek(y, m, d)` + array | `hijriDayName("yyyy/mm/dd")` |
+| `.daysInMonth(y, m)` | `hijriDaysInMonth(y, m)` |
+| `.leapYear(y)` | `hijriIsLeapYear(y)` |
+| `.fromJD(jd)` | `jdToHijri(jd)` |
+| `.toJD(y, m, d)` | `hijriToJD(y, m, d)` |
 
 ---
 
