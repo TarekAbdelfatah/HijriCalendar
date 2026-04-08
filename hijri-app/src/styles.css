@@ -1,6 +1,453 @@
-* { box-sizing: border-box; }
-body {
+/**
+ * Hijri Calendar - Centralized Design System
+ * Use these classes across all components
+ */
+
+/* ── Container ───────────────────────────────────────────────────────────── */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+/* ── Page Switcher ────────────────────────────────────────────────────── */
+.page-switcher {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 8px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  justify-content: center;
+}
+
+.page-switcher button {
+  padding: 10px 24px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  color: #666;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.page-switcher button:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.page-switcher button.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+/* ── Page Header ───────────────────────────────────────────────────────── */
+.page-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.page-header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0 0 6px;
+}
+
+.page-header p {
+  font-size: 13px;
+  color: var(--gray-500);
   margin: 0;
-  background: #f4f6f9;
-  font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+}
+
+/* ── Today Card ────────────────────────────────────────────────────────── */
+.today-card {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  border-radius: 12px;
+  padding: 18px 24px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.today-item {
+  text-align: center;
+  padding: 0 20px;
+  border-right: 1px solid rgba(255,255,255,0.2);
+}
+
+.today-item:last-child { border-right: none; }
+
+.today-item .lbl {
+  display: block;
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 4px;
+}
+
+.today-item .val {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+}
+
+.hijri-val { font-size: 18px; }
+
+/* ── Grid ────────────────────────────────────────────────────────────────── */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
+.col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Card ────────────────────────────────────────────────────────────────── */
+.card {
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.card h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0 0 4px;
+}
+
+.card .sub {
+  font-size: 12px;
+  color: var(--gray-500);
+  margin: 0 0 16px;
+}
+
+.card code {
+  background: #f0f4ff;
+  padding: 1px 5px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--primary);
+}
+
+/* ── Field ─────────────────────────────────────────────────────────────── */
+.field {
+  margin-bottom: 14px;
+}
+
+.field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-800);
+  margin-bottom: 5px;
+}
+
+.req { color: var(--danger); }
+
+/* ── Input ──────────────────────────────────────────────────────────────── */
+.inp {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 12px;
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--gray-800);
+  background: white;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.inp:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+.inp[readonly] {
+  background: var(--gray-50);
+  cursor: pointer;
+}
+
+.inp[readonly]:hover {
+  border-color: var(--primary);
+}
+
+.inp.error {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
+}
+
+.datePicker::placeholder { color: var(--gray-400); }
+
+/* ── Button ────────────────────────────────────────────────────────────── */
+.btn-row { display: flex; gap: 10px; margin-top: 16px; }
+
+.btn-p {
+  padding: 9px 20px;
+  border: none;
+  border-radius: 8px;
+  background: var(--primary);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-p:hover:not(:disabled) { background: var(--primary-dark); }
+.btn-p:disabled { background: var(--gray-400); cursor: not-allowed; }
+.btn-p.sm { padding: 9px 14px; white-space: nowrap; }
+
+.btn-s {
+  padding: 9px 18px;
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+  background: white;
+  color: var(--gray-700);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.btn-s:hover { background: var(--gray-100); }
+
+/* ── Toggle ────────────────────────────────────────────────────────────── */
+.toggle-row { display: flex; gap: 8px; margin-bottom: 14px; }
+
+.toggle-row button {
+  flex: 1;
+  padding: 7px;
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+  background: var(--gray-50);
+  color: var(--gray-700);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.toggle-row button.act {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+  font-weight: 600;
+}
+
+/* ── Result ───────────────────────────────────────────────────────────── */
+.convert-result {
+  margin-top: 10px;
+  padding: 10px 14px;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary);
+  text-align: center;
+}
+
+.result-box {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--success-bg);
+  border: 1px solid var(--success);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--success);
+  line-height: 1.6;
+}
+
+.result-box.error {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+/* ── Error / Hint ─────────────────────────────────────────────────────── */
+.err {
+  display: block;
+  font-size: 12px;
+  color: var(--danger);
+  margin-top: 4px;
+}
+
+.hint {
+  display: block;
+  font-size: 12px;
+  color: var(--primary);
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+/* ── Code Block ─────────────────────────────────────────────────────────── */
+.hc-code {
+  background: #2d2d2d;
+  color: #f8f8f2;
+  padding: 16px;
+  border-radius: 8px;
+  font-family: 'Consolas', monospace;
+  font-size: 13px;
+  overflow-x: auto;
+  direction: ltr;
+  text-align: left;
+  margin: 12px 0;
+}
+
+/* ── Docs Section ──────────────────────────────────────────────────────── */
+.docs-section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.docs-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--gray-800);
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--primary);
+}
+
+.docs-desc {
+  font-size: 14px;
+  color: var(--gray-600);
+  margin-bottom: 16px;
+}
+
+.docs-desc code {
+  background: #f0f4ff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--primary);
+}
+
+.docs-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.docs-table th,
+.docs-table td {
+  border: 1px solid var(--gray-300);
+  padding: 10px 12px;
+  text-align: right;
+  font-size: 13px;
+}
+
+.docs-table th {
+  background: var(--gray-100);
+  font-weight: 600;
+}
+
+.docs-table td code {
+  background: #f0f4ff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--primary);
+}
+
+/* ── Example Block ─────────────────────────────────────────────────────── */
+.example-block {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.example-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-800);
+  margin-bottom: 12px;
+}
+
+/* ── Debug Section ─────────────────────────────────────────────────────── */
+.debug-section {
+  background: var(--warning-bg);
+  border: 1px solid var(--warning);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 24px;
+}
+
+.debug-value {
+  padding: 8px 12px;
+  background: var(--gray-200);
+  border: 1px solid var(--gray-300);
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 14px;
+  color: var(--gray-800);
+  margin-top: 8px;
+}
+
+.test-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.test-buttons button {
+  padding: 6px 12px;
+  border: 1px solid var(--gray-300);
+  background: white;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.test-buttons button:hover { background: var(--gray-100); }
+
+/* ── Variables ─────────────────────────────────────────────────────────── */
+:root {
+  /* Primary Colors */
+  --primary: #667eea;
+  --primary-dark: #5568d3;
+  --primary-light: #869ef4;
+  --secondary: #764ba2;
+  
+  /* Semantic Colors */
+  --success: #4caf50;
+  --success-bg: #e8f5e9;
+  --danger: #dc3545;
+  --danger-bg: #ffebee;
+  --warning: #ff9800;
+  --warning-bg: #fff8e1;
+  --info: #2196f3;
+  --info-bg: #e3f2fd;
+  
+  /* Gray Scale */
+  --gray-50: #fafafa;
+  --gray-100: #f5f5f5;
+  --gray-200: #eeeeee;
+  --gray-300: #e0e0e0;
+  --gray-400: #bdbdbd;
+  --gray-500: #9e9e9e;
+  --gray-600: #757575;
+  --gray-700: #616161;
+  --gray-800: #424242;
+  --gray-900: #212121;
 }

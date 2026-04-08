@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hijri Calendar - JavaScript API</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #f0f2f5;
+      color: #333;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+    
+    .header {
+      background: linear-gradient(135deg, #1a5f3c, #2e8b57);
+      color: white;
+      padding: 24px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    .header h1 { font-size: 1.6em; margin-bottom: 8px; }
+    .header p { opacity: 0.9; font-size: 0.95em; }
+    
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .card h2 {
+      color: #1a5f3c;
+      font-size: 1.1em;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #e8e8e8;
+    }
+    
+    pre {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 14px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-family: 'Consolas', monospace;
+      font-size: 13px;
+      direction: ltr;
+      text-align: left;
+      margin: 12px 0;
+    }
+    code {
+      background: #e8e8e8;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-family: 'Consolas', monospace;
+      font-size: 0.9em;
+    }
+    pre code { background: transparent; padding: 0; }
+    
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.9em; }
+    th, td { padding: 10px 8px; text-align: right; border-bottom: 1px solid #eee; }
+    th { background: #f5f5f5; font-weight: 600; }
+    
+    .tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+    .tab {
+      padding: 8px 16px;
+      border: none;
+      background: #e0e0e0;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    .tab.active { background: #1a5f3c; color: white; }
+    
+    input[type="text"] {
+      padding: 10px 12px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      width: 100%;
+    }
+    input[type="text"]:focus { outline: none; border-color: #1a5f3c; }
+    
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      background: #1a5f3c;
+      color: white;
+      transition: background 0.2s;
+    }
+    button:hover { background: #147a42; }
+    button.outline {
+      background: transparent;
+      border: 2px solid #1a5f3c;
+      color: #1a5f3c;
+    }
+    button.outline:hover { background: #1a5f3c; color: white; }
+    button.sm { padding: 6px 12px; font-size: 12px; }
+    
+    /* Calendar Popup */
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 999;
+    }
+    .overlay.show { display: block; }
+    
+    .cal-popup {
+      display: none;
+      position: fixed;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      padding: 16px;
+      z-index: 1000;
+      width: 300px;
+      direction: ltr;
+    }
+    .cal-popup.show { display: block; }
+    
+    .cal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .cal-nav {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      padding: 4px 10px;
+      color: #1a5f3c;
+    }
+    .cal-month-year {
+      font-weight: 600;
+      font-size: 1em;
+    }
+    .cal-views { display: flex; gap: 4px; }
+    .cal-view-btn {
+      padding: 4px 10px;
+      border: 1px solid #ddd;
+      background: white;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .cal-view-btn.active { background: #1a5f3c; color: white; border-color: #1a5f3c; }
+    
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+      text-align: center;
+    }
+    .cal-day-header {
+      font-weight: 600;
+      color: #888;
+      font-size: 10px;
+      padding: 6px 0;
+    }
+    .cal-day {
+      padding: 6px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.15s;
+    }
+    .cal-day:hover { background: #e8e8e8; }
+    .cal-day.today { background: #e8f5e9; }
+    .cal-day.selected { background: #1a5f3c; color: white; }
+    .cal-day.other-month { color: #ccc; }
+    
+    .hijri-months {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid #eee;
+      justify-content: center;
+    }
+    .hijri-months button {
+      padding: 4px 8px;
+      font-size: 10px;
+      background: #f5f5f5;
+      color: #333;
+      border: 1px solid #ddd;
+    }
+    .hijri-months button:hover, .hijri-months button.active {
+      background: #1a5f3c;
+      color: white;
+      border-color: #1a5f3c;
+    }
+    
+    .demo-section { margin: 14px 0; }
+    .demo-result {
+      padding: 12px;
+      background: #e8f5e9;
+      border-radius: 6px;
+      margin-top: 10px;
+      border-right: 4px solid #1a5f3c;
+    }
+    
+    .func-item {
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      border-right: 3px solid #1a5f3c;
+    }
+    .func-name {
+      font-weight: 600;
+      color: #1a5f3c;
+      font-family: monospace;
+      font-size: 0.95em;
+    }
+    .func-desc { margin-top: 4px; color: #666; font-size: 0.9em; }
+    
+    .row { display: flex; gap: 12px; align-items: center; }
+    .row input { flex: 1; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <header class="header">
+      <h1>Hijri Calendar - JavaScript API</h1>
+      <p>مكتبة JavaScript نقية - بدون Angular أو jQuery</p>
+    </header>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('api')">API Documentation</button>
+      <button class="tab" onclick="showTab('demo')">Live Demo</button>
+    </div>
+
+    <!-- API TAB -->
+    <div id="tab-api">
+      
+      <div class="card">
+        <h2>Available Functions</h2>
+        <div class="func-item">
+          <div class="func-name">createDatePicker(options)</div>
+          <div class="func-desc">إنشاء date picker مع popup التقويم</div>
+        </div>
+        <div class="func-item">
+          <div class="func-name">hijriToGregorianStr(str)</div>
+          <div class="func-desc">"1447/10/22" → "2026/04/08"</div>
+        </div>
+        <div class="func-item">
+          <div class="func-name">gregorianToHijriStr(str)</div>
+          <div class="func-desc">"2026/04/08" → "1447/10/22"</div>
+        </div>
+        <div class="func-item">
+          <div class="func-name">todayHijri()</div>
+          <div class="func-desc">التاريخ الهجري الحالي</div>
+        </div>
+        <div class="func-item">
+          <div class="func-name">todayGregorian()</div>
+          <div class="func-desc">التاريخ الميلادي الحالي</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>1. Installation</h2>
+        <pre><code>&lt;script type="module"&gt;
+  import { createDatePicker, hijriToGregorianStr } from './hijri-calendar.lib.js';
+&lt;/script&gt;</code></pre>
+      </div>
+
+      <div class="card">
+        <h2>2. Basic Usage</h2>
+        <pre><code>const picker = createDatePicker({
+  container: '#myInput',
+  onSelect: (dates) => {
+    console.log('Hijri:', dates.hijri);   // "1447/10/22"
+    console.log('Greg:', dates.greg);    // "2026/04/08"
+    return null;
+  }
+});
+
+// Convert
+hijriToGregorianStr("1447/10/22"); // "2026/04/08"
+gregorianToHijriStr("2026/04/08"); // "1447/10/22"</code></pre>
+      </div>
+
+      <div class="card">
+        <h2>3. Options</h2>
+        <table>
+          <tr><th>Option</th><th>Type</th><th>Description</th></tr>
+          <tr><td><code>container</code></td><td>string | HTMLElement</td><td>Input element or selector</td></tr>
+          <tr><td><code>defaultView</code></td><td>'hijri' | 'gregorian'</td><td>Initial view (default: 'hijri')</td></tr>
+          <tr><td><code>outputFormat</code></td><td>string</td><td>'yyyy/mm/dd', 'dd/mm/yyyy', 'yyyy-mm-dd'</td></tr>
+          <tr><td><code>onSelect</code></td><td>function</td><td>Callback when date is selected</td></tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <h2>4. Validation Example</h2>
+        <pre><code>createDatePicker({
+  container: '#input',
+  onSelect: (dates) => {
+    if (dates.hijri < '1447/01/01') {
+      return 'Date must be after 1447/01/01';
+    }
+    return null; // success
+  }
+});</code></pre>
+      </div>
+
+      <div class="card">
+        <h2>5. Auto-Normalize</h2>
+        <p style="margin-bottom:10px; font-size:0.9em;">المكتبة تطبيع تلقائياً أي تنسيق:</p>
+        <pre><code>hijriToGregorianStr("2026/04/08");  // yyyy/mm/dd ✓
+hijriToGregorianStr("08/04/2026");  // dd/mm/yyyy ✓
+hijriToGregorianStr("08-04-2026");  // dd-mm-yyyy ✓</code></pre>
+      </div>
+    </div>
+
+    <!-- DEMO TAB -->
+    <div id="tab-demo" style="display:none;">
+      
+      <div class="card">
+        <h2>Today / اليوم</h2>
+        <div id="todayInfo" class="demo-result">Loading...</div>
+      </div>
+
+      <div class="card">
+        <h2>Converter / أداة التحويل</h2>
+        <div class="demo-section">
+          <div class="row">
+            <input type="text" id="convH2G" placeholder="1447/10/22">
+            <button onclick="demoH2G()">← Hijri to Greg</button>
+          </div>
+          <div id="convH2GResult" style="margin-top:8px; font-weight:600;"></div>
+        </div>
+        <div class="demo-section">
+          <div class="row">
+            <input type="text" id="convG2H" placeholder="2026/04/08">
+            <button onclick="demoG2H()">Greg to Hijri →</button>
+          </div>
+          <div id="convG2HResult" style="margin-top:8px; font-weight:600;"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Date Picker</h2>
+        <div class="demo-section">
+          <label style="font-size:0.9em; color:#666;">Click to select:</label>
+          <input type="text" id="demoPicker" readonly placeholder="انقر للاختيار" style="margin-top:6px; cursor:pointer;">
+        </div>
+        <div id="demoPickerResult" class="demo-result" style="display:none;">
+          <strong>Result:</strong><br>
+          Hijri: <span id="resultHijri">-</span><br>
+          Greg: <span id="resultGreg">-</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Output Format</h2>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="outline" onclick="setFormat('yyyy/mm/dd', this)">yyyy/mm/dd</button>
+          <button class="outline" onclick="setFormat('dd/mm/yyyy', this)">dd/mm/yyyy</button>
+          <button class="outline" onclick="setFormat('yyyy-mm-dd', this)">yyyy-mm-dd</button>
+        </div>
+        <div class="demo-section">
+          <input type="text" id="formatDemo" readonly placeholder="اختر تاريخ" style="margin-top:10px;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendar Overlay -->
+  <div class="overlay" id="calOverlay" onclick="closeCalendar()"></div>
+  
+  <!-- Calendar Popup -->
+  <div class="cal-popup" id="calPopup">
+    <div class="cal-header">
+      <button class="cal-nav" onclick="calNav(-1)">◀</button>
+      <div class="cal-month-year" id="calMonthYear">-</div>
+      <button class="cal-nav" onclick="calNav(1)">▶</button>
+    </div>
+    <div class="cal-views">
+      <button class="cal-view-btn active" onclick="setCalView('hijri')">Hijri</button>
+      <button class="cal-view-btn" onclick="setCalView('greg')">Greg</button>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+    <div class="hijri-months" id="hijriNames"></div>
+  </div>
+
+  <script>
+    // ================================================================
+    // HIJRI CALENDAR LIBRARY
+    // ================================================================
+    
+    const HIJRI_MONTH_NAMES_AR = ['محرم', 'صفر', 'ربيع الأول', 'ربيع الثاني', 'جمادى الأولى', 'جمادى الآخرة', 'رجب', 'شعبان', 'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'];
+    const DAY_NAMES_AR = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const GREG_MONTH_NAMES_AR = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    const UMM_DATA = [20,50,79,109,138,168,197,227,256,286,315,345,374,404,433,463,492,522,551,581,611,641,670,700,729,759,788,818,847,877,906,936,965,995,1024,1054,1083,1113,1142,1172,1201,1231,1260,1290,1320,1350,1379,1409,1438,1468,1497,1527,1556,1586,1615,1645,1674,1704,1733,1763,1792,1822,1851,1881,1910,1940,1969,1999,2028,2058,2087,2117,2146,2176,2205,2235,2264,2294,2323,2353,2383,2413,2442,2472,2501,2531,2560,2590,2619,2649,2678,2708,2737,2767,2796,2826,2855,2885,2914,2944,2973,3003,3032,3062,3091,3121,3150,3180,3209,3239,3268,3298,3327,3357,3386,3416,3446,3476,3505,3535,3564,3594,3623,3653,3682,3712,3741,3771,3800,3830,3859,3889,3918,3948,3977,4007,4036,4066,4095,4125,4155,4185,4214,4244,4273,4303,4332,4362,4391,4421,4450,4480,4509,4539,4568,4598,4627,4657,4686,4716,4745,4775,4804,4834,4863,4893,4922,4952,4981,5011,5040,5070,5099,5129,5158,5188,5218,5248,5277,5307,5336,5366,5395,5425,5454,5484,5513,5543,5572,5602,5631,5661,5690,5720,5749,5779,5808,5838,5867,5897,5926,5956,5985,6015,6044,6074,6103,6133,6162,6192,6221,6251,6281,6311,6340,6370,6399,6429,6458,6488,6517,6547,6576,6606,6635,6665,6694,6724,6753,6783,6812,6842,6871,6901,6930,6960,6989,7019,7048,7078,7107,7137,7166,7196,7225,7255,7284,7314,7344,7374,7403,7433,7462,7492,7521,7551,7580,7610,7639,7669,7698,7728,7757,7787,7816,7846,7875,7905,7934,7964,7993,8023,8053,8083,8112,8142,8171,8201,8230,8260,8289,8319,8348,8378,8407,8437,8466,8496,8525,8555,8584,8614,8643,8673,8702,8732,8761,8791,8821,8850,8880,8909,8938,8968,8997,9027,9056,9086,9115,9145,9175,9205,9234,9264,9293,9322,9352,9381,9410,9440,9470,9499,9529,9559,9589,9618,9648,9677,9706,9736,9765,9794,9824,9853,9883,9913,9943,9972,10002,10032,10061,10090,10120,10149,10178,10208,10237,10267,10297,10326,10356,10386,10415,10445,10474,10504,10533,10562,10592,10621,10651,10680,10710,10740,10770,10799,10829,10858,10888,10917,10947,10976,11005,11035,11064,11094,11124,11153,11183,11213,11242,11272,11301,11331,11360,11389,11419,11448,11478,11507,11537,11567,11596,11626,11655,11685,11715,11744,11774,11803,11832,11862,11891,11921,11950,11980,12010,12039,12069,12099,12128,12158,12187,12216,12246,12275,12304,12334,12364,12393,12423,12453,12483,12512,12542,12571,12600,12630,12659,12688,12718,12747,12777,12807,12837,12866,12896,12926,12955,12984,13014,13043,13072,13102,13131,13161,13191,13220,13250,13280,13310,13339,13368,13398,13427,13456,13486,13515,13545,13574,13604,13634,13664,13693,13723,13752,13782,13811,13840,13870,13899,13929,13958,13988,14018,14047,14077,14107,14136,14166,14195,14224,14254,14283,14313,14342,14372,14401,14431,14461,14490,14520,14550,14579,14609,14638,14667,14697,14726,14756,14785,14815,14844,14874,14904,14933,14963,14993,15021,15051,15081,15110,15140,15169,15199,15228,15258,15287,15317,15347,15377,15406,15436,15465,15494,15524,15553,15582,15612,15641,15671,15701,15731,15760,15790,15820,15849,15878,15908,15937,15966,15996,16025,16055,16085,16114,16144,16174,16204,16233,16262,16292,16321,16350,16380,16409,16439,16468,16498,16528,16558,16587,16617,16646,16676,16705,16734,16764,16793,16823,16852,16882,16912,16941,16971,17001,17030,17060,17089,17118,17148,17177,17207,17236,17266,17295,17325,17355,17384,17414,17444,17473,17502,17532,17561,17591,17620,17650,17679,17709,17738,17768,17798,17827,17857,17886,17916,17945,17975,18004,18034,18063,18093,18122,18152,18181,18211,18241,18270,18300,18330,18359,18388,18418,18447,18476,18506,18535,18565,18595,18625,18654,18684,18714,18743,18772,18802,18831,18860,18890,18919,18949,18979,19008,19038,19068,19098,19127,19156,19186,19215,19244,19274,19303,19333,19362,19392,19422,19452,19481,19511,19540,19570,19599,19628,19658,19687,19717,19746,19776,19806,19836,19865,19895,19924,19954,19983,20012,20042,20071,20101,20130,20160,20190,20219,20249,20279,20308,20338,20367,20396,20426,20455,20485,20514,20544,20573,20603,20633,20662,20692,20721,20751,20780,20810,20839,20869,20898,20928,20957,20987,21016,21046,21076,21105,21135,21164,21194,21223,21253,21282,21312,21341,21371,21400,21430,21459,21489,21519,21548,21578,21607,21637,21666,21696,21725,21754,21784,21813,21843,21873,21902,21932,21962,21991,22021,22050,22080,22109,22138,22168,22197,22227,22256,22286,22316,22346,22375,22405,22434,22464,22493,22522,22552,22581,22611,22640,22670,22700,22730,22759,22789,22818,22848,22877,22906,22936,22965,22994,23024,23054,23083,23113,23143,23173,23202,23232,23261,23290,23320,23349,23379,23408,23438,23467,23497,23527,23556,23586,23616,23645,23674,23704,23733,23763,23792,23822,23851,23881,23910,23940,23970,23999,24029,24058,24088,24117,24147,24176,24206,24235,24265,24294,24324,24353,24383,24413,24442,24472,24501,24531,24560,24590,24619,24648,24678,24707,24737,24767,24796,24826,24856,24885,24915,24944,24974,25003,25032,25062,25091,25121,25150,25180,25210,25240,25269,25299,25328,25358,25387,25416,25446,25475,25505,25534,25564,25594,25624,25653,25683,25712,25742,25771,25800,25830,25859,25888,25918,25948,25977,26007,26037,26067,26096,26126,26155,26184,26214,26243,26272,26302,26332,26361,26391,26421,26451,26480,26510,26539,26568,26598,26627,26656,26686,26715,26745,26775,26805,26834,26864,26893,26923,26952,26982,27011,27041,27070,27099,27129,27159,27188,27218,27248,27277,27307,27336,27366,27395,27425,27454,27484,27513,27542,27572,27602,27631,27661,27691,27720,27750,27779,27809,27838,27868,27897,27926,27956,27985,28015,28045,28074,28104,28134,28163,28193,28222,28252,28281,28310,28340,28369,28399,28428,28458,28488,28517,28547,28577,28607,28636,28665,28695,28724,28754,28783,28813,28843,28872,28901,28931,28960,28990,29019,29049,29078,29108,29137,29167,29196,29226,29255,29285,29315,29345,29375,29404,29434,29463,29492,29522,29551,29580,29610,29640,29669,29699,29729,29759,29788,29818,29847,29876,29906,29935,29964,29994,30023,30053,30082,30112,30141,30171,30200,30230,30259,30289,30318,30348,30378,30408,30437,30467,30496,30526,30555,30585,30614,30644,30673,30703,30732,30762,30791,30821,30850,30880,30909,30939,30968,30998,31027,31057,31086,31116,31145,31175];
+    
+    const MCJDN_OFFSET = 1940540;
+    
+    function pad2(n) { return String(n).padStart(2, '0'); }
+    
+    function ummIdx(year, month) { return (12 * (year - 1)) + month - 15292; }
+    
+    function gregToJD(year, month, day) {
+      let y = year, m = month;
+      if (m <= 2) { y--; m += 12; }
+      const a = Math.floor(y / 100);
+      const b = 2 - a + Math.floor(a / 4);
+      return Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + day + b - 1524.5;
+    }
+    
+    function jdToGreg(jd) {
+      const z = Math.floor(jd + 0.5);
+      const alpha = Math.floor((z - 1867216.25) / 36524.25);
+      const a = z + 1 + alpha - Math.floor(alpha / 4);
+      const b = a + 1524;
+      const c = Math.floor((b - 122.1) / 365.25);
+      const d = Math.floor(365.25 * c);
+      const e = Math.floor((b - d) / 30.6001);
+      const day = b - d - Math.floor(30.6001 * e) + (jd + 0.5 - z);
+      const month = e < 14 ? e - 1 : e - 13;
+      const year = month > 2 ? c - 4716 : c - 4715;
+      return { year, month, day: Math.floor(day) };
+    }
+    
+    function jdToHijri(jd) {
+      const mcjdn = Math.floor(jd) - MCJDN_OFFSET;
+      let index = 0;
+      for (let i = 0; i < UMM_DATA.length; i++) {
+        if (UMM_DATA[i] > mcjdn) break;
+        index++;
+      }
+      const daysIntoMonth = mcjdn - UMM_DATA[index - 1];
+      const hYear = Math.floor((index - 1) / 12) + 1;
+      const hMonth = index - 12 * (hYear - 1);
+      const hDay = daysIntoMonth + 1;
+      return { year: hYear, month: hMonth, day: hDay };
+    }
+    
+    function hijriToJD(year, month, day) {
+      const idx = ummIdx(year, month);
+      return (day + UMM_DATA[idx - 1] - 1) + MCJDN_OFFSET;
+    }
+    
+    function hijriToGregorian(hYear, hMonth, hDay) {
+      const jd = hijriToJD(hYear, hMonth, hDay);
+      const g = jdToGreg(jd);
+      return { ...g, formatted: `${g.year}/${pad2(g.month)}/${pad2(g.day)}` };
+    }
+    
+    function gregorianToHijri(gYear, gMonth, gDay) {
+      const jd = gregToJD(gYear, gMonth, gDay);
+      const h = jdToHijri(jd);
+      return { ...h, formatted: `${h.year}/${pad2(h.month)}/${pad2(h.day)}` };
+    }
+    
+    function normaliseDateString(dateStr) {
+      const p = dateStr.split(/[\/\-\\]/).map(Number);
+      if (p.length !== 3 || p.some(isNaN)) return null;
+      const [a, b, c] = p;
+      const [y, m, d] = a > 100 ? [a, b, c] : [c, b, a];
+      return `${y}/${pad2(m)}/${pad2(d)}`;
+    }
+    
+    function hijriToGregorianStr(hijriStr) {
+      const norm = normaliseDateString(hijriStr);
+      if (!norm) return 'Invalid date';
+      const [y, m, d] = norm.split('/').map(Number);
+      return hijriToGregorian(y, m, d).formatted;
+    }
+    
+    function gregorianToHijriStr(gregStr) {
+      const norm = normaliseDateString(gregStr);
+      if (!norm) return 'Invalid date';
+      const [y, m, d] = norm.split('/').map(Number);
+      return gregorianToHijri(y, m, d).formatted;
+    }
+    
+    function todayHijri() {
+      const now = new Date();
+      return gregorianToHijri(now.getFullYear(), now.getMonth() + 1, now.getDate());
+    }
+    
+    function todayGregorian() {
+      const now = new Date();
+      return { year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate(),
+               formatted: `${now.getFullYear()}/${pad2(now.getMonth()+1)}/${pad2(now.getDate())}` };
+    }
+    
+    // ================================================================
+    // DEMO FUNCTIONS
+    // ================================================================
+    
+    function showTab(tab) {
+      document.getElementById('tab-api').style.display = tab === 'api' ? 'block' : 'none';
+      document.getElementById('tab-demo').style.display = tab === 'demo' ? 'block' : 'none';
+      document.querySelectorAll('.tab').forEach((btn, i) => {
+        btn.classList.toggle('active', (tab === 'api' && i === 0) || (tab === 'demo' && i === 1));
+      });
+    }
+    
+    function initDemo() {
+      const todayH = todayHijri();
+      const todayG = todayGregorian();
+      const dayName = DAY_NAMES_AR[new Date().getDay()];
+      
+      document.getElementById('todayInfo').innerHTML = `
+        <strong>${dayName}</strong><br>
+        Hijri: ${todayH.day} ${HIJRI_MONTH_NAMES_AR[todayH.month - 1]} ${todayH.year} (${todayH.formatted})<br>
+        Greg: ${todayG.day} ${GREG_MONTH_NAMES_AR[todayG.month - 1]} ${todayG.year} (${todayG.formatted})
+      `;
+    }
+    
+    function demoH2G() {
+      const input = document.getElementById('convH2G').value.trim();
+      if (!input) return;
+      const result = hijriToGregorianStr(input);
+      document.getElementById('convH2GResult').textContent = result;
+      document.getElementById('convH2GResult').style.color = result === 'Invalid date' ? '#dc3545' : '#1a5f3c';
+    }
+    
+    function demoG2H() {
+      const input = document.getElementById('convG2H').value.trim();
+      if (!input) return;
+      const result = gregorianToHijriStr(input);
+      document.getElementById('convG2HResult').textContent = result;
+      document.getElementById('convG2HResult').style.color = result === 'Invalid date' ? '#dc3545' : '#1a5f3c';
+    }
+    
+    // ================================================================
+    // DATE PICKER
+    // ================================================================
+    
+    let calView = 'hijri';
+    let calYear, calMonth;
+    let calCallback = null;
+    let calInput = null;
+    let calFormat = 'yyyy/mm/dd';
+    
+    function openCalendar(inputEl, callback, format) {
+      calInput = inputEl;
+      calCallback = callback;
+      calFormat = format || 'yyyy/mm/dd';
+      
+      const val = inputEl.value;
+      if (val) {
+        const norm = normaliseDateString(val);
+        if (norm) {
+          const [y, m, d] = norm.split('/').map(Number);
+          calYear = y; calMonth = m;
+        }
+      }
+      
+      if (!calYear || !calMonth) {
+        const today = calView === 'hijri' ? todayHijri() : todayGregorian();
+        calYear = today.year;
+        calMonth = today.month;
+      }
+      
+      renderCalendar();
+      
+      const popup = document.getElementById('calPopup');
+      const rect = inputEl.getBoundingClientRect();
+      popup.style.top = (rect.bottom + 8) + 'px';
+      popup.style.left = rect.left + 'px';
+      popup.classList.add('show');
+      document.getElementById('calOverlay').classList.add('show');
+    }
+    
+    function closeCalendar() {
+      document.getElementById('calPopup').classList.remove('show');
+      document.getElementById('calOverlay').classList.remove('show');
+    }
+    
+    function setCalView(view) {
+      calView = view;
+      document.querySelectorAll('.cal-view-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.toLowerCase() === view);
+      });
+      const today = calView === 'hijri' ? todayHijri() : todayGregorian();
+      calYear = today.year;
+      calMonth = today.month;
+      renderCalendar();
+    }
+    
+    function calNav(delta) {
+      calMonth += delta;
+      if (calMonth < 1) { calMonth = 12; calYear--; }
+      if (calMonth > 12) { calMonth = 1; calYear++; }
+      renderCalendar();
+    }
+    
+    function renderCalendar() {
+      const grid = document.getElementById('calGrid');
+      const monthYear = document.getElementById('calMonthYear');
+      const hijriNames = document.getElementById('hijriNames');
+      
+      if (calView === 'hijri') {
+        monthYear.textContent = `${HIJRI_MONTH_NAMES_AR[calMonth - 1]} ${calYear}`;
+      } else {
+        monthYear.textContent = `${GREG_MONTH_NAMES_AR[calMonth - 1]} ${calYear}`;
+      }
+      
+      let html = '';
+      DAY_NAMES_AR.forEach(name => {
+        html += `<div class="cal-day-header">${name}</div>`;
+      });
+      
+      let daysInMonth, firstDay;
+      if (calView === 'hijri') {
+        const idx = ummIdx(calYear, calMonth);
+        const startMCJDN = UMM_DATA[idx - 1];
+        const endMCJDN = UMM_DATA[idx] || (UMM_DATA[idx - 1] + 30);
+        daysInMonth = endMCJDN - startMCJDN;
+        const jd = hijriToJD(calYear, calMonth, 1);
+        firstDay = Math.floor((jd + 1.5) % 7);
+      } else {
+        daysInMonth = new Date(calYear, calMonth, 0).getDate();
+        firstDay = new Date(calYear, calMonth - 1, 1).getDay();
+      }
+      
+      for (let i = 0; i < firstDay; i++) {
+        html += '<div class="cal-day other-month">-</div>';
+      }
+      
+      const today = calView === 'hijri' ? todayHijri() : todayGregorian();
+      const selectedVal = calInput ? normaliseDateString(calInput.value) : null;
+      
+      for (let d = 1; d <= daysInMonth; d++) {
+        const isToday = today.year === calYear && today.month === calMonth && today.day === d;
+        let isSelected = false;
+        if (selectedVal) {
+          const [sy, sm, sd] = selectedVal.split('/').map(Number);
+          isSelected = sy === calYear && sm === calMonth && sd === d;
+        }
+        
+        const classes = ['cal-day'];
+        if (isToday) classes.push('today');
+        if (isSelected) classes.push('selected');
+        
+        html += `<div class="${classes.join(' ')}" onclick="selectDay(${d})">${d}</div>`;
+      }
+      
+      grid.innerHTML = html;
+      
+      hijriNames.innerHTML = HIJRI_MONTH_NAMES_AR.map((name, i) => 
+        `<button class="${calMonth === i+1 ? 'active' : ''}" onclick="jumpToHijriMonth(${i+1})">${name}</button>`
+      ).join('');
+    }
+    
+    function jumpToHijriMonth(month) {
+      calMonth = month;
+      renderCalendar();
+    }
+    
+    function selectDay(day) {
+      let dates;
+      
+      if (calView === 'hijri') {
+        const hijri = `${calYear}/${pad2(calMonth)}/${pad2(day)}`;
+        const greg = hijriToGregorianStr(hijri);
+        dates = { hijri, greg };
+      } else {
+        const greg = `${calYear}/${pad2(calMonth)}/${pad2(day)}`;
+        const hijri = gregorianToHijriStr(greg);
+        dates = { hijri, greg };
+      }
+      
+      let formattedDate = dates.hijri;
+      if (calFormat === 'dd/mm/yyyy') {
+        const [y, m, d] = dates.hijri.split('/');
+        formattedDate = `${d}/${m}/${y}`;
+      } else if (calFormat === 'yyyy-mm-dd') {
+        const [y, m, d] = dates.hijri.split('/');
+        formattedDate = `${y}-${m}-${d}`;
+      }
+      
+      calInput.value = formattedDate;
+      
+      if (calCallback) {
+        const result = calCallback(dates);
+        if (result !== null && typeof result === 'string') {
+          alert(result);
+          return;
+        }
+      }
+      
+      closeCalendar();
+    }
+    
+    // Initialize pickers
+    document.getElementById('demoPicker').addEventListener('click', function() {
+      openCalendar(this, function(dates) {
+        document.getElementById('resultHijri').textContent = dates.hijri;
+        document.getElementById('resultGreg').textContent = dates.greg;
+        document.getElementById('demoPickerResult').style.display = 'block';
+        return null;
+      });
+    });
+    
+    let demoFormat = 'yyyy/mm/dd';
+    function setFormat(fmt, btn) {
+      demoFormat = fmt;
+      document.querySelectorAll('.card:last-child .outline').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+    
+    document.getElementById('formatDemo').addEventListener('click', function() {
+      openCalendar(this, function() { return null; }, demoFormat);
+    });
+    
+    // Init
+    initDemo();
+  </script>
+</body>
+</html>

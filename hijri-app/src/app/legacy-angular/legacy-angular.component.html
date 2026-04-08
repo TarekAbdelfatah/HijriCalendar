@@ -1,0 +1,173 @@
+<div class="page" dir="rtl">
+
+  <!-- ── Header ──────────────────────────────────────────────────────────── -->
+  <header class="page-header">
+    <h1>تقويم هجري - Legacy Angular</h1>
+    <p>Pure TypeScript · بدون jQuery · أم القرى الرسمي</p>
+  </header>
+
+  <!-- ── بطاقة اليوم ─────────────────────────────────────────────────────── -->
+  <div class="today-card">
+    <div class="today-item">
+      <span class="lbl">اليوم</span>
+      <span class="val">{{ todayDayName }}</span>
+    </div>
+    <div class="today-item">
+      <span class="lbl">هجري</span>
+      <span class="val hijri-val">{{ todayH.day }} {{ todayMonthName }} {{ todayH.year }}</span>
+    </div>
+    <div class="today-item">
+      <span class="lbl">ميلادي</span>
+      <span class="val">{{ todayG.formatted }}</span>
+    </div>
+  </div>
+
+  <div class="grid-2">
+
+    <!-- ── نموذج الزيارة ────────────────────────────────────────────────── -->
+    <section class="card">
+      <h2>نموذج تسجيل زيارة</h2>
+      <p class="sub">نفس الـ attribute <code>hijri-calender</code> بدون أي تغيير</p>
+
+      <form #visitForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
+
+        <div class="field">
+          <label>اسم المريض <span class="req">*</span></label>
+          <input type="text" class="inp" name="PatientName"
+                 [(ngModel)]="requestModel.PatientName" required
+                 placeholder="أدخل اسم المريض" />
+        </div>
+
+        <div class="field">
+          <label>تاريخ الزيارة (هجري) <span class="req">*</span></label>
+          <input
+            required
+            type="text"
+            readonly
+            hijri-calender
+            class="form-control txtbox datePicker"
+            name="VisitDate"
+            #VisitDate="ngModel"
+            [(ngModel)]="requestModel.VisitDateStr"
+            placeholder="انقر لاختيار التاريخ"
+          />
+          <span *ngIf="VisitDate.invalid && VisitDate.touched" class="err">
+            الرجاء اختيار تاريخ الزيارة
+          </span>
+          <span *ngIf="requestModel.VisitDateStr" class="hint">
+            الميلادي الموافق: {{ getGregDate(requestModel.VisitDateStr) }}
+          </span>
+        </div>
+
+        <div class="field">
+          <label>ملاحظات</label>
+          <input type="text" class="inp" name="Notes"
+                 [(ngModel)]="requestModel.Notes" placeholder="اختياري" />
+        </div>
+
+        <div class="btn-row">
+          <button type="submit" class="btn-p" [disabled]="visitForm.invalid">حفظ الزيارة</button>
+          <button type="button" class="btn-s" (click)="resetForm()">مسح</button>
+        </div>
+
+      </form>
+
+      <div *ngIf="submitResult" class="result-box">
+        <strong>تم الحفظ بنجاح:</strong><br/>{{ submitResult }}
+      </div>
+    </section>
+
+    <!-- ── العمود الأيمن ────────────────────────────────────────────────── -->
+    <div class="col-right">
+
+      <!-- أداة التحويل -->
+      <section class="card">
+        <h2>أداة التحويل</h2>
+
+        <div class="toggle-row">
+          <button [class.act]="convertMode==='h2g'" (click)="convertMode='h2g'">هجري ← ميلادي</button>
+          <button [class.act]="convertMode==='g2h'" (click)="convertMode='g2h'">ميلادي ← هجري</button>
+        </div>
+
+        <div class="field">
+          <label>{{ convertMode==='h2g' ? 'تاريخ هجري (yyyy/mm/dd)' : 'تاريخ ميلادي (yyyy/mm/dd)' }}</label>
+          <div class="row-inp">
+            <input type="text" class="inp" [(ngModel)]="convertInput"
+                   [placeholder]="convertMode==='h2g' ? '1446/01/15' : '2024/07/20'"
+                   (keyup.enter)="convert()" />
+            <button class="btn-p sm" (click)="convert()">تحويل</button>
+          </div>
+        </div>
+
+        <div *ngIf="convertResult" class="convert-result">{{ convertResult }}</div>
+      </section>
+
+      <!-- نموذج بحقلين تاريخ -->
+      <section class="card">
+        <h2>حقلان في نفس النموذج</h2>
+
+        <form #f2="ngForm" (ngSubmit)="submitForm2()" novalidate>
+          <div class="field">
+            <label>العنوان</label>
+            <input type="text" class="inp" name="title"
+                   [(ngModel)]="form2.title" required placeholder="مثال: إجازة رمضان" />
+          </div>
+          <div class="field">
+            <label>تاريخ البداية <span class="req">*</span></label>
+            <input required type="text" readonly hijri-calender
+                   class="inp datePicker" name="startDate"
+                   [(ngModel)]="form2.startDate" placeholder="انقر للاختيار" />
+          </div>
+          <div class="field">
+            <label>تاريخ النهاية <span class="req">*</span></label>
+            <input required type="text" readonly hijri-calender
+                   class="inp datePicker" name="endDate"
+                   [(ngModel)]="form2.endDate" placeholder="انقر للاختيار" />
+          </div>
+          <button type="submit" class="btn-p" [disabled]="f2.invalid">حفظ</button>
+        </form>
+
+        <div *ngIf="form2Result" class="result-box">{{ form2Result }}</div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- ── قسم اختبار محاكاة الباك إند ────────────────────────────────────── -->
+  <section class="card debug-section">
+    <h2 style="color: #d32f2f;">🔧 قسم اختبار محاكاة الباك إند</h2>
+    <p class="sub">لاختبار مشكلة عدم عرض التاريخ في حقل الإدخال</p>
+
+    <div class="field">
+      <label>تاريخ الاختبار (هجري)</label>
+      <div class="row-inp">
+        <input type="text" class="inp" [(ngModel)]="testDateInput"
+               placeholder="أدخل تاريخ مثل 20/10/1447" />
+        <button class="btn-p sm" (click)="simulateBackendLoad()">محاكاة تحميل من الباك إند</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>قيمة VisitDateStr الحالية</label>
+      <div class="debug-value">{{ requestModel.VisitDateStr || '(فارغة)' }}</div>
+    </div>
+
+    <div class="field">
+      <label>حالة حقل التاريخ في نموذج الزيارة</label>
+      <div class="debug-info">
+        <p>افتح أدوات المطور (F12) → علامة Console لمشاهدة سجلات التصحيح</p>
+        <p>سجلات التصحيح تبدأ بـ: <code>[hijri-calender]</code> و <code>[LegacyComponent]</code></p>
+      </div>
+    </div>
+
+    <div class="field">
+      <h3>اختبارات سريعة:</h3>
+      <div class="test-buttons">
+        <button class="btn-s sm" (click)="testDateInput='20/10/1447'; simulateBackendLoad()">20/10/1447</button>
+        <button class="btn-s sm" (click)="testDateInput='1447/10/20'; simulateBackendLoad()">1447/10/20</button>
+        <button class="btn-s sm" (click)="testDateInput='2026/04/08'; simulateBackendLoad()">2026/04/08</button>
+        <button class="btn-s sm" (click)="testDateInput='08/04/2026'; simulateBackendLoad()">08/04/2026</button>
+      </div>
+    </div>
+  </section>
+</div>

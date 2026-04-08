@@ -1,6 +1,40 @@
 /* ── Layout ─────────────────────────────────────────────────────────────── */
 .page { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
 
+/* ── Page Switcher ─────────────────────────────────────────────────────── */
+.page-switcher {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 8px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  justify-content: center;
+}
+
+.page-switcher button {
+  padding: 10px 24px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  color: #666;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.page-switcher button:hover {
+  border-color: #1967d2;
+  color: #1967d2;
+}
+
+.page-switcher button.active {
+  background: #1967d2;
+  border-color: #1967d2;
+  color: white;
+}
+
 .page-header { text-align: center; margin-bottom: 24px; }
 .page-header h1 { font-size: 22px; font-weight: 700; color: #1a1a2e; margin: 0 0 6px; }
 .page-header p  { font-size: 13px; color: #888; margin: 0; }
@@ -143,4 +177,97 @@
   gap: 8px;
   flex-wrap: wrap;
   margin-top: 10px;
+}
+
+/* ── Documentation Styles ─────────────────────────────────────────────────── */
+.docs-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.docs-section {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.docs-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #667eea;
+}
+
+.docs-desc {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 16px;
+}
+
+.docs-code {
+  background: #2d2d2d;
+  color: #f8f8f2;
+  padding: 16px;
+  border-radius: 8px;
+  font-family: 'Consolas', monospace;
+  font-size: 13px;
+  overflow-x: auto;
+  direction: ltr;
+  text-align: left;
+  margin: 12px 0;
+}
+
+.docs-result {
+  background: #e8f5e9;
+  border: 1px solid #4caf50;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #2e7d32;
+}
+
+.docs-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.docs-table th,
+.docs-table td {
+  border: 1px solid #ddd;
+  padding: 10px 12px;
+  text-align: right;
+  font-size: 13px;
+}
+
+.docs-table th {
+  background: #f5f5f5;
+  font-weight: 600;
+  color: #333;
+}
+
+.docs-table td code {
+  background: #f0f4ff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #1967d2;
+}
+
+.example-block {
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.example-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
 }

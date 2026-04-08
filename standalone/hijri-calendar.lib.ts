@@ -314,17 +314,17 @@ export function hijriToJD(year: number, month: number, day: number): number {
 }
 
 export function jdToHijri(jd: number): { year: number; month: number; day: number } {
-  const mcjdn = jd - MCJDN_OFFSET;
+  const mcjdn = Math.floor(jd) - MCJDN_OFFSET;
   let index = 0;
   for (let i = 0; i < UMM_DATA.length; i++) {
     if (UMM_DATA[i] > mcjdn) break;
     index++;
   }
-  const lunation = index + 15292;
-  const year  = Math.floor((lunation - 1) / 12) + 1;
-  const month = lunation - 12 * (year - 1);
-  const day   = Math.floor(mcjdn) - UMM_DATA[index - 1] + 1;
-  return { year, month, day };
+  const daysIntoMonth = mcjdn - UMM_DATA[index - 1];
+  const hYear = Math.floor((index - 1) / 12) + 1;
+  const hMonth = index - 12 * (hYear - 1);
+  const hDay = daysIntoMonth + 1;
+  return { year: hYear, month: hMonth, day: hDay };
 }
 
 export function dayOfWeekForJD(jd: number): number {
@@ -426,4 +426,162 @@ function normaliseDateString(dateStr: string): string | null {
   const [a, b, c] = p;
   const [y, m, d] = a > 100 ? [a, b, c] : [c, b, a];
   return `${y}/${String(m).padStart(2, '0')}/${String(d).padStart(2, '0')}`;
+}
+
+// ─── Format Date Utility ──────────────────────────────────────────────────────
+
+export type DateFormat = 'yyyy/mm/dd' | 'dd/mm/yyyy' | 'yyyy-mm-dd' | 'dd-mm-yyyy' | 'yyyy-mm' | 'yyyy';
+
+export interface DateRange { hijri: string; greg: string }
+
+function formatDate(dateStr: string, format: DateFormat): string {
+  const parts = dateStr.split('/');
+  if (parts.length !== 3) return dateStr;
+  const [y, m, d] = parts;
+  
+  switch (format) {
+    case 'yyyy/mm/dd': return dateStr;
+    case 'dd/mm/yyyy': return `${d}/${m}/${y}`;
+    case 'yyyy-mm-dd': return `${y}-${m}-${d}`;
+    case 'dd-mm-yyyy': return `${d}-${m}-${y}`;
+    case 'yyyy-mm': return `${y}-${m}`;
+    case 'yyyy': return y;
+    default: return dateStr;
+  }
+}
+
+// ─── Validation Result ────────────────────────────────────────────────────────
+
+export interface ValidationResult {
+  isValid: boolean;
+  errorMessage?: string;
+}
+
+export type ValidationFn = (dates: DateRange) => ValidationResult;
+
+// ─── Select Callback ───────────────────────────────────────────────────────────
+
+export type SelectCallback = (dates: DateRange) => ValidationResult | null;
+
+// ─── Picker Options ───────────────────────────────────────────────────────────
+
+export interface DatePickerOptions {
+  container: string | HTMLElement;
+  defaultView?: 'hijri' | 'gregorian';
+  outputFormat?: DateFormat;
+  validate?: ValidationFn;
+  onSelect?: SelectCallback;
+}
+
+interface DatePickerInstance {
+  setError: (message: string) => void;
+  clearError: () => void;
+  destroy: () => void;
+  getValue: () => DateRange | null;
+}
+
+// ─── Create Date Picker Factory ───────────────────────────────────────────────
+
+export function createDatePicker(options: DatePickerOptions): DatePickerInstance {
+  const container = typeof options.container === 'string' 
+    ? document.querySelector(options.container) as HTMLElement
+    : options.container;
+  
+  if (!container) {
+    throw new Error(`DatePicker: container "${options.container}" not found`);
+  }
+
+  const outputFormat = options.outputFormat || 'yyyy/mm/dd';
+  let currentDates: DateRange | null = null;
+  let errorEl: HTMLElement | null = null;
+
+  // Wrap container with error state
+  container.style.position = 'relative';
+
+  function showError(message: string): void {
+    container.classList.add('datepicker-error');
+    
+    if (!errorEl) {
+      errorEl = document.createElement('div');
+      errorEl.className = 'datepicker-error-msg';
+      container.appendChild(errorEl);
+    }
+    errorEl.textContent = message;
+    errorEl.style.display = 'block';
+  }
+
+  function clearError(): void {
+    container.classList.remove('datepicker-error');
+    if (errorEl) {
+      errorEl.style.display = 'none';
+    }
+  }
+
+  function triggerSelect(dates: DateRange): void {
+    currentDates = dates;
+    
+    if (options.onSelect) {
+      const result = options.onSelect(dates);
+      
+      if (result === null || result.isValid) {
+        clearError();
+      } else if (result.errorMessage) {
+        showError(result.errorMessage);
+      }
+    } else {
+      clearError();
+    }
+  }
+
+  function getValue(): DateRange | null {
+    return currentDates;
+  }
+
+  function destroy(): void {
+    clearError();
+    if (errorEl) {
+      errorEl.remove();
+      errorEl = null;
+    }
+    container.classList.remove('datepicker-error');
+  }
+
+  // Return instance with internal trigger for framework wrappers
+  return {
+    setError: showError,
+    clearError,
+    destroy,
+    getValue,
+    // Expose internal trigger for framework wrappers (Angular, React, etc.)
+    _triggerSelect: triggerSelect,
+    _options: options,
+  } as DatePickerInstance & { _triggerSelect: typeof triggerSelect; _options: DatePickerOptions };
+}
+
+// ─── Default CSS Styles ───────────────────────────────────────────────────────
+
+const PICKER_STYLES = `
+.datepicker-error input,
+.datepicker-error .datepicker-input {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25) !important;
+}
+.datepicker-error-msg {
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  font-size: 12px;
+  color: #dc3545;
+  white-space: nowrap;
+}
+`;
+
+// Inject styles once
+let stylesInjected = false;
+function injectPickerStyles(): void {
+  if (stylesInjected) return;
+  const style = document.createElement('style');
+  style.textContent = PICKER_STYLES;
+  document.head.appendChild(style);
+  stylesInjected = true;
 }

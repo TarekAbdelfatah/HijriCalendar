@@ -10,35 +10,35 @@
 // Index formula: (12 * (year - 1)) + month - 15292
 // Source: kbwood/calendars (https://github.com/kbwood/calendars)
 const UMM_DATA: number[] = [
-  20, 50, 79, 109, 138, 168, 197, 227, 256, 286, 315, 345,
-  374, 404, 433, 463, 492, 522, 551, 581, 611, 641, 670, 700,
-  729, 759, 788, 818, 847, 877, 906, 936, 965, 995, 1024, 1054,
-  1083, 1113, 1142, 1172, 1201, 1231, 1260, 1290, 1320, 1350, 1379, 1409,
-  1438, 1468, 1497, 1527, 1556, 1586, 1615, 1645, 1674, 1704, 1733, 1763,
-  1792, 1822, 1851, 1881, 1910, 1940, 1969, 1999, 2028, 2058, 2087, 2117,
-  2146, 2176, 2205, 2235, 2264, 2294, 2323, 2353, 2383, 2413, 2442, 2472,
-  2501, 2531, 2560, 2590, 2619, 2649, 2678, 2708, 2737, 2767, 2796, 2826,
-  2855, 2885, 2914, 2944, 2973, 3003, 3032, 3062, 3091, 3121, 3150, 3180,
-  3209, 3239, 3268, 3298, 3327, 3357, 3386, 3416, 3446, 3476, 3505, 3535,
-  3564, 3594, 3623, 3653, 3682, 3712, 3741, 3771, 3800, 3830, 3859, 3889,
-  3918, 3948, 3977, 4007, 4036, 4066, 4095, 4125, 4155, 4185, 4214, 4244,
-  4273, 4303, 4332, 4362, 4391, 4421, 4450, 4480, 4509, 4539, 4568, 4598,
-  4627, 4657, 4686, 4716, 4745, 4775, 4804, 4834, 4863, 4893, 4922, 4952,
-  4981, 5011, 5040, 5070, 5099, 5129, 5158, 5188, 5218, 5248, 5277, 5307,
-  5336, 5366, 5395, 5425, 5454, 5484, 5513, 5543, 5572, 5602, 5631, 5661,
-  5690, 5720, 5749, 5779, 5808, 5838, 5867, 5897, 5926, 5956, 5985, 6015,
-  6044, 6074, 6103, 6133, 6162, 6192, 6221, 6251, 6281, 6311, 6340, 6370,
-  6399, 6429, 6458, 6488, 6517, 6547, 6576, 6606, 6635, 6665, 6694, 6724,
-  6753, 6783, 6812, 6842, 6871, 6901, 6930, 6960, 6989, 7019, 7048, 7078,
-  7107, 7137, 7166, 7196, 7225, 7255, 7284, 7314, 7344, 7374, 7403, 7433,
-  7462, 7492, 7521, 7551, 7580, 7610, 7639, 7669, 7698, 7728, 7757, 7787,
-  7816, 7846, 7875, 7905, 7934, 7964, 7993, 8023, 8053, 8083, 8112, 8142,
-  8171, 8201, 8230, 8260, 8289, 8319, 8348, 8378, 8407, 8437, 8466, 8496,
-  8525, 8555, 8584, 8614, 8643, 8673, 8702, 8732, 8761, 8791, 8821, 8850,
-  8880, 8909, 8938, 8968, 8997, 9027, 9056, 9086, 9115, 9145, 9175, 9205,
-  9234, 9264, 9293, 9322, 9352, 9381, 9410, 9440, 9470, 9499, 9529, 9559,
-  9589, 9618, 9648, 9677, 9706, 9736, 9765, 9794, 9824, 9853, 9883, 9913,
-  9943, 9972, 10002, 10032, 10061, 10090, 10120, 10149, 10178, 10208, 10237, 10267,
+     20,    50,    79,   109,   138,   168,   197,   227,   256,   286,   315,   345,
+    374,   404,   433,   463,   492,   522,   551,   581,   611,   641,   670,   700,
+    729,   759,   788,   818,   847,   877,   906,   936,   965,   995,  1024,  1054,
+   1083,  1113,  1142,  1172,  1201,  1231,  1260,  1290,  1320,  1350,  1379,  1409,
+   1438,  1468,  1497,  1527,  1556,  1586,  1615,  1645,  1674,  1704,  1733,  1763,
+   1792,  1822,  1851,  1881,  1910,  1940,  1969,  1999,  2028,  2058,  2087,  2117,
+   2146,  2176,  2205,  2235,  2264,  2294,  2323,  2353,  2383,  2413,  2442,  2472,
+   2501,  2531,  2560,  2590,  2619,  2649,  2678,  2708,  2737,  2767,  2796,  2826,
+   2855,  2885,  2914,  2944,  2973,  3003,  3032,  3062,  3091,  3121,  3150,  3180,
+   3209,  3239,  3268,  3298,  3327,  3357,  3386,  3416,  3446,  3476,  3505,  3535,
+   3564,  3594,  3623,  3653,  3682,  3712,  3741,  3771,  3800,  3830,  3859,  3889,
+   3918,  3948,  3977,  4007,  4036,  4066,  4095,  4125,  4155,  4185,  4214,  4244,
+   4273,  4303,  4332,  4362,  4391,  4421,  4450,  4480,  4509,  4539,  4568,  4598,
+   4627,  4657,  4686,  4716,  4745,  4775,  4804,  4834,  4863,  4893,  4922,  4952,
+   4981,  5011,  5040,  5070,  5099,  5129,  5158,  5188,  5218,  5248,  5277,  5307,
+   5336,  5366,  5395,  5425,  5454,  5484,  5513,  5543,  5572,  5602,  5631,  5661,
+   5690,  5720,  5749,  5779,  5808,  5838,  5867,  5897,  5926,  5956,  5985,  6015,
+   6044,  6074,  6103,  6133,  6162,  6192,  6221,  6251,  6281,  6311,  6340,  6370,
+   6399,  6429,  6458,  6488,  6517,  6547,  6576,  6606,  6635,  6665,  6694,  6724,
+   6753,  6783,  6812,  6842,  6871,  6901,  6930,  6960,  6989,  7019,  7048,  7078,
+   7107,  7137,  7166,  7196,  7225,  7255,  7284,  7314,  7344,  7374,  7403,  7433,
+   7462,  7492,  7521,  7551,  7580,  7610,  7639,  7669,  7698,  7728,  7757,  7787,
+   7816,  7846,  7875,  7905,  7934,  7964,  7993,  8023,  8053,  8083,  8112,  8142,
+   8171,  8201,  8230,  8260,  8289,  8319,  8348,  8378,  8407,  8437,  8466,  8496,
+   8525,  8555,  8584,  8614,  8643,  8673,  8702,  8732,  8761,  8791,  8821,  8850,
+   8880,  8909,  8938,  8968,  8997,  9027,  9056,  9086,  9115,  9145,  9175,  9205,
+   9234,  9264,  9293,  9322,  9352,  9381,  9410,  9440,  9470,  9499,  9529,  9559,
+   9589,  9618,  9648,  9677,  9706,  9736,  9765,  9794,  9824,  9853,  9883,  9913,
+   9943,  9972, 10002, 10032, 10061, 10090, 10120, 10149, 10178, 10208, 10237, 10267,
   10297, 10326, 10356, 10386, 10415, 10445, 10474, 10504, 10533, 10562, 10592, 10621,
   10651, 10680, 10710, 10740, 10770, 10799, 10829, 10858, 10888, 10917, 10947, 10976,
   11005, 11035, 11064, 11094, 11124, 11153, 11183, 11213, 11242, 11272, 11301, 11331,
@@ -263,9 +263,9 @@ function jdToGreg(jd: number): { year: number; month: number; day: number } {
   const c = Math.floor((b - 122.1) / 365.25);
   const d = Math.floor(365.25 * c);
   const e = Math.floor((b - d) / 30.6001);
-  const day = b - d - Math.floor(30.6001 * e);
+  const day   = b - d - Math.floor(30.6001 * e);
   const month = e < 14 ? e - 1 : e - 13;
-  const year = month > 2 ? c - 4716 : c - 4715;
+  const year  = month > 2 ? c - 4716 : c - 4715;
   return { year, month, day };
 }
 
@@ -273,7 +273,7 @@ function jdToGreg(jd: number): { year: number; month: number; day: number } {
 export function pad2(n: number): string { return String(n).padStart(2, '0'); }
 
 export interface HijriDateObj { year: number; month: number; day: number; formatted: string }
-export interface GregDateObj { year: number; month: number; day: number; formatted: string }
+export interface GregDateObj  { year: number; month: number; day: number; formatted: string }
 
 export const HIJRI_MONTH_NAMES = [
   'المحرم', 'صفر', 'ربيع الأول', 'ربيع الآخر',
@@ -321,9 +321,9 @@ export function jdToHijri(jd: number): { year: number; month: number; day: numbe
     index++;
   }
   const lunation = index + 15292;
-  const year = Math.floor((lunation - 1) / 12) + 1;
+  const year  = Math.floor((lunation - 1) / 12) + 1;
   const month = lunation - 12 * (year - 1);
-  const day = Math.floor(mcjdn) - UMM_DATA[index - 1] + 1;
+  const day   = Math.floor(mcjdn) - UMM_DATA[index - 1] + 1;
   return { year, month, day };
 }
 
@@ -335,13 +335,13 @@ export function dayOfWeekForJD(jd: number): number {
 
 export function hijriToGregorian(hYear: number, hMonth: number, hDay: number): GregDateObj {
   const jd = hijriToJD(hYear, hMonth, hDay);
-  const g = jdToGreg(jd);
+  const g  = jdToGreg(jd);
   return { ...g, formatted: `${g.year}/${pad2(g.month)}/${pad2(g.day)}` };
 }
 
 export function gregorianToHijri(gYear: number, gMonth: number, gDay: number): HijriDateObj {
   const jd = gregToJD(gYear, gMonth, gDay);
-  const h = jdToHijri(jd);
+  const h  = jdToHijri(jd);
   return { ...h, formatted: `${h.year}/${pad2(h.month)}/${pad2(h.day)}` };
 }
 
@@ -372,10 +372,8 @@ export function todayHijriStr(): string {
 
 export function todayGregorian(): GregDateObj {
   const now = new Date();
-  return {
-    year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate(),
-    formatted: `${now.getFullYear()}/${pad2(now.getMonth() + 1)}/${pad2(now.getDate())}`
-  };
+  return { year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate(),
+           formatted: `${now.getFullYear()}/${pad2(now.getMonth()+1)}/${pad2(now.getDate())}` };
 }
 
 /** Returns today's Gregorian date as "yyyy/mm/dd" */
@@ -423,11 +421,167 @@ export const GREG_MONTH_NAMES_AR = [
 ];
 
 function normaliseDateString(dateStr: string): string | null {
-  debugger
-
   const p = dateStr.split(/[\/\-\\]/).map(Number);
   if (p.length !== 3 || p.some(isNaN)) return null;
   const [a, b, c] = p;
   const [y, m, d] = a > 100 ? [a, b, c] : [c, b, a];
   return `${y}/${String(m).padStart(2, '0')}/${String(d).padStart(2, '0')}`;
+}
+
+// ─── Format Date Utility ──────────────────────────────────────────────────────
+
+export type DateFormat = 'yyyy/mm/dd' | 'dd/mm/yyyy' | 'yyyy-mm-dd' | 'dd-mm-yyyy' | 'yyyy-mm' | 'yyyy';
+
+export interface DateRange { hijri: string; greg: string }
+
+function formatDate(dateStr: string, format: DateFormat): string {
+  const parts = dateStr.split('/');
+  if (parts.length !== 3) return dateStr;
+  const [y, m, d] = parts;
+  
+  switch (format) {
+    case 'yyyy/mm/dd': return dateStr;
+    case 'dd/mm/yyyy': return `${d}/${m}/${y}`;
+    case 'yyyy-mm-dd': return `${y}-${m}-${d}`;
+    case 'dd-mm-yyyy': return `${d}-${m}-${y}`;
+    case 'yyyy-mm': return `${y}-${m}`;
+    case 'yyyy': return y;
+    default: return dateStr;
+  }
+}
+
+// ─── Validation Result ────────────────────────────────────────────────────────
+
+export interface ValidationResult {
+  isValid: boolean;
+  errorMessage?: string;
+}
+
+export type ValidationFn = (dates: DateRange) => ValidationResult;
+
+// ─── Select Callback ───────────────────────────────────────────────────────────
+
+export type SelectCallback = (dates: DateRange) => ValidationResult | null;
+
+// ─── Picker Options ───────────────────────────────────────────────────────────
+
+export interface DatePickerOptions {
+  container: string | HTMLElement;
+  defaultView?: 'hijri' | 'gregorian';
+  outputFormat?: DateFormat;
+  validate?: ValidationFn;
+  onSelect?: SelectCallback;
+}
+
+interface DatePickerInstance {
+  setError: (message: string) => void;
+  clearError: () => void;
+  destroy: () => void;
+  getValue: () => DateRange | null;
+}
+
+// ─── Create Date Picker Factory ───────────────────────────────────────────────
+
+export function createDatePicker(options: DatePickerOptions): DatePickerInstance {
+  const container = typeof options.container === 'string' 
+    ? document.querySelector(options.container) as HTMLElement
+    : options.container;
+  
+  if (!container) {
+    throw new Error(`DatePicker: container "${options.container}" not found`);
+  }
+
+  const outputFormat = options.outputFormat || 'yyyy/mm/dd';
+  let currentDates: DateRange | null = null;
+  let errorEl: HTMLElement | null = null;
+
+  // Wrap container with error state
+  container.style.position = 'relative';
+
+  function showError(message: string): void {
+    container.classList.add('datepicker-error');
+    
+    if (!errorEl) {
+      errorEl = document.createElement('div');
+      errorEl.className = 'datepicker-error-msg';
+      container.appendChild(errorEl);
+    }
+    errorEl.textContent = message;
+    errorEl.style.display = 'block';
+  }
+
+  function clearError(): void {
+    container.classList.remove('datepicker-error');
+    if (errorEl) {
+      errorEl.style.display = 'none';
+    }
+  }
+
+  function triggerSelect(dates: DateRange): void {
+    currentDates = dates;
+    
+    if (options.onSelect) {
+      const result = options.onSelect(dates);
+      
+      if (result === null || result.isValid) {
+        clearError();
+      } else if (result.errorMessage) {
+        showError(result.errorMessage);
+      }
+    } else {
+      clearError();
+    }
+  }
+
+  function getValue(): DateRange | null {
+    return currentDates;
+  }
+
+  function destroy(): void {
+    clearError();
+    if (errorEl) {
+      errorEl.remove();
+      errorEl = null;
+    }
+    container.classList.remove('datepicker-error');
+  }
+
+  // Return instance with internal trigger for framework wrappers
+  return {
+    setError: showError,
+    clearError,
+    destroy,
+    getValue,
+    // Expose internal trigger for framework wrappers (Angular, React, etc.)
+    _triggerSelect: triggerSelect,
+    _options: options,
+  } as DatePickerInstance & { _triggerSelect: typeof triggerSelect; _options: DatePickerOptions };
+}
+
+// ─── Default CSS Styles ───────────────────────────────────────────────────────
+
+const PICKER_STYLES = `
+.datepicker-error input,
+.datepicker-error .datepicker-input {
+  border-color: #dc3545 !important;
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25) !important;
+}
+.datepicker-error-msg {
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+  font-size: 12px;
+  color: #dc3545;
+  white-space: nowrap;
+}
+`;
+
+// Inject styles once
+let stylesInjected = false;
+function injectPickerStyles(): void {
+  if (stylesInjected) return;
+  const style = document.createElement('style');
+  style.textContent = PICKER_STYLES;
+  document.head.appendChild(style);
+  stylesInjected = true;
 }
