@@ -76,6 +76,7 @@ export class HijriCalenderDirective implements ControlValueAccessor, AfterViewIn
 
   ngAfterViewInit(): void {
     this.buildWrapper();
+    this.updateDisplay(); // re-apply value written before view was ready
   }
 
   ngOnDestroy(): void {
