@@ -75,11 +75,8 @@ export class HijriCalenderDirective implements ControlValueAccessor, AfterViewIn
   // ── Lifecycle ─────────────────────────────────────────────────────────────
 
   ngAfterViewInit(): void {
-    console.log('[hijri-calender] ngAfterViewInit started');
     this.buildWrapper();
-    console.log('[hijri-calender] buildWrapper completed');
-    this.updateDisplay(); // re-apply value written before view was ready
-    console.log('[hijri-calender] ngAfterViewInit completed');
+    this.updateDisplay();
   }
 
   ngOnDestroy(): void {
@@ -90,45 +87,19 @@ export class HijriCalenderDirective implements ControlValueAccessor, AfterViewIn
   // ── ControlValueAccessor ──────────────────────────────────────────────────
 
   writeValue(val: string): void {
-    console.log('[hijri-calender] writeValue called with:', JSON.stringify(val), 'type:', typeof val, 'bindValue:', this.bindValue);
-    
     if (!val) {
       this.hijriStr = '';
       this.gregStr  = '';
       this.el.nativeElement.value = '';
-      console.log('[hijri-calender] writeValue: empty value, cleared');
       return;
     }
 
-    const norm = this.normalise(val);
-    console.log('[hijri-calender] normalise result:', norm);
-    
-    if (!norm) {
-      console.log('[hijri-calender] writeValue: normalise returned null, exiting');
-      return;
-    }
-
-    // Incoming value is in bindValue format
     if (this.bindValue === 'hijri') {
-      this.hijriStr = norm;
-      console.log('[hijri-calender] hijriStr set to:', this.hijriStr);
-      try { 
-        this.gregStr = hijriToGregorianStr(norm); 
-        console.log('[hijri-calender] gregStr converted to:', this.gregStr);
-      } catch (e) { 
-        this.gregStr = ''; 
-        console.error('[hijri-calender] Error converting hijri to gregorian:', e);
-      }
+      this.hijriStr = val;
+      this.gregStr = hijriToGregorianStr(val);
     } else {
-      this.gregStr  = norm;
-      console.log('[hijri-calender] gregStr set to:', this.gregStr);
-      try { 
-        this.hijriStr = gregorianToHijriStr(norm); 
-        console.log('[hijri-calender] hijriStr converted to:', this.hijriStr);
-      } catch (e) { 
-        this.hijriStr = ''; 
-        console.error('[hijri-calender] Error converting gregorian to hijri:', e);
-      }
+      this.gregStr  = val;
+      this.hijriStr = gregorianToHijriStr(val);
     }
 
     this.updateDisplay();
@@ -304,10 +275,10 @@ export class HijriCalenderDirective implements ControlValueAccessor, AfterViewIn
 
     if (this.displayMode === 'hijri') {
       this.hijriStr = ds;
-      try { this.gregStr = hijriToGregorianStr(ds); } catch { this.gregStr = ''; }
+      this.gregStr = hijriToGregorianStr(ds);
     } else {
       this.gregStr  = ds;
-      try { this.hijriStr = gregorianToHijriStr(ds); } catch { this.hijriStr = ''; }
+      this.hijriStr = gregorianToHijriStr(ds);
     }
 
     this.updateDisplay();
@@ -319,14 +290,8 @@ export class HijriCalenderDirective implements ControlValueAccessor, AfterViewIn
 
   /** Show the date in input according to current displayMode */
   private updateDisplay(): void {
-    console.log('[hijri-calender] updateDisplay called, displayMode:', this.displayMode);
-    console.log('[hijri-calender] hijriStr:', this.hijriStr, 'gregStr:', this.gregStr);
-    
     const val = this.displayMode === 'hijri' ? this.hijriStr : this.gregStr;
-    console.log('[hijri-calender] value to display:', val);
-    
     this.el.nativeElement.value = val;
-    console.log('[hijri-calender] input value set to:', this.el.nativeElement.value);
   }
 
   /** Move the calendar view to the month of the current value */
@@ -345,27 +310,6 @@ export class HijriCalenderDirective implements ControlValueAccessor, AfterViewIn
     const r = (this.wrapper ?? this.el.nativeElement).getBoundingClientRect();
     this.popup.style.top   = `${r.bottom + window.scrollY + 4}px`;
     this.popup.style.right = `${document.documentElement.clientWidth - r.right - window.scrollX}px`;
-  }
-
-  private normalise(s: string): string | null {
-    console.log('[hijri-calender] normalise input:', JSON.stringify(s), 'length:', s.length);
-    const p = s.split(/[\/\-\\]/).map(Number);
-    console.log('[hijri-calender] split result:', p, 'length:', p.length);
-    
-    if (p.length !== 3 || p.some(isNaN)) {
-      console.log('[hijri-calender] normalise: invalid format or NaN');
-      return null;
-    }
-    
-    const [a, b, c] = p;
-    console.log('[hijri-calender] parts:', {a, b, c});
-    
-    const [y, m, d] = a > 100 ? [a, b, c] : [c, b, a];
-    console.log('[hijri-calender] normalized:', {y, m, d});
-    
-    const result = `${y}/${pad2(m)}/${pad2(d)}`;
-    console.log('[hijri-calender] normalise result:', result);
-    return result;
   }
 
   // ── Styles injected once into <head> ──────────────────────────────────────

@@ -243,9 +243,7 @@ const MIN_YEAR = 1276;
 const MAX_YEAR = 1500;
 
 function ummIdx(year: number, month: number): number {
-  const idx = (12 * (year - 1)) + month - 15292;
-  console.log('[hijri-lib] ummIdx(', year, month, ') =', idx, 'UMM_DATA.length=', UMM_DATA.length);
-  return idx;
+  return (12 * (year - 1)) + month - 15292;
 }
 
 // ─── Julian Day ↔ Gregorian ───────────────────────────────────────────────────
@@ -258,10 +256,6 @@ function gregToJD(year: number, month: number, day: number): number {
 }
 
 function jdToGreg(jd: number): { year: number; month: number; day: number } {
-  console.log('[hijri-lib] jdToGreg input JD:', jd);
-  if (isNaN(jd)) {
-    console.error('[hijri-lib] ERROR: jd is NaN!');
-  }
   const z = Math.floor(jd + 0.5);
   const alpha = Math.floor((z - 1867216.25) / 36524.25);
   const a = z + 1 + alpha - Math.floor(alpha / 4);
@@ -272,8 +266,6 @@ function jdToGreg(jd: number): { year: number; month: number; day: number } {
   const day   = b - d - Math.floor(30.6001 * e);
   const month = e < 14 ? e - 1 : e - 13;
   const year  = month > 2 ? c - 4716 : c - 4715;
-  console.log('[hijri-lib] jdToGreg intermediate:', {z, alpha, a, b, c, d, e});
-  console.log('[hijri-lib] jdToGreg result:', {year, month, day});
   return { year, month, day };
 }
 
@@ -302,10 +294,7 @@ export const DAY_NAMES_SHORT_AR = ['أحد', 'اثنين', 'ثلاثاء', 'أر
 
 export function hijriDaysInMonth(year: number, month: number): number {
   const idx = ummIdx(year, month);
-  console.log('[hijri-lib] hijriDaysInMonth(', year, month, '): idx=', idx, 'UMM_DATA[idx]=', UMM_DATA[idx], 'UMM_DATA[idx-1]=', UMM_DATA[idx - 1]);
-  const result = UMM_DATA[idx] - UMM_DATA[idx - 1];
-  console.log('[hijri-lib] hijriDaysInMonth result:', result);
-  return result;
+  return UMM_DATA[idx] - UMM_DATA[idx - 1];
 }
 
 export function hijriIsLeapYear(year: number): boolean {
@@ -321,14 +310,7 @@ export function hijriIsValid(year: number, month: number, day: number): boolean 
 
 export function hijriToJD(year: number, month: number, day: number): number {
   const idx = ummIdx(year, month);
-  console.log('[hijri-lib] hijriToJD(', year, month, day, '): idx=', idx, 'UMM_DATA[idx-1]=', UMM_DATA[idx - 1], 'MCJDN_OFFSET=', MCJDN_OFFSET);
-  const value = UMM_DATA[idx - 1];
-  if (value === undefined) {
-    console.error('[hijri-lib] ERROR: UMM_DATA[idx-1] is undefined! idx-1=', idx - 1);
-  }
-  const jd = (day + UMM_DATA[idx - 1] - 1) + MCJDN_OFFSET;
-  console.log('[hijri-lib] hijriToJD result:', jd);
-  return jd;
+  return (day + UMM_DATA[idx - 1] - 1) + MCJDN_OFFSET;
 }
 
 export function jdToHijri(jd: number): { year: number; month: number; day: number } {
@@ -352,14 +334,9 @@ export function dayOfWeekForJD(jd: number): number {
 // ─── High-level conversion helpers ───────────────────────────────────────────
 
 export function hijriToGregorian(hYear: number, hMonth: number, hDay: number): GregDateObj {
-  console.log('[hijri-lib] hijriToGregorian input:', hYear, hMonth, hDay);
   const jd = hijriToJD(hYear, hMonth, hDay);
-  console.log('[hijri-lib] hijriToGregorian JD:', jd);
   const g  = jdToGreg(jd);
-  console.log('[hijri-lib] hijriToGregorian gregorian:', g);
-  const result = { ...g, formatted: `${g.year}/${pad2(g.month)}/${pad2(g.day)}` };
-  console.log('[hijri-lib] hijriToGregorian result:', result.formatted);
-  return result;
+  return { ...g, formatted: `${g.year}/${pad2(g.month)}/${pad2(g.day)}` };
 }
 
 export function gregorianToHijri(gYear: number, gMonth: number, gDay: number): HijriDateObj {
@@ -369,23 +346,16 @@ export function gregorianToHijri(gYear: number, gMonth: number, gDay: number): H
 }
 
 export function hijriToGregorianStr(hijriStr: string): string {
-  console.log('[hijri-lib] hijriToGregorianStr input:', hijriStr);
-  const [y, m, d] = hijriStr.split('/').map(Number);
-  console.log('[hijri-lib] hijriToGregorianStr parsed:', y, m, d);
-  const result = hijriToGregorian(y, m, d);
-  console.log('[hijri-lib] hijriToGregorianStr result:', result.formatted);
-  
-  // التحقق من NaN
-  if (isNaN(result.year) || isNaN(result.month) || isNaN(result.day)) {
-    console.error('[hijri-lib] ERROR: hijriToGregorianStr returned NaN for input:', hijriStr);
-    throw new Error(`Invalid hijri date or conversion error: ${hijriStr}`);
-  }
-  
-  return result.formatted;
+  const norm = normaliseDateString(hijriStr);
+  if (!norm) return 'Invalid date';
+  const [y, m, d] = norm.split('/').map(Number);
+  return hijriToGregorian(y, m, d).formatted;
 }
 
 export function gregorianToHijriStr(gregStr: string): string {
-  const [y, m, d] = gregStr.split('/').map(Number);
+  const norm = normaliseDateString(gregStr);
+  if (!norm) return 'Invalid date';
+  const [y, m, d] = norm.split('/').map(Number);
   return gregorianToHijri(y, m, d).formatted;
 }
 
@@ -449,3 +419,11 @@ export const GREG_MONTH_NAMES_AR = [
   'يناير', 'فبراير', 'مارس', 'إبريل', 'مايو', 'يونيو',
   'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر',
 ];
+
+function normaliseDateString(dateStr: string): string | null {
+  const p = dateStr.split(/[\/\-\\]/).map(Number);
+  if (p.length !== 3 || p.some(isNaN)) return null;
+  const [a, b, c] = p;
+  const [y, m, d] = a > 100 ? [a, b, c] : [c, b, a];
+  return `${y}/${String(m).padStart(2, '0')}/${String(d).padStart(2, '0')}`;
+}

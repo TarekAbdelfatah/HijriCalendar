@@ -346,12 +346,16 @@ export function gregorianToHijri(gYear: number, gMonth: number, gDay: number): H
 }
 
 export function hijriToGregorianStr(hijriStr: string): string {
-  const [y, m, d] = hijriStr.split('/').map(Number);
+  const norm = normaliseDateString(hijriStr);
+  if (!norm) return 'Invalid date';
+  const [y, m, d] = norm.split('/').map(Number);
   return hijriToGregorian(y, m, d).formatted;
 }
 
 export function gregorianToHijriStr(gregStr: string): string {
-  const [y, m, d] = gregStr.split('/').map(Number);
+  const norm = normaliseDateString(gregStr);
+  if (!norm) return 'Invalid date';
+  const [y, m, d] = norm.split('/').map(Number);
   return gregorianToHijri(y, m, d).formatted;
 }
 
@@ -415,3 +419,11 @@ export const GREG_MONTH_NAMES_AR = [
   'يناير', 'فبراير', 'مارس', 'إبريل', 'مايو', 'يونيو',
   'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر',
 ];
+
+function normaliseDateString(dateStr: string): string | null {
+  const p = dateStr.split(/[\/\-\\]/).map(Number);
+  if (p.length !== 3 || p.some(isNaN)) return null;
+  const [a, b, c] = p;
+  const [y, m, d] = a > 100 ? [a, b, c] : [c, b, a];
+  return `${y}/${String(m).padStart(2, '0')}/${String(d).padStart(2, '0')}`;
+}
