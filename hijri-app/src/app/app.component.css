@@ -98,3 +98,49 @@
   background: #f0faf4; border: 1px solid #a8d5b5; border-radius: 8px;
   font-size: 13px; color: #1b5e20; line-height: 1.6;
 }
+
+/* ── قسم التصحيح ────────────────────────────────────────────────────────── */
+.debug-section {
+  margin-top: 20px;
+  border-color: #ff9800;
+  background: #fff8e1;
+}
+
+.debug-value {
+  padding: 8px 12px;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 14px;
+  color: #333;
+  margin-top: 4px;
+}
+
+.debug-info {
+  padding: 10px;
+  background: #e3f2fd;
+  border: 1px solid #90caf9;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #1565c0;
+}
+
+.debug-info p {
+  margin: 4px 0;
+}
+
+.debug-info code {
+  background: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  color: #d32f2f;
+}
+
+.test-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}

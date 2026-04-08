@@ -138,4 +138,42 @@
 
     </div>
   </div>
+
+  <!-- ── قسم اختبار محاكاة الباك إند ────────────────────────────────────── -->
+  <section class="card debug-section">
+    <h2 style="color: #d32f2f;">🔧 قسم اختبار محاكاة الباك إند</h2>
+    <p class="sub">لاختبار مشكلة عدم عرض التاريخ في حقل الإدخال</p>
+
+    <div class="field">
+      <label>تاريخ الاختبار (هجري)</label>
+      <div class="row-inp">
+        <input type="text" class="inp" [(ngModel)]="testDateInput"
+               placeholder="أدخل تاريخ مثل 20/10/1447" />
+        <button class="btn-p sm" (click)="simulateBackendLoad()">محاكاة تحميل من الباك إند</button>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>قيمة VisitDateStr الحالية</label>
+      <div class="debug-value">{{ requestModel.VisitDateStr || '(فارغة)' }}</div>
+    </div>
+
+    <div class="field">
+      <label>حالة حقل التاريخ في نموذج الزيارة</label>
+      <div class="debug-info">
+        <p>افتح أدوات المطور (F12) → علامة Console لمشاهدة سجلات التصحيح</p>
+        <p>سجلات التصحيح تبدأ بـ: <code>[hijri-calender]</code> و <code>[AppComponent]</code></p>
+      </div>
+    </div>
+
+    <div class="field">
+      <h3>اختبارات سريعة:</h3>
+      <div class="test-buttons">
+        <button class="btn-s sm" (click)="testDateInput='20/10/1447'; simulateBackendLoad()">20/10/1447</button>
+        <button class="btn-s sm" (click)="testDateInput='1447/10/20'; simulateBackendLoad()">1447/10/20</button>
+        <button class="btn-s sm" (click)="testDateInput='2026/04/08'; simulateBackendLoad()">2026/04/08</button>
+        <button class="btn-s sm" (click)="testDateInput='08/04/2026'; simulateBackendLoad()">08/04/2026</button>
+      </div>
+    </div>
+  </section>
 </div>
