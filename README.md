@@ -504,8 +504,11 @@ gregorianToHijri(gYear: number, gMonth: number, gDay: number): HijriDateObj
 ### التاريخ الحالي
 
 ```typescript
-todayHijri(): HijriDateObj
-todayGregorian(): GregDateObj
+todayHijri(): HijriDateObj        // { year:1446, month:9, day:15, formatted:"15 رمضان 1446" }
+todayHijriStr(): string           // "1446/09/15"  ← بديل مباشر لـ getCurrentHijriDate() بدون jQuery
+
+todayGregorian(): GregDateObj     // { year:2025, month:3, day:15, formatted:"2025/03/15" }
+todayGregorianStr(): string       // "2025/03/15"
 ```
 
 ### معلومات الشهر والسنة

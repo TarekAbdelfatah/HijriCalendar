@@ -360,10 +360,21 @@ export function todayHijri(): HijriDateObj {
   return gregorianToHijri(now.getFullYear(), now.getMonth() + 1, now.getDate());
 }
 
+/** Returns today's Hijri date as "yyyy/mm/dd" — direct replacement for $.calendars getCurrentHijriDate() */
+export function todayHijriStr(): string {
+  const h = todayHijri();
+  return `${h.year}/${pad2(h.month)}/${pad2(h.day)}`;
+}
+
 export function todayGregorian(): GregDateObj {
   const now = new Date();
   return { year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate(),
            formatted: `${now.getFullYear()}/${pad2(now.getMonth()+1)}/${pad2(now.getDate())}` };
+}
+
+/** Returns today's Gregorian date as "yyyy/mm/dd" */
+export function todayGregorianStr(): string {
+  return todayGregorian().formatted;
 }
 
 export function hijriDayOfWeek(year: number, month: number, day: number): number {
