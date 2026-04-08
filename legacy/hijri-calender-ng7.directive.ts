@@ -112,15 +112,12 @@ export class HijriCalenderDirective implements ControlValueAccessor, AfterViewIn
       return;
     }
 
-    const norm = this.normalise(val);
-    if (!norm) { return; }
-
     if (this.bindValue === 'hijri') {
-      this.hijriStr = norm;
-      try { this.gregStr = hijriToGregorianStr(norm); } catch (e) { this.gregStr = ''; }
+      this.hijriStr = val;
+      this.gregStr = hijriToGregorianStr(val);
     } else {
-      this.gregStr  = norm;
-      try { this.hijriStr = gregorianToHijriStr(norm); } catch (e) { this.hijriStr = ''; }
+      this.gregStr  = val;
+      this.hijriStr = gregorianToHijriStr(val);
     }
 
     this.updateDisplay();
@@ -321,10 +318,10 @@ export class HijriCalenderDirective implements ControlValueAccessor, AfterViewIn
 
     if (this.displayMode === 'hijri') {
       this.hijriStr = ds;
-      try { this.gregStr = hijriToGregorianStr(ds); } catch (e) { this.gregStr = ''; }
+      this.gregStr = hijriToGregorianStr(ds);
     } else {
       this.gregStr  = ds;
-      try { this.hijriStr = gregorianToHijriStr(ds); } catch (e) { this.hijriStr = ''; }
+      this.hijriStr = gregorianToHijriStr(ds);
     }
 
     this.updateDisplay();
@@ -360,18 +357,6 @@ export class HijriCalenderDirective implements ControlValueAccessor, AfterViewIn
     const r = ref.getBoundingClientRect();
     this.popup.style.top   = (r.bottom + window.scrollY + 4) + 'px';
     this.popup.style.right = (document.documentElement.clientWidth - r.right - window.scrollX) + 'px';
-  }
-
-  private normalise(s: string): string | null {
-    const parts = s.split(/[\/\-\\]/);
-    if (parts.length !== 3) { return null; }
-    const nums = parts.map(function(x) { return +x; });
-    if (nums.some(isNaN)) { return null; }
-    const a = nums[0], b = nums[1], c = nums[2];
-    const y = a > 100 ? a : c;
-    const m = b;
-    const d = a > 100 ? c : a;
-    return y + '/' + pad2(m) + '/' + pad2(d);
   }
 
   // ── Styles ────────────────────────────────────────────────────────────────
