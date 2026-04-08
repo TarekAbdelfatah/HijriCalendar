@@ -9,7 +9,7 @@
 // Each value = Modified Chronological Julian Day Number of the start of a lunar month.
 // Index formula: (12 * (year - 1)) + month - 15292
 // Source: kbwood/calendars (https://github.com/kbwood/calendars)
-const UMM_DATA: readonly number[] = [
+const UMM_DATA: number[] = [
      20,    50,    79,   109,   138,   168,   197,   227,   256,   286,   315,   345,
     374,   404,   433,   463,   492,   522,   551,   581,   611,   641,   670,   700,
     729,   759,   788,   818,   847,   877,   906,   936,   965,   995,  1024,  1054,

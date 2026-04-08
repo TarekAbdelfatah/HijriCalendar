@@ -12,18 +12,21 @@
 ```
 HijriCalendar/
 ├── standalone/
-│   └── hijri-calendar.lib.ts   ← المكتبة المستقلة (Vanilla TS/JS)
-├── hijri-app/                  ← مشروع Angular 18 كامل (Directive + Demo)
+│   └── hijri-calendar.lib.ts            ← المكتبة المستقلة (Vanilla TS/JS)
+├── legacy/
+│   └── hijri-calender-ng7.directive.ts  ← Directive متوافق مع Angular 7–13
+├── hijri-app/                           ← مشروع Angular 18 كامل (Directive + Demo)
 │   └── src/app/hijri-calendar/
 │       ├── hijri-calendar.lib.ts        ← نفس المكتبة
-│       └── hijri-calender.directive.ts  ← Angular Directive
+│       └── hijri-calender.directive.ts  ← Angular 14+ Standalone Directive
 └── README.md
 ```
 
 | المسار | الاستخدام |
 |--------|-----------|
-| `standalone/hijri-calendar.lib.ts` | مشاريع Vanilla JS/TS — ASP.NET — Blazor — Next.js — React — Vue |
-| `hijri-app/` | مشاريع Angular 18+ مع الـ Directive الجاهز |
+| `standalone/hijri-calendar.lib.ts` | Vanilla JS/TS — ASP.NET — Blazor — Next.js — React — Vue |
+| `hijri-app/src/app/hijri-calendar/hijri-calender.directive.ts` | Angular 14+ (standalone) |
+| `legacy/hijri-calender-ng7.directive.ts` | Angular 7–13 (NgModule) |
 
 ---
 
@@ -181,7 +184,88 @@ ng serve
 
 ---
 
-## 2. Standalone Library (Vanilla TS/JS)
+## 2. Angular 7–13 Directive (NgModule)
+
+استخدم الملف `legacy/hijri-calender-ng7.directive.ts` — متوافق مع TypeScript 3.x.
+
+### الملفات المطلوبة
+
+انسخ ملفين إلى مشروعك:
+- `legacy/hijri-calender-ng7.directive.ts` → مثلاً `src/app/directives/hijri-calender.directive.ts`
+- `standalone/hijri-calendar.lib.ts` → مثلاً `src/assets/hijri-calender/hijri-calendar.lib.ts`
+
+### تعديل مسار الاستيراد
+
+افتح `hijri-calender.directive.ts` وعدّل سطر الـ import ليطابق مكان الـ lib في مشروعك:
+
+```typescript
+// عدّل هذا المسار حسب مشروعك
+import { ... } from '../assets/hijri-calender/hijri-calendar.lib';
+```
+
+### إضافة الـ Directive في AppModule
+
+```typescript
+// app.module.ts
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+import { AppComponent } from './app.component';
+import { HijriCalenderDirective } from './directives/hijri-calender.directive';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    HijriCalenderDirective,   // ← أضف هنا
+  ],
+  imports: [BrowserModule, FormsModule],
+  bootstrap: [AppComponent],
+})
+export class AppModule { }
+```
+
+### الاستخدام في القالب
+
+**نفس الـ attributes تماماً** كما في Angular 18:
+
+```html
+<!-- ngModel يستقبل تاريخ هجري (الافتراضي) -->
+<input
+  required
+  type="text"
+  readonly
+  hijri-calender
+  class="form-control"
+  name="VisitDate"
+  #VisitDate="ngModel"
+  [(ngModel)]="requestModel.VisitDateStr"
+/>
+<span *ngIf="VisitDate.invalid && VisitDate.touched" style="color:red">
+  هذا الحقل مطلوب
+</span>
+
+<!-- ngModel يستقبل تاريخ ميلادي -->
+<input type="text" readonly hijri-calender
+       [bindValue]="'gregorian'"
+       name="startDate" [(ngModel)]="model.gregDate" />
+```
+
+> **ملاحظة Angular 7:** استخدم `*ngIf` بدلاً من `@if` — الـ control flow الجديد متاح من Angular 17 فقط.
+
+### الفروق بين النسختين
+
+| | Angular 18 (`hijri-app/`) | Angular 7–13 (`legacy/`) |
+|-|--------------------------|--------------------------|
+| `standalone: true` | ✅ | ❌ — يُعلَن في NgModule |
+| TypeScript | 5.x (modern syntax) | 3.x compatible |
+| Template control flow | `@if` / `@for` | `*ngIf` / `*ngFor` |
+| الـ Directive نفسه | ✅ | ✅ |
+| `bindValue` | ✅ | ✅ |
+| قائمة هـ / م | ✅ | ✅ |
+
+---
+
+## 3. Standalone Library (Vanilla TS/JS)
 
 استخدم `standalone/hijri-calendar.lib.ts` مباشرة في أي مشروع.
 
