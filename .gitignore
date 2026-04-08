@@ -1,0 +1,29 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Angular build output
+hijri-app/dist/
+hijri-app/tmp/
+hijri-app/out-tsc/
+hijri-app/bazel-out/
+
+# Angular cache
+hijri-app/.angular/cache/
+
+# Coverage
+hijri-app/coverage/
+
+# IDEs
+.idea/
+*.sublime-workspace
+.history/
+
+# System
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+*.local

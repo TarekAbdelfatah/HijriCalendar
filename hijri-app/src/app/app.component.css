@@ -1,0 +1,100 @@
+/* ── Layout ─────────────────────────────────────────────────────────────── */
+.page { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+
+.page-header { text-align: center; margin-bottom: 24px; }
+.page-header h1 { font-size: 22px; font-weight: 700; color: #1a1a2e; margin: 0 0 6px; }
+.page-header p  { font-size: 13px; color: #888; margin: 0; }
+
+/* ── Today card ──────────────────────────────────────────────────────────── */
+.today-card {
+  display: flex; gap: 0; justify-content: center;
+  background: linear-gradient(135deg, #1967d2 0%, #0d47a1 100%);
+  border-radius: 12px; padding: 18px 24px; margin-bottom: 28px;
+  flex-wrap: wrap; gap: 16px;
+}
+.today-item   { text-align: center; padding: 0 20px; border-right: 1px solid rgba(255,255,255,.2); }
+.today-item:last-child { border-right: none; }
+.lbl          { display: block; font-size: 11px; color: rgba(255,255,255,.7); margin-bottom: 4px; }
+.val          { display: block; font-size: 16px; font-weight: 700; color: #fff; }
+.hijri-val    { font-size: 18px; }
+
+/* ── Grid ────────────────────────────────────────────────────────────────── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.col-right { display: flex; flex-direction: column; gap: 20px; }
+
+/* ── Card ────────────────────────────────────────────────────────────────── */
+.card {
+  background: #fff; border: 1px solid #e8ecf0;
+  border-radius: 12px; padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+.card h2  { font-size: 15px; font-weight: 700; color: #1a1a2e; margin: 0 0 4px; }
+.card .sub { font-size: 12px; color: #888; margin: 0 0 16px; }
+.card code  { background: #f0f4ff; padding: 1px 5px; border-radius: 4px; font-size: 12px; color: #1967d2; }
+
+/* ── Fields ──────────────────────────────────────────────────────────────── */
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 13px; font-weight: 600; color: #333; margin-bottom: 5px; }
+.req { color: #d32f2f; }
+
+.inp {
+  width: 100%; box-sizing: border-box;
+  padding: 9px 12px; border: 1px solid #d0d7de; border-radius: 8px;
+  font-size: 14px; color: #333; background: #fff; outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.inp:focus { border-color: #1967d2; box-shadow: 0 0 0 3px rgba(25,103,210,.12); }
+.inp[readonly] { background: #f8fafc; cursor: pointer; }
+.inp[readonly]:hover { border-color: #1967d2; }
+.datePicker::placeholder { color: #aaa; }
+
+.err  { display: block; font-size: 12px; color: #d32f2f; margin-top: 4px; }
+.hint { display: block; font-size: 12px; color: #1967d2; margin-top: 4px; font-weight: 500; }
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.btn-row { display: flex; gap: 10px; margin-top: 16px; }
+
+.btn-p {
+  padding: 9px 20px; border: none; border-radius: 8px;
+  background: #1967d2; color: #fff; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: background .15s;
+}
+.btn-p:hover:not(:disabled) { background: #1558b0; }
+.btn-p:disabled { background: #b0c4e8; cursor: not-allowed; }
+.btn-p.sm { padding: 9px 14px; white-space: nowrap; }
+
+.btn-s {
+  padding: 9px 18px; border: 1px solid #d0d7de; border-radius: 8px;
+  background: #fff; color: #555; font-size: 14px; cursor: pointer;
+  transition: background .15s;
+}
+.btn-s:hover { background: #f0f4f8; }
+
+/* ── Toggle ──────────────────────────────────────────────────────────────── */
+.toggle-row { display: flex; gap: 8px; margin-bottom: 14px; }
+.toggle-row button {
+  flex: 1; padding: 7px; border: 1px solid #d0d7de; border-radius: 8px;
+  background: #f8fafc; color: #555; font-size: 13px; cursor: pointer;
+  transition: all .15s;
+}
+.toggle-row button.act {
+  background: #1967d2; color: #fff; border-color: #1967d2; font-weight: 600;
+}
+
+/* ── Converter / Result ──────────────────────────────────────────────────── */
+.row-inp { display: flex; gap: 8px; }
+.row-inp .inp { flex: 1; }
+
+.convert-result {
+  margin-top: 10px; padding: 10px 14px;
+  background: #f0f4ff; border: 1px solid #c5d3f0; border-radius: 8px;
+  font-size: 15px; font-weight: 700; color: #1967d2; text-align: center;
+}
+
+.result-box {
+  margin-top: 14px; padding: 12px 14px;
+  background: #f0faf4; border: 1px solid #a8d5b5; border-radius: 8px;
+  font-size: 13px; color: #1b5e20; line-height: 1.6;
+}
