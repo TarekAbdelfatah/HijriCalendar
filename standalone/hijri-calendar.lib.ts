@@ -269,9 +269,9 @@ function jdToGreg(jd: number): { year: number; month: number; day: number } {
   return { year, month, day };
 }
 
-function pad2(n: number): string { return String(n).padStart(2, '0'); }
+// ─── Utilities + Exported types ──────────────────────────────────────────────
+export function pad2(n: number): string { return String(n).padStart(2, '0'); }
 
-// ─── Exported types ───────────────────────────────────────────────────────────
 export interface HijriDateObj { year: number; month: number; day: number; formatted: string }
 export interface GregDateObj  { year: number; month: number; day: number; formatted: string }
 
@@ -393,8 +393,6 @@ export function gregDaysInMonth(year: number, month: number): number {
 export function gregDayOfWeek(year: number, month: number, day: number): number {
   return dayOfWeekForJD(gregToJD(year, month, day));
 }
-
-export function pad2(n: number): string { return String(n).padStart(2, '0'); }
 
 export const GREG_MONTH_NAMES_AR = [
   'يناير', 'فبراير', 'مارس', 'إبريل', 'مايو', 'يونيو',
