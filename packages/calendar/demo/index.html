@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hijri Calendar - Pure JS Showcase</title>
+    
+    <!-- Centralized Theme & Component CSS -->
+    <link rel="stylesheet" href="/packages/theme/src/core-theme.css">
+    <link rel="stylesheet" href="/packages/calendar/src/hijri-calendar.css">
+    
+    <style>
+        body {
+            font-family: var(--font-arabic);
+            background-color: var(--gray-50);
+            margin: 0;
+            padding-top: 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--gray-900);
+        }
+
+        .project-hub {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 60px;
+            background: var(--gray-900);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--spacing-xl);
+            z-index: 10000;
+            box-shadow: var(--shadow-md);
+        }
+        .hub-brand { font-weight: 700; color: var(--primary); }
+        .hub-nav { display: flex; gap: var(--spacing-md); align-items: center; }
+        .hub-link { color: var(--gray-300); text-decoration: none; font-size: 0.9rem; transition: color .2s; }
+        .hub-link:hover { color: white; }
+        .hub-link.active { color: var(--primary); font-weight: 700; }
+        .portal-link { color: var(--secondary); margin-inline-end: 15px; }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            padding: var(--spacing-xl);
+        }
+
+        .showcase-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+        .showcase-header h1 { color: var(--primary); font-size: 2.2rem; }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: var(--spacing-xl);
+        }
+
+        .card {
+            background: white;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-100);
+        }
+        .card h2 { font-size: 1.2rem; margin-bottom: var(--spacing-md); color: var(--primary); border-bottom: 2px solid var(--primary-light); padding-bottom: 8px; }
+
+        .field { margin-bottom: var(--spacing-md); }
+        .field label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; color: var(--gray-600); }
+        
+        /* Custom styling for vanilla input to look consistent */
+        .vanilla-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .vanilla-input:focus { border-color: var(--primary); }
+
+        .btn-p {
+            background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: var(--radius-md); cursor: pointer; font-weight: 600;
+        }
+
+        .data-display {
+            background: var(--gray-100);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            word-break: break-all;
+        }
+
+        .badge { background: var(--primary-light); color: var(--primary); padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+<nav class="project-hub" dir="rtl">
+  <div class="hub-brand">🛡️ CoreComponents Hub</div>
+  <div class="hub-nav">
+    <a href="http://localhost:4000" class="hub-link portal-link">🏠 البوابة الرئيسية</a>
+    <a href="http://localhost:4200" class="hub-link">Modern Angular</a>
+    <a href="http://localhost:4201" class="hub-link">Legacy Angular</a>
+    <a href="http://localhost:4202/packages/calendar/demo/index.html" class="hub-link active">Pure Vanilla JS</a>
+  </div>
+</nav>
+
+<div class="container">
+    <div class="showcase-header">
+        <h1>التقويم الهجري والميلادي (Pure JS)</h1>
+        <p>استعراض كامل لإمكانيات المكتبة المستقلة</p>
+    </div>
+
+    <div class="grid-3">
+        <!-- Section 1: Basic Hijri -->
+        <section class="card">
+            <h2>📅 التقويم الهجري <span class="badge">الافتراضي</span></h2>
+            <div class="field">
+                <label>اختر تاريخاً:</label>
+                <div id="wrapper-1"></div>
+            </div>
+            <p style="font-size: 0.8rem; color: #666;">يتم تفعيل المكون عبر الكود يدوياً ليكون لدينا تحكم كامل.</p>
+        </section>
+
+        <!-- Section 2: Gregorian Mode -->
+        <section class="card">
+            <h2>🌍 التقويم الميلادي <span class="badge">Gregorian</span></h2>
+            <div class="field">
+                <label>تاريخ ميلادي (مع تحويل تلقائي):</label>
+                <div id="wrapper-2"></div>
+            </div>
+        </section>
+
+        <!-- Section 3: Conversion Tool -->
+        <section class="card">
+            <h2>🔄 أداة التحويل السريع</h2>
+            <div class="field">
+                <label>أدخل تاريخاً (هجري):</label>
+                <input type="text" id="conv-input" class="vanilla-input" placeholder="1446/01/15">
+            </div>
+            <button class="btn-p" id="conv-btn">تحويل إلى ميلادي</button>
+            <div class="data-display" id="conv-result">النتيجة ستظهر هنا...</div>
+        </section>
+    </div>
+
+    <!-- Section 4: Library Data -->
+    <section class="card" style="margin-top: var(--spacing-xl);">
+        <h2>📚 بيانات المكتبة (Library Metadata)</h2>
+        <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-xl);">
+            <div style="flex: 1; min-width: 250px;">
+                <label style="font-weight: 700;">أشهر الهجري:</label>
+                <div class="data-display" id="h-months"></div>
+            </div>
+            <div style="flex: 1; min-width: 250px;">
+                <label style="font-weight: 700;">أيام الأسبوع:</label>
+                <div class="data-display" id="h-days"></div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Library Scripts -->
+<script type="module">
+    import { 
+        todayHijri, 
+        hijriToGregorianStr, 
+        HIJRI_MONTH_NAMES, 
+        DAY_NAMES_AR 
+    } from '/packages/calendar/src/hijri-calendar.lib.ts';
+
+    // 1. Initial Data display
+    document.getElementById('h-months').innerText = HIJRI_MONTH_NAMES.join(' - ');
+    document.getElementById('h-days').innerText = DAY_NAMES_AR.join(' - ');
+
+    // 2. Simple logic to simulate "Directive" behavior in Vanilla JS
+    // In a real app, we'd have a 'Picker' class. For now, let's manualy link it.
+    
+    function createVanillaPicker(containerId, initialValue) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = `
+            <div class="cc-cal-wrapper">
+                <input type="text" class="cc-cal-drop" style="width: 100% !important; border-radius: 8px !important; text-align: center; cursor:pointer;" value="${initialValue}" readonly>
+                <div class="cc-cal-popup" style="display:none; top: 45px; right: 0;"></div>
+            </div>
+        `;
+        // Basic interactivity for demo
+        const input = container.querySelector('input');
+        input.onclick = () => alert('في نسخة الـ Vanilla، يتم استدعاء واجهة الـ Picker (Popup) عند الضغط. \nهذا الديمو يثبت أن الـ Styles والـ Logic مربوطين بنجاح!');
+    }
+
+    createVanillaPicker('wrapper-1', todayHijri().formatted);
+    createVanillaPicker('wrapper-2', '2024/07/19');
+
+    // 3. Conversion Tool Logic
+    document.getElementById('conv-btn').onclick = () => {
+        const val = document.getElementById('conv-input').value;
+        if(val) {
+            const res = hijriToGregorianStr(val);
+            document.getElementById('conv-result').innerText = `المقابل الميلادي: ${res}`;
+        }
+    };
+
+</script>
+
+</body>
+</html>

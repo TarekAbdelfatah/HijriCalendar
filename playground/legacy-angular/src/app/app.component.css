@@ -1,4 +1,26 @@
+@import "../../../../packages/theme/src/core-theme.css";
+
 /* Copying styles from the legacy-angular.component.css */
+body {
+  font-family: var(--font-arabic);
+  background-color: var(--gray-50);
+  margin: 0;
+  padding: 0;
+  padding-top: 60px;
+}
+
+/* ── Project Hub (Fixed Top) ────────────────────────────────────────────── */
+.project-hub {
+  position: fixed; top: 0; left: 0; right: 0; height: 60px;
+  background: white; border-bottom: 2px solid var(--primary);
+  display: flex; align-items: center; padding: 0 20px; z-index: 1000;
+  box-shadow: var(--shadow-md); justify-content: space-between;
+}
+.hub-brand { font-weight: 800; color: var(--primary); font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
+.hub-nav { display: flex; gap: 15px; }
+.hub-link { text-decoration: none; color: var(--gray-600); padding: 8px 12px; border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
+.hub-link:hover { background: var(--primary-light); color: var(--primary); }
+.hub-link.active { background: var(--primary); color: white; }
 .page { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 .page-header { text-align: center; margin-bottom: 2rem; border-bottom: 2px solid #eee; padding-bottom: 1rem; }
 .page-header h1 { color: #2c3e50; margin-bottom: 0.5rem; }

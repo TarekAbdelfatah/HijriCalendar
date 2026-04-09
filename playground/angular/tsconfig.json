@@ -26,7 +26,8 @@
     ],
     "baseUrl": "./",
     "paths": {
-      "@core-components/calendar": ["../../packages/calendar/src/hijri-calendar.lib.ts"]
+      "@core-components/calendar": ["../../packages/calendar/src/hijri-calendar.lib.ts"],
+      "@core-components/theme": ["../../packages/theme/src/core-theme.css"]
     }
   },
   "angularCompilerOptions": {

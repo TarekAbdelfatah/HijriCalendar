@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoreComponents Portal - بوابة المكونات</title>
+    <!-- Use the centralized theme directly -->
+    <link rel="stylesheet" href="packages/theme/src/core-theme.css">
+    <style>
+        body {
+            font-family: var(--font-arabic);
+            background-color: var(--gray-50);
+            color: var(--gray-900);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: var(--spacing-2xl);
+        }
+
+        .portal-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+        }
+
+        .portal-header h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .portal-header p {
+            color: var(--gray-600);
+            font-size: 1.1rem;
+        }
+
+        .component-table {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            overflow: hidden;
+            border-collapse: collapse;
+        }
+
+        .component-table th {
+            background-color: var(--primary);
+            color: white;
+            padding: var(--spacing-md);
+            text-align: start;
+        }
+
+        .component-table td {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid var(--gray-200);
+            vertical-align: middle;
+        }
+
+        .component-name {
+            font-weight: 700;
+            color: var(--gray-900);
+            font-size: 1.1rem;
+        }
+
+        .component-desc {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            max-width: 300px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .portal-btn {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 90px;
+            border: 1px solid transparent;
+        }
+
+        .btn-modern { background-color: var(--primary); color: white; }
+        .btn-modern:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+
+        .btn-legacy { background-color: var(--secondary); color: white; }
+        .btn-legacy:hover { background-color: var(--secondary-hover); transform: translateY(-2px); }
+
+        .btn-pure { background-color: white; border-color: var(--gray-300); color: var(--gray-700); }
+        .btn-pure:hover { background-color: var(--gray-100); border-color: var(--gray-400); transform: translateY(-2px); }
+
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: var(--success-light);
+            color: var(--success);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="portal-header">
+        <h1>CoreComponents Monorepo</h1>
+        <p>بوابة الوصول الموحدة للمكونات المشتركة</p>
+    </div>
+
+    <table class="component-table">
+        <thead>
+            <tr>
+                <th>المكون</th>
+                <th>الوصف</th>
+                <th>الحالة</th>
+                <th>روابط المعاينة (Demo Links)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Calendar Component -->
+            <tr>
+                <td>
+                    <div class="component-name">التقويم الهجري (Hijri Calendar)</div>
+                    <div style="font-size: 0.8rem; color: var(--primary)">@core-components/calendar</div>
+                </td>
+                <td>
+                    <div class="component-desc">تقويم هجري/ميلادي متقدم يعتمد على أم القرى، يدعم الاختيار المزدوج والتنسيق المخصص.</div>
+                </td>
+                <td><span class="status-badge">جاهز (Ready)</span></td>
+                <td>
+                    <div class="btn-group">
+                        <a href="http://localhost:4200" class="portal-btn btn-modern" target="_blank">Modern Ver.</a>
+                        <a href="http://localhost:4201" class="hub-link" target="_blank">Legacy Ver.</a>
+                        <a href="http://localhost:4202/packages/calendar/demo/index.html" class="portal-btn btn-pure" target="_blank">Vanilla JS</a>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Autocomplete Component -->
+            <tr>
+                <td>
+                    <div class="component-name">الإكمال التلقائي (Autocomplete)</div>
+                    <div style="font-size: 0.8rem; color: var(--gray-400)">@core-components/autocomplete</div>
+                </td>
+                <td>
+                    <div class="component-desc">محرك بحث ذكي يدعم التصفية الفورية والربط مع الـ API الخارجي.</div>
+                </td>
+                <td><span class="status-badge" style="background:var(--gray-200); color:var(--gray-500)">قيد التطوير</span></td>
+                <td>
+                    <div class="btn-group">
+                        <button class="portal-btn btn-pure" disabled>قريباً</button>
+                    </div>
+                </td>
+            </tr>
+
+            <!-- Wizard Component -->
+            <tr>
+                <td>
+                    <div class="component-name">المساعد المتسلسل (Wizard)</div>
+                    <div style="font-size: 0.8rem; color: var(--gray-400)">@core-components/wizard</div>
+                </td>
+                <td>
+                    <div class="component-desc">نظام خطوات مرن للنماذج الطويلة مع دعم الـ Validation في كل خطوة.</div>
+                </td>
+                <td><span class="status-badge" style="background:var(--gray-200); color:var(--gray-500)">قيد التطوير</span></td>
+                <td>
+                    <div class="btn-group">
+                        <button class="portal-btn btn-pure" disabled>قريباً</button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="margin-top: var(--spacing-xl); color: var(--gray-500); font-size: 0.8rem;">
+        &copy; 2026 CoreComponents Team - Saudi Visual Identity Implementation
+    </div>
+
+</body>
+</html>

@@ -12,7 +12,8 @@
     "target": "es2015",
     "lib": ["es2018", "dom"],
     "paths": {
-      "@core-components/calendar": ["../../packages/calendar/src/hijri-calendar.lib.ts"]
+      "@core-components/calendar": ["../../packages/calendar/src/hijri-calendar.lib.ts"],
+      "@core-components/theme": ["../../packages/theme/src/core-theme.css"]
     }
   }
 }

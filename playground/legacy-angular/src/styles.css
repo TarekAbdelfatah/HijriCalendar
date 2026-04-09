@@ -1,0 +1,10 @@
+@import "../../../packages/theme/src/core-theme.css";
+@import "../../../packages/calendar/src/hijri-calendar.css";
+
+body {
+  font-family: var(--font-arabic);
+  background-color: var(--gray-50);
+  margin: 0;
+  padding: 0;
+  padding-top: 60px;
+}

@@ -1,0 +1,6 @@
+{
+  "name": "@core-components/theme",
+  "version": "1.0.0",
+  "description": "Centralized Design System and Theme Variables for CoreComponents suite",
+  "main": "src/core-theme.css"
+}

@@ -1,14 +1,10 @@
 /**
- * Hijri Calendar Library - Pure TypeScript
+ * Hijri Calendar Library - Pure TypeScript logic only.
  * Real Saudi Umm al-Qura lookup table (kbwood/calendars, MIT)
- * No jQuery. No external dependencies.
  * Valid range: 1276–1500 AH  (1859–2077 CE)
  */
 
 // ─── Umm al-Qura MCJDN lookup table ─────────────────────────────────────────
-// Each value = Modified Chronological Julian Day Number of the start of a lunar month.
-// Index formula: (12 * (year - 1)) + month - 15292
-// Source: kbwood/calendars (https://github.com/kbwood/calendars)
 const UMM_DATA: number[] = [
      20,    50,    79,   109,   138,   168,   197,   227,   256,   286,   315,   345,
     374,   404,   433,   463,   492,   522,   551,   581,   611,   641,   670,   700,
@@ -168,77 +164,77 @@ const UMM_DATA: number[] = [
   54948, 54977, 55007, 55036, 55066, 55095, 55125, 55154, 55184, 55213, 55243, 55273,
   55302, 55332, 55361, 55391, 55420, 55450, 55479, 55508, 55538, 55567, 55597, 55627,
   55657, 55686, 55716, 55745, 55775, 55804, 55834, 55863, 55892, 55922, 55951, 55981,
-  56011, 56040, 56070, 56100, 56129, 56159, 56188, 56218, 56247, 56276, 56306, 56335,
-  56365, 56394, 56424, 56454, 56483, 56513, 56543, 56572, 56601, 56631, 56660, 56690,
-  56719, 56749, 56778, 56808, 56837, 56867, 56897, 56926, 56956, 56985, 57015, 57044,
-  57074, 57103, 57133, 57162, 57192, 57221, 57251, 57280, 57310, 57340, 57369, 57399,
-  57429, 57458, 57487, 57517, 57546, 57576, 57605, 57634, 57664, 57694, 57723, 57753,
-  57783, 57813, 57842, 57871, 57901, 57930, 57959, 57989, 58018, 58048, 58077, 58107,
-  58137, 58167, 58196, 58226, 58255, 58285, 58314, 58343, 58373, 58402, 58432, 58461,
-  58491, 58521, 58551, 58580, 58610, 58639, 58669, 58698, 58727, 58757, 58786, 58816,
-  58845, 58875, 58905, 58934, 58964, 58994, 59023, 59053, 59082, 59111, 59141, 59170,
-  59200, 59229, 59259, 59288, 59318, 59348, 59377, 59407, 59436, 59466, 59495, 59525,
-  59554, 59584, 59613, 59643, 59672, 59702, 59731, 59761, 59791, 59820, 59850, 59879,
-  59909, 59939, 59968, 59997, 60027, 60056, 60086, 60115, 60145, 60174, 60204, 60234,
-  60264, 60293, 60323, 60352, 60381, 60411, 60440, 60469, 60499, 60528, 60558, 60588,
-  60618, 60647, 60677, 60707, 60736, 60765, 60795, 60824, 60853, 60883, 60912, 60942,
-  60972, 61002, 61031, 61061, 61090, 61120, 61149, 61179, 61208, 61237, 61267, 61296,
-  61326, 61356, 61385, 61415, 61445, 61474, 61504, 61533, 61563, 61592, 61621, 61651,
-  61680, 61710, 61739, 61769, 61799, 61828, 61858, 61888, 61917, 61947, 61976, 62006,
-  62035, 62064, 62094, 62123, 62153, 62182, 62212, 62242, 62271, 62301, 62331, 62360,
-  62390, 62419, 62448, 62478, 62507, 62537, 62566, 62596, 62625, 62655, 62685, 62715,
-  62744, 62774, 62803, 62832, 62862, 62891, 62921, 62950, 62980, 63009, 63039, 63069,
-  63099, 63128, 63157, 63187, 63216, 63246, 63275, 63305, 63334, 63363, 63393, 63423,
-  63453, 63482, 63512, 63541, 63571, 63600, 63630, 63659, 63689, 63718, 63747, 63777,
-  63807, 63836, 63866, 63895, 63925, 63955, 63984, 64014, 64043, 64073, 64102, 64131,
-  64161, 64190, 64220, 64249, 64279, 64309, 64339, 64368, 64398, 64427, 64457, 64486,
-  64515, 64545, 64574, 64603, 64633, 64663, 64692, 64722, 64752, 64782, 64811, 64841,
-  64870, 64899, 64929, 64958, 64987, 65017, 65047, 65076, 65106, 65136, 65166, 65195,
-  65225, 65254, 65283, 65313, 65342, 65371, 65401, 65431, 65460, 65490, 65520, 65549,
-  65579, 65608, 65638, 65667, 65697, 65726, 65755, 65785, 65815, 65844, 65874, 65903,
-  65933, 65963, 65992, 66022, 66051, 66081, 66110, 66140, 66169, 66199, 66228, 66258,
-  66287, 66317, 66346, 66376, 66405, 66435, 66465, 66494, 66524, 66553, 66583, 66612,
-  66641, 66671, 66700, 66730, 66760, 66789, 66819, 66849, 66878, 66908, 66937, 66967,
-  66996, 67025, 67055, 67084, 67114, 67143, 67173, 67203, 67233, 67262, 67292, 67321,
-  67351, 67380, 67409, 67439, 67468, 67497, 67527, 67557, 67587, 67617, 67646, 67676,
-  67705, 67735, 67764, 67793, 67823, 67852, 67882, 67911, 67941, 67971, 68000, 68030,
-  68060, 68089, 68119, 68148, 68177, 68207, 68236, 68266, 68295, 68325, 68354, 68384,
-  68414, 68443, 68473, 68502, 68532, 68561, 68591, 68620, 68650, 68679, 68708, 68738,
-  68768, 68797, 68827, 68857, 68886, 68916, 68946, 68975, 69004, 69034, 69063, 69092,
-  69122, 69152, 69181, 69211, 69240, 69270, 69300, 69330, 69359, 69388, 69418, 69447,
-  69476, 69506, 69535, 69565, 69595, 69624, 69654, 69684, 69713, 69743, 69772, 69802,
-  69831, 69861, 69890, 69919, 69949, 69978, 70008, 70038, 70067, 70097, 70126, 70156,
-  70186, 70215, 70245, 70274, 70303, 70333, 70362, 70392, 70421, 70451, 70481, 70510,
-  70540, 70570, 70599, 70629, 70658, 70687, 70717, 70746, 70776, 70805, 70835, 70864,
-  70894, 70924, 70954, 70983, 71013, 71042, 71071, 71101, 71130, 71159, 71189, 71218,
-  71248, 71278, 71308, 71337, 71367, 71397, 71426, 71455, 71485, 71514, 71543, 71573,
-  71602, 71632, 71662, 71691, 71721, 71751, 71781, 71810, 71839, 71869, 71898, 71927,
-  71957, 71986, 72016, 72046, 72075, 72105, 72135, 72164, 72194, 72223, 72253, 72282,
-  72311, 72341, 72370, 72400, 72429, 72459, 72489, 72518, 72548, 72577, 72607, 72637,
-  72666, 72695, 72725, 72754, 72784, 72813, 72843, 72872, 72902, 72931, 72961, 72991,
-  73020, 73050, 73080, 73109, 73139, 73168, 73197, 73227, 73256, 73286, 73315, 73345,
-  73375, 73404, 73434, 73464, 73493, 73523, 73552, 73581, 73611, 73640, 73669, 73699,
-  73729, 73758, 73788, 73818, 73848, 73877, 73907, 73936, 73965, 73995, 74024, 74053,
-  74083, 74113, 74142, 74172, 74202, 74231, 74261, 74291, 74320, 74349, 74379, 74408,
-  74437, 74467, 74497, 74526, 74556, 74585, 74615, 74645, 74675, 74704, 74733, 74763,
-  74792, 74822, 74851, 74881, 74910, 74940, 74969, 74999, 75029, 75058, 75088, 75117,
-  75147, 75176, 75206, 75235, 75264, 75294, 75323, 75353, 75383, 75412, 75442, 75472,
-  75501, 75531, 75560, 75590, 75619, 75648, 75678, 75707, 75737, 75766, 75796, 75826,
-  75856, 75885, 75915, 75944, 75974, 76003, 76032, 76062, 76091, 76121, 76150, 76180,
-  76210, 76239, 76269, 76299, 76328, 76358, 76387, 76416, 76446, 76475, 76505, 76534,
-  76564, 76593, 76623, 76653, 76682, 76712, 76741, 76771, 76801, 76830, 76859, 76889,
-  76918, 76948, 76977, 77007, 77036, 77066, 77096, 77125, 77155, 77185, 77214, 77243,
-  77273, 77302, 77332, 77361, 77390, 77420, 77450, 77479, 77509, 77539, 77569, 77598,
-  77627, 77657, 77686, 77715, 77745, 77774, 77804, 77833, 77863, 77893, 77923, 77952,
-  77982, 78011, 78041, 78070, 78099, 78129, 78158, 78188, 78217, 78247, 78277, 78307,
-  78336, 78366, 78395, 78425, 78454, 78483, 78513, 78542, 78572, 78601, 78631, 78661,
-  78690, 78720, 78750, 78779, 78808, 78838, 78867, 78897, 78926, 78956, 78985, 79015,
-  79044, 79074, 79104, 79133, 79163, 79192, 79222, 79251, 79281, 79310, 79340, 79369,
-  79399, 79428, 79458, 79487, 79517, 79546, 79576, 79606, 79635, 79665, 79695, 79724,
-  79753, 79783, 79812, 79841, 79871, 79900, 79930, 79960, 79990,
+  55981, 56011, 56040, 56070, 56100, 56129, 56159, 56188, 56218, 56247, 56276, 56306,
+  56335, 56365, 56394, 56424, 56454, 56483, 56513, 56543, 56572, 56601, 56631, 56660,
+  56690, 56719, 56749, 56778, 56808, 56837, 56867, 56897, 56926, 56956, 56985, 57015,
+  57044, 57074, 57103, 57133, 57162, 57192, 57221, 57251, 57280, 57310, 57340, 57369,
+  57399, 57429, 57458, 57487, 57517, 57546, 57576, 57605, 57634, 57664, 57694, 57723,
+  57753, 57783, 57813, 57842, 57871, 57901, 57930, 57959, 57989, 58018, 58048, 58077,
+  58107, 58137, 58167, 58196, 58226, 58255, 58285, 58314, 58343, 58373, 58402, 58432,
+  58461, 58491, 58521, 58551, 58580, 58610, 58639, 58669, 58698, 58727, 58757, 58786,
+  58816, 58845, 58875, 58905, 58934, 58964, 58994, 59023, 59053, 59082, 59111, 59141,
+  59170, 59200, 59229, 59259, 59288, 59318, 59348, 59377, 59407, 59436, 59466, 59495,
+  59525, 59554, 59584, 59613, 59643, 59672, 59702, 59731, 59761, 59791, 59820, 59850,
+  59879, 59909, 59939, 59968, 59997, 60027, 60056, 60086, 60115, 60145, 60174, 60204,
+  60234, 60264, 60293, 60323, 60352, 60381, 60411, 60440, 60469, 60499, 60528, 60558,
+  60588, 60618, 60647, 60677, 60707, 60736, 60765, 60795, 60824, 60853, 60883, 60912,
+  60942, 60972, 61002, 61031, 61061, 61090, 61120, 61149, 61179, 61208, 61237, 61267,
+  61296, 61326, 61356, 61385, 61415, 61445, 61474, 61504, 61533, 61563, 61592, 61621,
+  61651, 61680, 61710, 61739, 61769, 61799, 61828, 61858, 61888, 61917, 61947, 61976,
+  62006, 62035, 62064, 62094, 62123, 62153, 62182, 62212, 62242, 62271, 62301, 62331,
+  62360, 62390, 62419, 62448, 62478, 62507, 62537, 62566, 62596, 62625, 62655, 62685,
+  62715, 62744, 62774, 62803, 62832, 62862, 62891, 62921, 62950, 62980, 63009, 63039,
+  63069, 63099, 63128, 63157, 63187, 63216, 63246, 63275, 63305, 63334, 63363, 63393,
+  63423, 63453, 63482, 63512, 63541, 63571, 63600, 63630, 63659, 63689, 63718, 63747,
+  63777, 63807, 63836, 63866, 63895, 63925, 63955, 63984, 64014, 64043, 64073, 64102,
+  64131, 64161, 64190, 64220, 64249, 64279, 64309, 64339, 64368, 64398, 64427, 64457,
+  64486, 64515, 64545, 64574, 64603, 64633, 64663, 64692, 64722, 64752, 64782, 64811,
+  64841, 64870, 64899, 64929, 64958, 64987, 65017, 65047, 65076, 65106, 65136, 65166,
+  65195, 65225, 65254, 65283, 65313, 65342, 65371, 65401, 65431, 65460, 65490, 65520,
+  65549, 65579, 65608, 65638, 65667, 65697, 65726, 65755, 65785, 65815, 65844, 65874,
+  65874, 65903, 65933, 65963, 65992, 66022, 66051, 66081, 66110, 66140, 66169, 66199,
+  66228, 66258, 66287, 66317, 66346, 66376, 66405, 66435, 66465, 66494, 66524, 66553,
+  66583, 66612, 66641, 66671, 66700, 66730, 66760, 66789, 66819, 66849, 66878, 66908,
+  66937, 66967, 66996, 67025, 67055, 67084, 67114, 67143, 67173, 67203, 67233, 67262,
+  67292, 67321, 67351, 67380, 67409, 67439, 67468, 67497, 67527, 67557, 67587, 67617,
+  67646, 67676, 67705, 67735, 67764, 67793, 67823, 67852, 67882, 67911, 67941, 67971,
+  68000, 68030, 68060, 68089, 68119, 68148, 68177, 68207, 68236, 68266, 68295, 68325,
+  68354, 68384, 68414, 68443, 68473, 68502, 68532, 68561, 68591, 68620, 68650, 68679,
+  68708, 68738, 68768, 68797, 68827, 68857, 68886, 68916, 68946, 68975, 69004, 69034,
+  69063, 69092, 69122, 69152, 69181, 69211, 69240, 69270, 69300, 69330, 69359, 69388,
+  69418, 69447, 69476, 69506, 69535, 69565, 69595, 69624, 69654, 69684, 69713, 69743,
+  69772, 69802, 69831, 69861, 69890, 69919, 69949, 69978, 70008, 70038, 70067, 70097,
+  70126, 70156, 70186, 70215, 70245, 70274, 70303, 70333, 70362, 70392, 70421, 70451,
+  70481, 70510, 70540, 70570, 70599, 70629, 70658, 70687, 70717, 70746, 70776, 70805,
+  70835, 70864, 70894, 70924, 70954, 70983, 71013, 71042, 71071, 71101, 71130, 71159,
+  71189, 71218, 71248, 71278, 71308, 71337, 71367, 71397, 71426, 71455, 71485, 71514,
+  71543, 71573, 71602, 71632, 71662, 71691, 71721, 71751, 71781, 71810, 71839, 71869,
+  71898, 71927, 71957, 71986, 72016, 72046, 72075, 72105, 72135, 72164, 72194, 72223,
+  72253, 72282, 72311, 72341, 72370, 72400, 72429, 72459, 72489, 72518, 72548, 72577,
+  72607, 72637, 72666, 72695, 72725, 72754, 72784, 72813, 72843, 72872, 72902, 72931,
+  72961, 72991, 73020, 73050, 73080, 73109, 73139, 73168, 73197, 73227, 73256, 73286,
+  73315, 73345, 73375, 73404, 73434, 73464, 73493, 73523, 73552, 73581, 73611, 73640,
+  73669, 73699, 73729, 73758, 73788, 73818, 73848, 73877, 73907, 73936, 73965, 73995,
+  74024, 74053, 74083, 74113, 74142, 74172, 74202, 74231, 74261, 74291, 74320, 74349,
+  74379, 74408, 74437, 74467, 74497, 74526, 74556, 74585, 74615, 74645, 74675, 74704,
+  74733, 74763, 74792, 74822, 74851, 74881, 74910, 74940, 74969, 74999, 75029, 75058,
+  75088, 75117, 75147, 75176, 75206, 75235, 75264, 75294, 75323, 75353, 75383, 75412,
+  75442, 75472, 75501, 75531, 75560, 75590, 75619, 75648, 75678, 75707, 75737, 75766,
+  75796, 75826, 75856, 75885, 75915, 75944, 75974, 76003, 76032, 76062, 76091, 76121,
+  76150, 76180, 76210, 76239, 76269, 76299, 76328, 76358, 76387, 76416, 76446, 76475,
+  76505, 76534, 76564, 76593, 76623, 76653, 76682, 76712, 76741, 76771, 76801, 76830,
+  76859, 76889, 76918, 76948, 76977, 77007, 77036, 77066, 77096, 77125, 77155, 77185,
+  77214, 77243, 77273, 77302, 77332, 77361, 77390, 77420, 77450, 77479, 77509, 77539,
+  77569, 77598, 77627, 77657, 77686, 77715, 77745, 77774, 77804, 77833, 77863, 77893,
+  77923, 77952, 77982, 78011, 78041, 78070, 78099, 78129, 78158, 78188, 78217, 78247,
+  78277, 78307, 78336, 78366, 78395, 78425, 78454, 78483, 78513, 78542, 78572, 78601,
+  78631, 78661, 78690, 78720, 78750, 78779, 78808, 78838, 78867, 78897, 78926, 78956,
+  78985, 79015, 79044, 79074, 79104, 79133, 79163, 79192, 79222, 79251, 79281, 79310,
+  79340, 79369, 79399, 79428, 79458, 79487, 79517, 79546, 79576, 79606, 79635, 79665,
+  79695, 79724, 79753, 79783, 79812, 79841, 79871, 79900, 79930, 79960, 79990,
 ];
 
-const MCJDN_OFFSET = 2400000 - 0.5; // JD = MCJDN + this
+const MCJDN_OFFSET = 2400000 - 0.5;
 const MIN_YEAR = 1276;
 const MAX_YEAR = 1500;
 
@@ -290,15 +286,16 @@ export const HIJRI_MONTH_NAMES_EN = [
 export const DAY_NAMES_AR = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
 export const DAY_NAMES_SHORT_AR = ['أحد', 'اثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'];
 
+export const GREG_MONTH_NAMES_AR = [
+  'يناير', 'فبراير', 'مارس', 'إبريل', 'مايو', 'يونيو',
+  'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر',
+];
+
 // ─── Core functions ───────────────────────────────────────────────────────────
 
 export function hijriDaysInMonth(year: number, month: number): number {
   const idx = ummIdx(year, month);
   return UMM_DATA[idx] - UMM_DATA[idx - 1];
-}
-
-export function hijriIsLeapYear(year: number): boolean {
-  return hijriDaysInMonth(year, 12) === 30;
 }
 
 export function hijriIsValid(year: number, month: number, day: number): boolean {
@@ -328,7 +325,24 @@ export function jdToHijri(jd: number): { year: number; month: number; day: numbe
 }
 
 export function dayOfWeekForJD(jd: number): number {
-  return Math.floor(jd + 1.5) % 7; // 0=Sun … 6=Sat
+  return Math.floor(jd + 1.5) % 7;
+}
+
+export function hijriDayOfWeek(year: number, month: number, day: number): number {
+  return dayOfWeekForJD(hijriToJD(year, month, day));
+}
+
+export function gregDayOfWeek(year: number, month: number, day: number): number {
+  return dayOfWeekForJD(gregToJD(year, month, day));
+}
+
+export function gregIsLeapYear(year: number): boolean {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+}
+
+export function gregDaysInMonth(year: number, month: number): number {
+  const days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  return month === 2 && gregIsLeapYear(year) ? 29 : days[month - 1];
 }
 
 // ─── High-level conversion helpers ───────────────────────────────────────────
@@ -364,63 +378,14 @@ export function todayHijri(): HijriDateObj {
   return gregorianToHijri(now.getFullYear(), now.getMonth() + 1, now.getDate());
 }
 
-/** Returns today's Hijri date as "yyyy/mm/dd" — direct replacement for $.calendars getCurrentHijriDate() */
-export function todayHijriStr(): string {
-  const h = todayHijri();
-  return `${h.year}/${pad2(h.month)}/${pad2(h.day)}`;
-}
-
 export function todayGregorian(): GregDateObj {
   const now = new Date();
   return { year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate(),
            formatted: `${now.getFullYear()}/${pad2(now.getMonth()+1)}/${pad2(now.getDate())}` };
 }
 
-/** Returns today's Gregorian date as "yyyy/mm/dd" */
-export function todayGregorianStr(): string {
-  return todayGregorian().formatted;
-}
-
-export function hijriDayOfWeek(year: number, month: number, day: number): number {
-  return dayOfWeekForJD(hijriToJD(year, month, day));
-}
-
-/** Returns Arabic day name for a Hijri date string "yyyy/mm/dd".
- *  Direct replacement for $.calendars.instance("UmmAlQura","ar").dayOfWeek() */
-export function hijriDayName(dateStr: string): string {
-  if (!dateStr) return '';
-  const p = dateStr.split('/').map(Number);
-  if (p.length !== 3 || p.some(isNaN)) return '';
-  return DAY_NAMES_AR[hijriDayOfWeek(p[0], p[1], p[2])];
-}
-
-/** Returns Arabic day name for a Gregorian date string "yyyy/mm/dd" */
-export function gregDayName(dateStr: string): string {
-  if (!dateStr) return '';
-  const p = dateStr.split('/').map(Number);
-  if (p.length !== 3 || p.some(isNaN)) return '';
-  return DAY_NAMES_AR[gregDayOfWeek(p[0], p[1], p[2])];
-}
-
-export function gregIsLeapYear(year: number): boolean {
-  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
-}
-
-export function gregDaysInMonth(year: number, month: number): number {
-  const days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  return month === 2 && gregIsLeapYear(year) ? 29 : days[month - 1];
-}
-
-export function gregDayOfWeek(year: number, month: number, day: number): number {
-  return dayOfWeekForJD(gregToJD(year, month, day));
-}
-
-export const GREG_MONTH_NAMES_AR = [
-  'يناير', 'فبراير', 'مارس', 'إبريل', 'مايو', 'يونيو',
-  'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر',
-];
-
 function normaliseDateString(dateStr: string): string | null {
+  if (!dateStr) return null;
   const p = dateStr.split(/[\/\-\\]/).map(Number);
   if (p.length !== 3 || p.some(isNaN)) return null;
   const [a, b, c] = p;
@@ -428,160 +393,6 @@ function normaliseDateString(dateStr: string): string | null {
   return `${y}/${String(m).padStart(2, '0')}/${String(d).padStart(2, '0')}`;
 }
 
-// ─── Format Date Utility ──────────────────────────────────────────────────────
-
 export type DateFormat = 'yyyy/mm/dd' | 'dd/mm/yyyy' | 'yyyy-mm-dd' | 'dd-mm-yyyy' | 'yyyy-mm' | 'yyyy';
-
 export interface DateRange { hijri: string; greg: string }
-
-function formatDate(dateStr: string, format: DateFormat): string {
-  const parts = dateStr.split('/');
-  if (parts.length !== 3) return dateStr;
-  const [y, m, d] = parts;
-  
-  switch (format) {
-    case 'yyyy/mm/dd': return dateStr;
-    case 'dd/mm/yyyy': return `${d}/${m}/${y}`;
-    case 'yyyy-mm-dd': return `${y}-${m}-${d}`;
-    case 'dd-mm-yyyy': return `${d}-${m}-${y}`;
-    case 'yyyy-mm': return `${y}-${m}`;
-    case 'yyyy': return y;
-    default: return dateStr;
-  }
-}
-
-// ─── Validation Result ────────────────────────────────────────────────────────
-
-export interface ValidationResult {
-  isValid: boolean;
-  errorMessage?: string;
-}
-
-export type ValidationFn = (dates: DateRange) => ValidationResult;
-
-// ─── Select Callback ───────────────────────────────────────────────────────────
-
-export type SelectCallback = (dates: DateRange) => ValidationResult | null;
-
-// ─── Picker Options ───────────────────────────────────────────────────────────
-
-export interface DatePickerOptions {
-  container: string | HTMLElement;
-  defaultView?: 'hijri' | 'gregorian';
-  outputFormat?: DateFormat;
-  validate?: ValidationFn;
-  onSelect?: SelectCallback;
-}
-
-interface DatePickerInstance {
-  setError: (message: string) => void;
-  clearError: () => void;
-  destroy: () => void;
-  getValue: () => DateRange | null;
-}
-
-// ─── Create Date Picker Factory ───────────────────────────────────────────────
-
-export function createDatePicker(options: DatePickerOptions): DatePickerInstance {
-  const container = typeof options.container === 'string' 
-    ? document.querySelector(options.container) as HTMLElement
-    : options.container;
-  
-  if (!container) {
-    throw new Error(`DatePicker: container "${options.container}" not found`);
-  }
-
-  const outputFormat = options.outputFormat || 'yyyy/mm/dd';
-  let currentDates: DateRange | null = null;
-  let errorEl: HTMLElement | null = null;
-
-  // Wrap container with error state
-  container.style.position = 'relative';
-
-  function showError(message: string): void {
-    container.classList.add('datepicker-error');
-    
-    if (!errorEl) {
-      errorEl = document.createElement('div');
-      errorEl.className = 'datepicker-error-msg';
-      container.appendChild(errorEl);
-    }
-    errorEl.textContent = message;
-    errorEl.style.display = 'block';
-  }
-
-  function clearError(): void {
-    container.classList.remove('datepicker-error');
-    if (errorEl) {
-      errorEl.style.display = 'none';
-    }
-  }
-
-  function triggerSelect(dates: DateRange): void {
-    currentDates = dates;
-    
-    if (options.onSelect) {
-      const result = options.onSelect(dates);
-      
-      if (result === null || result.isValid) {
-        clearError();
-      } else if (result.errorMessage) {
-        showError(result.errorMessage);
-      }
-    } else {
-      clearError();
-    }
-  }
-
-  function getValue(): DateRange | null {
-    return currentDates;
-  }
-
-  function destroy(): void {
-    clearError();
-    if (errorEl) {
-      errorEl.remove();
-      errorEl = null;
-    }
-    container.classList.remove('datepicker-error');
-  }
-
-  // Return instance with internal trigger for framework wrappers
-  return {
-    setError: showError,
-    clearError,
-    destroy,
-    getValue,
-    // Expose internal trigger for framework wrappers (Angular, React, etc.)
-    _triggerSelect: triggerSelect,
-    _options: options,
-  } as DatePickerInstance & { _triggerSelect: typeof triggerSelect; _options: DatePickerOptions };
-}
-
-// ─── Default CSS Styles ───────────────────────────────────────────────────────
-
-const PICKER_STYLES = `
-.datepicker-error input,
-.datepicker-error .datepicker-input {
-  border-color: #dc3545 !important;
-  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25) !important;
-}
-.datepicker-error-msg {
-  position: absolute;
-  bottom: -20px;
-  left: 0;
-  font-size: 12px;
-  color: #dc3545;
-  white-space: nowrap;
-}
-`;
-
-// Inject styles once
-let stylesInjected = false;
-function injectPickerStyles(): void {
-  if (stylesInjected) return;
-  const style = document.createElement('style');
-  style.textContent = PICKER_STYLES;
-  document.head.appendChild(style);
-  stylesInjected = true;
-}
+export interface ValidationResult { isValid: boolean; errorMessage?: string; }

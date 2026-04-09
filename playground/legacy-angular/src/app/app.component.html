@@ -1,101 +1,41 @@
+<nav class="project-hub" dir="rtl">
+  <div class="hub-brand">
+    <span class="icon">🛡️</span> CoreComponents Portal
+  </div>
+  <div class="hub-nav">
+    <a href="http://localhost:4000" class="hub-link portal-link">
+      <span class="icon">🏠</span> البوابة الرئيسية
+    </a>
+    <div class="nav-divider"></div>
+    <a href="http://localhost:4200" class="hub-link">
+      <span class="icon">🅰️</span> Modern Angular
+    </a>
+    <a href="http://localhost:4201" class="hub-link active">
+      <span class="icon">📜</span> Legacy Angular
+    </a>
+    <a href="http://localhost:4202" class="hub-link">
+      <span class="icon">🧪</span> Pure Vanilla JS
+    </a>
+  </div>
+</nav>
+
 <div class="page" dir="rtl">
+    <header class="page-header">
+      <h1>التقويم الهجري - الإصدار القديم (Legacy)</h1>
+      <p>Angular v9 Showcase · تدعيم الأنظمة القديمة مع نفس مظهر الأنظمة الحديثة</p>
+    </header>
 
-  <!-- ── Header ──────────────────────────────────────────────────────────── -->
-  <header class="page-header">
-    <h1>تقويم هجري - Legacy Angular Project</h1>
-    <p>NgModule Based · Pure TypeScript · Single Source of Truth</p>
-  </header>
-
-  <!-- ── البطاقة الحالية ─────────────────────────────────────────────────────── -->
-  <div class="today-card">
-    <div class="today-item">
-      <span class="lbl">اليوم</span>
-      <span class="val">{{ todayDayName }}</span>
-    </div>
-    <div class="today-item">
-      <span class="lbl">هجري</span>
-      <span class="val hijri-val">{{ todayH.day }} {{ todayMonthName }} {{ todayH.year }}</span>
-    </div>
-    <div class="today-item">
-      <span class="lbl">ميلادي</span>
-      <span class="val">{{ todayG.formatted }}</span>
-    </div>
-  </div>
-
-  <div class="grid-2">
-
-    <!-- ── نموذج الزيارة ────────────────────────────────────────────────── -->
-    <section class="card">
-      <h2>نموذج تسجيل زيارة</h2>
-      <p class="sub">نفس الـ attribute <code>hijri-calender</code> بدون أي تغيير</p>
-
-      <form #visitForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
-
+    <div class="card">
+        <h2>استخدام المكون (NgModule)</h2>
+        <p class="sub">في هذا المشروع، يتم استيراد المكون عبر <code>AppModule</code> كـ Directive تقليدي.</p>
+        
         <div class="field">
-          <label>اسم المريض <span class="req">*</span></label>
-          <input type="text" class="inp" name="PatientName"
-                 [(ngModel)]="requestModel.PatientName" required
-                 placeholder="أدخل اسم المريض" />
+            <label>تاريخ الموعد (هجري):</label>
+            <input type="text" readonly hijri-calender class="inp" placeholder="انقر لاختيار التاريخ" />
         </div>
-
-        <div class="field">
-          <label>تاريخ الزيارة (هجري) <span class="req">*</span></label>
-          <input
-            required
-            type="text"
-            readonly
-            hijri-calender
-            class="form-control txtbox datePicker"
-            name="VisitDate"
-            #VisitDate="ngModel"
-            [(ngModel)]="requestModel.VisitDateStr"
-            placeholder="انقر لاختيار التاريخ"
-            (onSelect)="onDateSelected($event, 'VisitDate')"
-          />
-          <span *ngIf="VisitDate.invalid && VisitDate.touched" class="err">
-            الرجاء اختيار تاريخ الزيارة
-          </span>
-          <span *ngIf="requestModel.VisitDateStr" class="hint">
-            الميلادي الموافق: {{ getGregDate(requestModel.VisitDateStr) }}
-          </span>
+        
+        <div style="margin-top: var(--spacing-md); color: var(--gray-500); font-size: 0.85rem;">
+            * ملاحظة: يتم جلب منطق الحسابات من نفس المصدر الموحد للقضاء على تكرار الكود.
         </div>
-
-        <div class="field">
-          <label>ملاحظات</label>
-          <input type="text" class="inp" name="Notes"
-                 [(ngModel)]="requestModel.Notes" placeholder="اختياري" />
-        </div>
-
-        <div class="btn-row">
-          <button type="submit" class="btn-p" [disabled]="visitForm.invalid">حفظ الزيارة</button>
-          <button type="button" class="btn-s" (click)="resetForm()">مسح</button>
-        </div>
-
-      </form>
-
-      <div *ngIf="submitResult" class="result-box">
-        <strong>تم الحفظ بنجاح:</strong><br/>{{ submitResult }}
-      </div>
-    </section>
-
-    <!-- ── العمود الأيمن ────────────────────────────────────────────────── -->
-    <div class="col-right">
-      <section class="card">
-        <h2>أداة التحويل (Shared Lib)</h2>
-        <div class="toggle-row">
-          <button [class.act]="convertMode==='h2g'" (click)="convertMode='h2g'">هجري ← ميلادي</button>
-          <button [class.act]="convertMode==='g2h'" (click)="convertMode='g2h'">ميلادي ← هجري</button>
-        </div>
-        <div class="field">
-          <label>{{ convertMode==='h2g' ? 'تاريخ هجري' : 'تاريخ ميلادي' }}</label>
-          <div class="row-inp">
-            <input type="text" class="inp" [(ngModel)]="convertInput"
-                   (keyup.enter)="convert()" />
-            <button class="btn-p sm" (click)="convert()">تحويل</button>
-          </div>
-        </div>
-        <div *ngIf="convertResult" class="convert-result">{{ convertResult }}</div>
-      </section>
     </div>
-  </div>
 </div>

@@ -1,10 +1,17 @@
 {
-  "name": "core-components",
+  "name": "core-components-monorepo",
   "version": "1.0.0",
+  "description": "Enterprise Core Components Monorepo (Shared Logic + Dual Angular Playgrounds)",
   "private": true,
-  "description": "Core Components - Standalone UI Control Suite",
-  "workspaces": [
-    "packages/*",
-    "playground/*"
-  ]
+  "scripts": {
+    "install:all": "npm install --prefix packages/calendar && npm install --prefix packages/theme && npm install --prefix playground/angular && npm install --prefix playground/legacy-angular",
+    "start:angular": "npm start --prefix playground/angular",
+    "start:legacy": "npm start --prefix playground/legacy-angular",
+    "start:vanilla": "npx -y serve . -p 4202",
+    "start:portal": "npx -y serve . -p 4000",
+    "start:all": "start npm run start:angular && start npm run start:legacy && start npm run start:vanilla && start npm run start:portal"
+  },
+  "devDependencies": {
+    "serve": "^14.2.0"
+  }
 }

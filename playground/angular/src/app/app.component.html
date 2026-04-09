@@ -1,15 +1,33 @@
+<nav class="project-hub" dir="rtl">
+  <div class="hub-brand">
+    <span class="icon">🛡️</span> CoreComponents Portal
+  </div>
+  <div class="hub-nav">
+    <a href="http://localhost:4000" class="hub-link portal-link">
+      <span class="icon">🏠</span> البوابة الرئيسية
+    </a>
+    <div class="nav-divider"></div>
+    <a href="http://localhost:4200" class="hub-link active">
+      <span class="icon">🅰️</span> Modern Angular
+    </a>
+    <a href="http://localhost:4201" class="hub-link">
+      <span class="icon">📜</span> Legacy Angular
+    </a>
+    <a href="http://localhost:4202/packages/calendar/demo/index.html" class="hub-link">
+      <span class="icon">🧪</span> Pure Vanilla JS
+    </a>
+  </div>
+</nav>
+
 <div class="page" dir="rtl">
 
   <!-- ── Page Switcher ───────────────────────────────────────────────────── -->
   <div class="page-switcher">
     <button [class.active]="currentPage === 'demo'" (click)="currentPage = 'demo'">
-      📋 Angular 18
+      📋 Angular 18 Showcase
     </button>
     <button [class.active]="currentPage === 'docs'" (click)="currentPage = 'docs'">
-      📚 JavaScript API
-    </button>
-    <button [class.active]="currentPage === 'legacy'" (click)="currentPage = 'legacy'">
-      Legacy Angular
+      📚 Developer API
     </button>
   </div>
 
@@ -18,283 +36,86 @@
   <!-- ══════════════════════════════════════════════════════════════════════ -->
   @if (currentPage === 'demo') {
 
-  <header class="page-header">
-    <h1>تقويم هجري - Angular 18</h1>
-    <p>Pure TypeScript · بدون jQuery · أم القرى الرسمي</p>
-  </header>
+    <header class="page-header">
+      <h1>التقويم الهجري - الإصدار الحديث</h1>
+      <p>Pure TypeScript · بدون jQuery · متوافق مع هوية وزارة العدل</p>
+    </header>
 
-  <!-- بطاقة اليوم -->
-  <div class="today-card">
-    <div class="today-item">
-      <span class="lbl">اليوم</span>
-      <span class="val">{{ todayDayName }}</span>
-    </div>
-    <div class="today-item">
-      <span class="lbl">هجري</span>
-      <span class="val hijri-val">{{ todayH.day }} {{ todayMonthName }} {{ todayH.year }}</span>
-    </div>
-    <div class="today-item">
-      <span class="lbl">ميلادي</span>
-      <span class="val">{{ todayG.formatted }}</span>
-    </div>
-  </div>
-
-  <div class="grid-2">
-
-    <!-- نموذج الزيارة -->
-    <section class="card">
-      <h2>نموذج تسجيل زيارة</h2>
-      <p class="sub">نفس الـ attribute <code>hijri-calender</code> بدون أي تغيير</p>
-
-      <form #visitForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
-
-        <div class="field">
-          <label>اسم المريض <span class="req">*</span></label>
-          <input type="text" class="inp" name="PatientName"
-                 [(ngModel)]="requestModel.PatientName" required
-                 placeholder="أدخل اسم المريض" />
-        </div>
-
-        <div class="field">
-          <label>تاريخ الزيارة (هجري) <span class="req">*</span></label>
-          <input
-            required
-            type="text"
-            readonly
-            hijri-calender
-            class="form-control txtbox datePicker"
-            name="VisitDate"
-            #VisitDate="ngModel"
-            [(ngModel)]="requestModel.VisitDateStr"
-            placeholder="انقر لاختيار التاريخ"
-          />
-          @if (VisitDate.invalid && VisitDate.touched) {
-            <span class="err">الرجاء اختيار تاريخ الزيارة</span>
-          }
-          @if (requestModel.VisitDateStr) {
-            <span class="hint">الميلادي: {{ convertToGreg(requestModel.VisitDateStr) }}</span>
-          }
-        </div>
-
-        <div class="field">
-          <label>ملاحظات</label>
-          <input type="text" class="inp" name="Notes"
-                 [(ngModel)]="requestModel.Notes" placeholder="اختياري" />
-        </div>
-
-        <div class="btn-row">
-          <button type="submit" class="btn-p" [disabled]="visitForm.invalid">حفظ</button>
-          <button type="button" class="btn-s" (click)="resetForm()">مسح</button>
-        </div>
-      </form>
-
-      @if (submitResult) {
-        <div class="result-box">
-          <strong>تم الحفظ:</strong><br/>{{ submitResult }}
-        </div>
-      }
-    </section>
-
-    <!-- العمود الأيمن -->
-    <div class="col-right">
-
-      <section class="card">
-        <h2>أداة التحويل</h2>
-        <div class="toggle-row">
-          <button [class.act]="convertMode==='h2g'" (click)="convertMode='h2g'">هجري ← ميلادي</button>
-          <button [class.act]="convertMode==='g2h'" (click)="convertMode='g2h'">ميلادي ← هجري</button>
-        </div>
-        <div class="field">
-          <label>{{ convertMode==='h2g' ? 'تاريخ هجري' : 'تاريخ ميلادي' }}</label>
-          <div class="row-inp">
-            <input type="text" class="inp" [(ngModel)]="convertInput"
-                   (keyup.enter)="convert()" />
-            <button class="btn-p sm" (click)="convert()">تحويل</button>
-          </div>
-        </div>
-        @if (convertResult) {
-          <div class="convert-result">{{ convertResult }}</div>
-        }
-      </section>
-
-      <section class="card">
-        <h2>حقلان في نفس النموذج</h2>
-        <form #f2="ngForm" (ngSubmit)="submitForm2()" novalidate>
-          <div class="field">
-            <label>العنوان</label>
-            <input type="text" class="inp" name="title"
-                   [(ngModel)]="form2.title" required />
-          </div>
-          <div class="field">
-            <label>تاريخ البداية</label>
-            <input required type="text" readonly hijri-calender
-                   class="inp datePicker" name="startDate" [(ngModel)]="form2.startDate" />
-          </div>
-          <div class="field">
-            <label>تاريخ النهاية</label>
-            <input required type="text" readonly hijri-calender
-                   class="inp datePicker" name="endDate" [(ngModel)]="form2.endDate" />
-          </div>
-          <button type="submit" class="btn-p" [disabled]="f2.invalid">حفظ</button>
-        </form>
-        @if (form2Result) {
-          <div class="result-box">{{ form2Result }}</div>
-        }
-      </section>
-
-    </div>
-  </div>
-
-  <!-- محاكاة الباك إند -->
-  <section class="card debug-section">
-    <h2>🔧 محاكاة تحميل من الباك إند</h2>
-    <div class="field">
-      <label>تاريخ الاختبار:</label>
-      <div class="row-inp">
-        <input type="text" class="inp" [(ngModel)]="testDateInput" />
-        <button class="btn-p sm" (click)="simulateBackendLoad()">محاكاة</button>
+    <!-- بطاقة اليوم -->
+    <div class="today-card">
+      <div class="today-item">
+        <span class="lbl">اليوم</span>
+        <span class="val">{{ todayDayName }}</span>
+      </div>
+      <div class="today-item">
+        <span class="lbl">هجري</span>
+        <span class="val hijri-val">{{ todayH.day }} {{ todayMonthName }} {{ todayH.year }}</span>
+      </div>
+      <div class="today-item">
+        <span class="lbl">ميلادي</span>
+        <span class="val">{{ todayG.formatted }}</span>
       </div>
     </div>
-    <div class="debug-value">{{ requestModel.VisitDateStr || '(فارغة)' }}</div>
-    <div class="test-buttons">
-      <button class="btn-s sm" (click)="testDateInput='20/10/1447'; simulateBackendLoad()">20/10/1447</button>
-      <button class="btn-s sm" (click)="testDateInput='1447/10/20'; simulateBackendLoad()">1447/10/20</button>
-      <button class="btn-s sm" (click)="testDateInput='2026/04/08'; simulateBackendLoad()">2026/04/08</button>
-      <button class="btn-s sm" (click)="testDateInput='08/04/2026'; simulateBackendLoad()">08/04/2026</button>
+
+    <div class="grid-2">
+      <!-- نموذج تسجيل -->
+      <section class="card">
+        <h2>نموذج تسجيل طلب</h2>
+        <p class="sub">استخدام <code>hijri-calender</code> كـ Directive مستقل</p>
+
+        <form #visitForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
+          <div class="field">
+            <label>اسم المتقدم <span class="req">*</span></label>
+            <input type="text" class="inp" name="PatientName" [(ngModel)]="requestModel.PatientName" required placeholder="أدخل الاسم الكامل" />
+          </div>
+
+          <div class="field">
+            <label>تاريخ الميلاد (هجري/ميلادي) <span class="req">*</span></label>
+            <input required type="text" readonly hijri-calender class="inp datePicker" name="VisitDate" [(ngModel)]="requestModel.VisitDateStr" placeholder="اختر التاريخ..." />
+            @if (requestModel.VisitDateStr) {
+              <span class="hint">المقابل ميلادياً: {{ convertToGreg(requestModel.VisitDateStr) }}</span>
+            }
+          </div>
+
+          <div class="btn-row">
+            <button type="submit" class="btn-p" [disabled]="visitForm.invalid">إرسال الطلب</button>
+            <button type="button" class="btn-s" (click)="resetForm()">إلغاء</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- الجانب الأيسر: معلومات وشرح -->
+      <div class="col-right">
+         <section class="card">
+            <h2>إعدادات العرض</h2>
+            <p class="sub">يقرأ من <code>&#64;core-components/calendar</code></p>
+            <ul style="padding-inline-start: 20px; color: var(--gray-600); font-size: 0.9rem;">
+              <li>دعم كامل لتقويم أم القرى الرسمي.</li>
+              <li>تبديل فوري بين الهجري والميلادي.</li>
+              <li>دعم الوضع الداكن (Dark Mode) آلياً.</li>
+            </ul>
+         </section>
+      </div>
     </div>
-  </section>
 
   } @else if (currentPage === 'docs') {
 
-  <!-- ══════════════════════════════════════════════════════════════════════ -->
-  <!-- ── DOCUMENTATION PAGE ───────────────────────────────────────────── -->
-  <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <header class="page-header docs-header">
+      <h1>📚 Developer API</h1>
+      <p>دليل الاستيراد للحزم المشتركة</p>
+    </header>
 
-  <header class="page-header docs-header">
-    <h1>📚 JavaScript API - Standalone Library</h1>
-    <p>دليل شامل لاستخدام مكتبة JavaScript النقية (بدون Angular أو jQuery)</p>
-  </header>
+    <section class="docs-section">
+      <div class="docs-title">1️⃣ التثبيت</div>
+      <pre class="docs-code">import {{ '{' }} todayHijri {{ '}' }} from '&#64;core-components/calendar';</pre>
+    </section>
 
-  <!-- Section 1: Installation -->
-  <section class="docs-section">
-    <div class="docs-title">1️⃣ التثبيت</div>
-    <p class="docs-desc">انسخ ملفين إلى مشروعك:</p>
-    <pre class="docs-code">src/app/hijri-calendar/
-├── hijri-calendar.lib.ts      ← المكتبة
-└── hijri-calender.directive.ts ← الدايريكتيف</pre>
-  </section>
-
-  <!-- Section 2: Basic Usage -->
-  <section class="docs-section">
-    <div class="docs-title">2️⃣ الاستخدام الأساسي</div>
-    <p class="docs-desc">أضف <code>hijri-calender</code> على أي input:</p>
-    <pre class="docs-code">// app.component.ts
-import &#123; HijriCalenderDirective &#125; from './hijri-calendar/hijri-calender.directive';
-
-&#64;Component(&#123;
-  imports: [FormsModule, HijriCalenderDirective],
-  ...
-&#125;)
-export class AppComponent &#123; &#125;</pre>
-    <pre class="docs-code">&lt;!-- template.html --&gt;
-&lt;input hijri-calender [(ngModel)]="model.date" /&gt;</pre>
-  </section>
-
-  <!-- Section 3: bindValue -->
-  <section class="docs-section">
-    <div class="docs-title">3️⃣ bindValue - التحكم في صيغة القيمة</div>
-    <p class="docs-desc">حدد هل ngModel يستقبل هجري أو ميلادي:</p>
-    <pre class="docs-code">&lt;!-- افتراضي: ngModel = هجري --&gt;
-&lt;input hijri-calender [(ngModel)]="model.hijriDate" /&gt;
-
-&lt;!-- ngModel = ميلادي --&gt;
-&lt;input hijri-calender [bindValue]="'gregorian'" [(ngModel)]="model.gregDate" /&gt;</pre>
-    <div class="docs-result">
-      <strong>النتيجة:</strong> كلاهما يعرض popup هجري، الفرق فقط في القيمة المُخرَّجة
-    </div>
-  </section>
-
-  <!-- Section 4: Validation -->
-  <section class="docs-section">
-    <div class="docs-title">4️⃣ التحقق من التاريخ</div>
-    <p class="docs-desc">استخدم onSelect callback للتحقق:</p>
-    <pre class="docs-code">// app.component.ts
-onSelect(dates: &#123; hijri: string; greg: string &#125;) &#123;
-  if (dates.hijri &lt; '1447/01/01') &#123;
-    return &#123; isValid: false, errorMessage: 'التاريخ قبل المسموح' &#125;;
-  &#125;
-  return &#123; isValid: true &#125;;
-&#125;</pre>
-    <pre class="docs-code">&lt;input hijri-calender 
-       (onSelect)="onSelect($event)"
-       [(ngModel)]="model.date" /&gt;</pre>
-  </section>
-
-  <!-- Section 5: Examples -->
-  <section class="docs-section">
-    <div class="docs-title">5️⃣ أمثلة حيّة</div>
-    
-    <!-- Example 1 -->
-    <div class="example-block">
-      <div class="example-title">مثال: تاريخ أدنى</div>
-      <div class="field">
-        <label>التاريخ (بعد 1447/01/01):</label>
-        <input type="text" readonly hijri-calender class="inp" 
-               [(ngModel)]="test1Model.date" placeholder="اختر"/>
-        @if (test1Result) {
-          <span class="hint">{{ test1Result }}</span>
-        }
-      </div>
-    </div>
-
-    <!-- Example 2 -->
-    <div class="example-block">
-      <div class="example-title">مثال: عدة تقويمات</div>
-      <div class="grid-2">
-        <div class="field">
-          <label>Calendar 1:</label>
-          <input type="text" readonly hijri-calender class="inp" [(ngModel)]="test8Model1.date" />
-        </div>
-        <div class="field">
-          <label>Calendar 2 (ميلادي):</label>
-          <input type="text" readonly hijri-calender [bindValue]="'gregorian'" 
-                 class="inp" [(ngModel)]="test8Model2.date" />
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Section 6: API -->
-  <section class="docs-section">
-    <div class="docs-title">6️⃣ مرجع API</div>
-    <table class="docs-table">
-      <tr>
-        <th>Property</th>
-        <th>Type</th>
-        <th>Default</th>
-        <th>الوصف</th>
-      </tr>
-      <tr>
-        <td><code>bindValue</code></td>
-        <td>'hijri' | 'gregorian'</td>
-        <td>'hijri'</td>
-        <td>صيغة القيمة المُخرَّجة</td>
-      </tr>
-      <tr>
-        <td><code>defaultView</code></td>
-        <td>'hijri' | 'gregorian'</td>
-        <td>'hijri'</td>
-        <td>العرض الأولي للـ popup</td>
-      </tr>
-    </table>
-  </section>
-
-  } @else {
-
-  <!-- ══════════════════════════════════════════════════════════════════════ -->
-  <!-- ── LEGACY PAGE ───────────────────────────────────────────────────── -->
-  <!-- ══════════════════════════════════════════════════════════════════════ -->
-  <app-legacy-angular />
+    <section class="docs-section">
+      <div class="docs-title">2️⃣ نظام الألوان</div>
+      <pre class="docs-code">:root {{ '{' }}
+  --primary: #006C35;
+{{ '}' }}</pre>
+    </section>
 
   }
 </div>

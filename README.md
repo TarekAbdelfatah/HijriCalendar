@@ -1,751 +1,86 @@
-# التقويم الهجري · Hijri Calendar
+# CoreComponents 🚀
 
-تقويم هجري/ميلادي مبني على جدول **أم القرى الرسمي السعودي** — بدون jQuery، بدون أي تبعيات خارجية.
-
-> **Pure TypeScript · No jQuery · No dependencies**  
-> Real Saudi Umm al-Qura table · Valid range: 1276–1500 AH (1859–2077 CE)
+A reference-grade monorepo suite for high-performance, standalone UI controls. Built with **Zero Dependencies**, **Pure TypeScript**, and a **Centralized Design System**.
 
 ---
 
-## هيكل المشروع · Project Structure
+## 🚀 Getting Started
 
-```
-HijriCalendar/
-├── standalone/
-│   └── hijri-calendar.lib.ts            ← المكتبة المستقلة (Vanilla TS/JS)
-├── legacy/
-│   └── hijri-calender-ng7.directive.ts  ← Directive متوافق مع Angular 7–13
-├── hijri-app/                           ← مشروع Angular 18 كامل (Directive + Demo)
-│   └── src/app/hijri-calendar/
-│       ├── hijri-calendar.lib.ts        ← نفس المكتبة
-│       └── hijri-calender.directive.ts  ← Angular 14+ Standalone Directive
-└── README.md
+Since we use isolated environments for maximum compatibility, you need to install dependencies for each project:
+
+### 1. Install All Dependencies
+```powershell
+# In the root directory, this command runs install for all sub-projects
+npm run install:all
 ```
 
-| المسار | الاستخدام |
-|--------|-----------|
-| `standalone/hijri-calendar.lib.ts` | Vanilla JS/TS — ASP.NET — Blazor — Next.js — React — Vue |
-| `hijri-app/src/app/hijri-calendar/hijri-calender.directive.ts` | Angular 14+ (standalone) |
-| `legacy/hijri-calender-ng7.directive.ts` | Angular 7–13 (NgModule) |
+### 2. Run the Projects
+You can run all projects simultaneously with one command:
+```powershell
+npm run start:all
+```
+
+Or run them independently:
+*   **Modern Angular (v18+)**: 
+    `npm run start:angular` (Runs on [http://localhost:4200](http://localhost:4200))
+*   **Legacy Angular (v9)**: 
+    `npm run start:legacy` (Runs on [http://localhost:4201](http://localhost:4201))
+
+## 🏛️ Project Hub Architecture
+
+This project is structured as a monorepo containing the core library packages and multiple playground environments for testing and demonstration. Each environment runs on a dedicated port for seamless navigation.
+
+| Environment | Tech Stack | Port | Status |
+| :--- | :--- | :--- | :--- |
+| **Modern Playground** | Angular 18+ (Standalone) | `http://localhost:4200` | ✅ Active |
+| **Legacy Playground** | Angular 7/9 (NgModule) | `http://localhost:4201` | ✅ Active |
+| **Vanilla Demo** | Pure JS / HTML | `(packages/calendar/demo)` | ⏳ Planned |
+| **Next.js Hub** | Next.js 14 (App Router) | `http://localhost:3000` | ⏳ Planned |
+| **MVC Hub** | ASP.NET Core MVC | `http://localhost:5000` | ⏳ Planned |
 
 ---
 
-## دقة التقويم · Accuracy
+## 🏗️ Folder Structure
 
-المكتبة تستخدم جدول MCJDN الحقيقي من مصدر [kbwood/calendars](https://github.com/kbwood/calendars) (MIT) — **وليس الخوارزمية الجدولية التقريبية**.
-
-| التاريخ الهجري | الرسمي السعودي | هذه المكتبة | الحالة |
-|----------------|----------------|-------------|--------|
-| 1 محرم 1445    | 2023/07/19     | 2023/07/19  | ✅     |
-| 1 رمضان 1445   | 2024/03/11     | 2024/03/11  | ✅     |
-| 1 شوال 1445 (عيد) | 2024/04/10  | 2024/04/10  | ✅     |
-| 1 محرم 1446    | 2024/07/07     | 2024/07/07  | ✅     |
-| 1 محرم 1447    | 2025/06/26     | 2025/06/26  | ✅     |
-
----
-
-## 1. Angular Directive
-
-### التثبيت · Setup
-
-انسخ ملفي المكتبة إلى مشروعك:
-
-```
-src/app/hijri-calendar/
-├── hijri-calendar.lib.ts
-└── hijri-calender.directive.ts
-```
-
-ثم استورد في الـ Component:
-
-```typescript
-// app.component.ts
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { HijriCalenderDirective } from './hijri-calendar/hijri-calender.directive';
-
-@Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [FormsModule, HijriCalenderDirective],
-  templateUrl: './app.component.html',
-})
-export class AppComponent {
-  visitDate = '';    // "1446/09/15"
-  gregDate  = '';    // "2025/03/15"
-}
-```
-
-### الاستخدام الأساسي
-
-أضف `hijri-calender` على أي `<input>` — تأكد من `readonly` لمنع الكتابة اليدوية:
-
-```html
-<!-- القيمة المرتبطة هجرية بصيغة yyyy/mm/dd (الافتراضي) -->
-<input
-  type="text"
-  readonly
-  hijri-calender
-  name="visitDate"
-  [(ngModel)]="visitDate"
-/>
-```
-
-### bindValue — التحكم في صيغة القيمة المُخزَّنة
-
-الـ `bindValue` يحدد ما يُخزَّن في المتغير المرتبط بـ `ngModel`:
-
-```html
-<!-- الافتراضي: ngModel يستقبل/يرسل تاريخ هجري "1446/09/15" -->
-<input readonly hijri-calender [(ngModel)]="model.hijriDate" name="d1" />
-
-<!-- bindValue='gregorian': ngModel يستقبل/يرسل تاريخ ميلادي "2025/03/15" -->
-<input readonly hijri-calender [bindValue]="'gregorian'"
-       [(ngModel)]="model.gregDate" name="d2" />
-```
-
-| bindValue | ما يُخزَّن في ngModel | ما يعرضه البوب-اب |
-|-----------|----------------------|-------------------|
-| `'hijri'` (افتراضي) | `"1446/09/15"` | التقويم الهجري |
-| `'gregorian'` | `"2025/03/15"` | التقويم الهجري |
-
-> **ملاحظة:** القائمة المنسدلة (هـ / م) بجانب الحقل تتحكم في **طريقة عرض البوب-اب** فقط،  
-> وليس في `bindValue`. يمكن للمستخدم عرض ميلادي بينما يُخزَّن هجري والعكس.
-
-### قائمة هـ / م المنسدلة
-
-تظهر تلقائياً بجانب كل حقل. تتيح للمستخدم التبديل بين:
-- **هـ** — عرض شبكة التقويم الهجري
-- **م** — عرض شبكة التقويم الميلادي
-
-التحويل يتم تلقائياً في الخلفية.
-
-### مثال كامل مع Validation
-
-```html
-<form #f="ngForm" (ngSubmit)="onSubmit(f)" novalidate>
-
-  <div class="field">
-    <label>اسم المريض <span style="color:red">*</span></label>
-    <input type="text" class="inp" name="patientName"
-           [(ngModel)]="model.patientName" required />
-  </div>
-
-  <div class="field">
-    <label>تاريخ الزيارة <span style="color:red">*</span></label>
-    <input
-      required
-      type="text"
-      readonly
-      hijri-calender
-      class="inp"
-      name="visitDate"
-      #visitDate="ngModel"
-      [(ngModel)]="model.visitDate"
-      placeholder="انقر لاختيار التاريخ"
-    />
-    @if (visitDate.invalid && visitDate.touched) {
-      <span style="color:red; font-size:12px">هذا الحقل مطلوب</span>
-    }
-  </div>
-
-  <button type="submit" [disabled]="f.invalid">حفظ</button>
-</form>
-```
-
-```typescript
-export class MyComponent {
-  model = { patientName: '', visitDate: '' };
-
-  onSubmit(f: NgForm) {
-    console.log(this.model.visitDate); // "1446/09/15"
-  }
-}
-```
-
-### حقلان في نفس النموذج
-
-```html
-<input required type="text" readonly hijri-calender
-       class="inp" name="startDate" [(ngModel)]="range.start" />
-
-<input required type="text" readonly hijri-calender
-       class="inp" name="endDate" [(ngModel)]="range.end" />
-```
-
-### تشغيل مشروع Angular التجريبي
-
-```bash
-cd hijri-app
-npm install
-ng serve
-# افتح http://localhost:4200
-```
+*   **/packages**: Contains the source code for all UI controls.
+    *   `calendar/`: The core Hijri/Gregorian logic and directives.
+    *   `theme/`: **Single Source of Truth** for CSS variables and design tokens.
+    *   `autocomplete/`: (Planned) Modern autocomplete control.
+    *   `wizard/`: (Planned) Stepper/Wizard control.
+*   **/playground**: Technology-specific projects that import from `/packages`.
+    *   `angular/`: Modern Angular showcase.
+    *   `legacy-angular/`: Backward compatibility showcase.
 
 ---
 
-## 2. Angular 7–13 Directive (NgModule)
+## 🎨 Centralized Design System
 
-استخدم الملف `legacy/hijri-calender-ng7.directive.ts` — متوافق مع TypeScript 3.x.
+All components and playgrounds use the `@core-components/theme` package. To ensure visual consistency, always use the CSS variables defined in:
+`packages/theme/src/core-theme.css`
 
-### الملفات المطلوبة
-
-انسخ ملفين إلى مشروعك:
-- `legacy/hijri-calender-ng7.directive.ts` → مثلاً `src/app/directives/hijri-calender.directive.ts`
-- `standalone/hijri-calendar.lib.ts` → مثلاً `src/assets/hijri-calender/hijri-calendar.lib.ts`
-
-### تعديل مسار الاستيراد
-
-افتح `hijri-calender.directive.ts` وعدّل سطر الـ import ليطابق مكان الـ lib في مشروعك:
-
-```typescript
-// عدّل هذا المسار حسب مشروعك
-import { ... } from '../assets/hijri-calender/hijri-calendar.lib';
-```
-
-### إضافة الـ Directive في AppModule
-
-```typescript
-// app.module.ts
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
-import { AppComponent } from './app.component';
-import { HijriCalenderDirective } from './directives/hijri-calender.directive';
-
-@NgModule({
-  declarations: [
-    AppComponent,
-    HijriCalenderDirective,   // ← أضف هنا
-  ],
-  imports: [BrowserModule, FormsModule],
-  bootstrap: [AppComponent],
-})
-export class AppModule { }
-```
-
-### الاستخدام في القالب
-
-**نفس الـ attributes تماماً** كما في Angular 18:
-
-```html
-<!-- ngModel يستقبل تاريخ هجري (الافتراضي) -->
-<input
-  required
-  type="text"
-  readonly
-  hijri-calender
-  class="form-control"
-  name="VisitDate"
-  #VisitDate="ngModel"
-  [(ngModel)]="requestModel.VisitDateStr"
-/>
-<span *ngIf="VisitDate.invalid && VisitDate.touched" style="color:red">
-  هذا الحقل مطلوب
-</span>
-
-<!-- ngModel يستقبل تاريخ ميلادي -->
-<input type="text" readonly hijri-calender
-       [bindValue]="'gregorian'"
-       name="startDate" [(ngModel)]="model.gregDate" />
-```
-
-> **ملاحظة Angular 7:** استخدم `*ngIf` بدلاً من `@if` — الـ control flow الجديد متاح من Angular 17 فقط.
-
-### الفروق بين النسختين
-
-| | Angular 18 (`hijri-app/`) | Angular 7–13 (`legacy/`) |
-|-|--------------------------|--------------------------|
-| `standalone: true` | ✅ | ❌ — يُعلَن في NgModule |
-| TypeScript | 5.x (modern syntax) | 3.x compatible |
-| Template control flow | `@if` / `@for` | `*ngIf` / `*ngFor` |
-| الـ Directive نفسه | ✅ | ✅ |
-| `bindValue` | ✅ | ✅ |
-| قائمة هـ / م | ✅ | ✅ |
-
----
-
-## 3. Standalone Library (Vanilla TS/JS)
-
-استخدم `standalone/hijri-calendar.lib.ts` مباشرة في أي مشروع.
-
-### تحويل إلى JavaScript
-
-```bash
-npx tsc standalone/hijri-calendar.lib.ts \
-    --module esnext --target es2017 \
-    --moduleResolution bundler \
-    --outDir standalone/dist
-```
-
-### الدوال الأساسية · Core Functions
-
-```typescript
-import {
-  hijriToGregorianStr,
-  gregorianToHijriStr,
-  todayHijri,
-  todayGregorian,
-} from './hijri-calendar.lib';
-
-// تحويل هجري → ميلادي
-hijriToGregorianStr("1446/09/01")  // "2025/03/01"
-
-// تحويل ميلادي → هجري
-gregorianToHijriStr("2025/03/01")  // "1446/09/01"
-
-// اليوم الحالي
-const h = todayHijri();    // { year:1446, month:9, day:15, formatted:"15 رمضان 1446" }
-const g = todayGregorian();// { year:2025, month:3, day:15, formatted:"2025/03/15" }
-```
-
-### ASP.NET MVC / Razor Pages
-
-```html
-<!-- _Layout.cshtml أو الصفحة مباشرة -->
-<script type="module">
-  import { hijriToGregorianStr, gregorianToHijriStr, todayHijri, pad2 }
-    from '/lib/hijri-calendar.lib.js';
-
-  // تعبئة الحقل بتاريخ اليوم هجري
-  const t = todayHijri();
-  document.getElementById('visitDate').value =
-    `${t.year}/${pad2(t.month)}/${pad2(t.day)}`;
-
-  // قبل الإرسال: تحويل للميلادي وحفظ في حقل مخفي
-  document.getElementById('myForm').addEventListener('submit', () => {
-    const hijri = document.getElementById('visitDate').value;
-    document.getElementById('visitDateGreg').value = hijriToGregorianStr(hijri);
-  });
-</script>
-
-<form id="myForm" method="post">
-  <input id="visitDate" name="VisitDateHijri" type="text" readonly />
-  <input id="visitDateGreg" name="VisitDateGreg" type="hidden" />
-  <button type="submit">حفظ</button>
-</form>
-```
-
-```csharp
-// HomeController.cs
-[HttpPost]
-public IActionResult Save(string VisitDateHijri, string VisitDateGreg)
-{
-    // VisitDateHijri = "1446/09/15"
-    // VisitDateGreg  = "2025/03/15"
-    if (DateTime.TryParse(VisitDateGreg, out var date))
-    {
-        // احفظ date في قاعدة البيانات
-    }
-    return RedirectToAction("Index");
-}
-```
-
-### Blazor WebAssembly / Server
-
-```javascript
-// wwwroot/hijri-interop.js
-import { todayHijri, hijriToGregorianStr, gregorianToHijriStr, pad2 }
-  from './hijri-calendar.lib.js';
-
-window.hijriLib = {
-  todayStr() {
-    const t = todayHijri();
-    return `${t.year}/${pad2(t.month)}/${pad2(t.day)}`;
-  },
-  toGregorian(hijri) { return hijriToGregorianStr(hijri); },
-  toHijri(greg)      { return gregorianToHijriStr(greg); },
-};
-```
-
-```html
-<!-- index.html -->
-<script type="module" src="hijri-interop.js"></script>
-```
-
-```csharp
-// MyComponent.razor
-@inject IJSRuntime JS
-
-<input @bind="hijriDate" readonly />
-<p>الميلادي: @gregDate</p>
-
-@code {
-    string hijriDate = "";
-    string gregDate  = "";
-
-    protected override async Task OnInitializedAsync()
-    {
-        hijriDate = await JS.InvokeAsync<string>("hijriLib.todayStr");
-        gregDate  = await JS.InvokeAsync<string>("hijriLib.toGregorian", hijriDate);
-    }
-
-    async Task OnDatePicked(string newHijri)
-    {
-        hijriDate = newHijri;
-        gregDate  = await JS.InvokeAsync<string>("hijriLib.toGregorian", newHijri);
-    }
-}
-```
-
-### Next.js / React
-
-```tsx
-// lib/hijri-calendar.lib.ts  ← انسخ الملف هنا
-// components/HijriDateInput.tsx
-'use client';
-import { useState, useEffect } from 'react';
-import { todayHijri, hijriToGregorianStr, pad2 } from '@/lib/hijri-calendar.lib';
-
-interface Props {
-  value?: string;
-  onChange?: (hijri: string, greg: string) => void;
-}
-
-export default function HijriDateInput({ value, onChange }: Props) {
-  const [display, setDisplay] = useState('');
-
-  useEffect(() => {
-    if (value) {
-      setDisplay(value);
-    } else {
-      const t = todayHijri();
-      setDisplay(`${t.year}/${pad2(t.month)}/${pad2(t.day)}`);
-    }
-  }, [value]);
-
-  function pick(hijri: string) {
-    setDisplay(hijri);
-    const greg = hijriToGregorianStr(hijri);
-    onChange?.(hijri, greg);
-  }
-
-  return (
-    <input
-      type="text"
-      readOnly
-      value={display}
-      className="border rounded px-3 py-2 cursor-pointer"
-      onClick={() => { /* افتح popup التقويم */ }}
-    />
-  );
-}
-```
-
-```tsx
-// app/page.tsx
-import HijriDateInput from '@/components/HijriDateInput';
-
-export default function Page() {
-  return (
-    <HijriDateInput
-      onChange={(hijri, greg) => {
-        console.log('Hijri:', hijri);   // "1446/09/15"
-        console.log('Greg:',  greg);    // "2025/03/15"
-      }}
-    />
-  );
-}
-```
-
-### Vue 3
-
-```vue
-<!-- components/HijriInput.vue -->
-<template>
-  <input type="text" readonly :value="display" @click="openPicker" />
-</template>
-
-<script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { todayHijri, hijriToGregorianStr, pad2 } from '@/lib/hijri-calendar.lib';
-
-const emit = defineEmits<{ change: [hijri: string, greg: string] }>();
-const display = ref('');
-
-onMounted(() => {
-  const t = todayHijri();
-  display.value = `${t.year}/${pad2(t.month)}/${pad2(t.day)}`;
-});
-
-function pick(hijri: string) {
-  display.value = hijri;
-  emit('change', hijri, hijriToGregorianStr(hijri));
-}
-</script>
-```
-
----
-
-## 3. مرجع API الكامل · Full API Reference
-
-> جميع الدوال والثوابت مصدّرة من `hijri-calendar.lib.ts`
-
----
-
-### الأنواع / Types
-
-```typescript
-interface HijriDateObj {
-  year:      number;   // 1446
-  month:     number;   // 9
-  day:       number;   // 15
-  formatted: string;   // "15 رمضان 1446"
-}
-
-interface GregDateObj {
-  year:      number;   // 2025
-  month:     number;   // 3
-  day:       number;   // 15
-  formatted: string;   // "2025/03/15"
+Example:
+```css
+.my-card {
+  background: var(--primary);
+  border-radius: var(--radius-md);
 }
 ```
 
 ---
 
-### التاريخ الحالي / Today
+## 👨‍💻 Developer Guide
 
-```typescript
-todayHijri(): HijriDateObj
-// { year:1446, month:9, day:15, formatted:"15 رمضان 1446" }
+For instructions on how to create new components or add new playground environments, please refer to the [**DEVELOPER_GUIDE.md**](./DEVELOPER_GUIDE.md).
 
-todayHijriStr(): string
-// "1446/09/15"
-// بديل مباشر لـ: $.calendars.instance("ummalqura","ar").newDate()
-
-todayGregorian(): GregDateObj
-// { year:2025, month:3, day:15, formatted:"2025/03/15" }
-
-todayGregorianStr(): string
-// "2025/03/15"
-```
-
-**مثال:**
-```typescript
-import { todayHijriStr, todayGregorianStr } from './hijri-calendar.lib';
-
-console.log(todayHijriStr());     // "1446/09/15"
-console.log(todayGregorianStr()); // "2025/03/15"
-```
+### Main Rules:
+1.  **Logic must be Pure TS/JS** (No frameworks in core logic).
+2.  **Styles must be Pure CSS** (Using theme variables).
+3.  **Single Source of Truth**: Always link to packages, never duplicate code.
 
 ---
 
-### تحويل هجري ↔ ميلادي / Conversion
-
-```typescript
-// نصي (الأسهل)
-hijriToGregorianStr(hijriStr: string): string
-// الإدخال: "1446/09/15"  أو "1446-09-15"  أو "15/09/1446"
-// الإخراج: "2025/03/15"
-
-gregorianToHijriStr(gregStr: string): string
-// الإدخال: "2025/03/15"
-// الإخراج: "1446/09/15"
-
-// بالأرقام (مع object كامل)
-hijriToGregorian(hYear: number, hMonth: number, hDay: number): GregDateObj
-gregorianToHijri(gYear: number, gMonth: number, gDay: number): HijriDateObj
-```
-
-**مثال:**
-```typescript
-import { hijriToGregorianStr, gregorianToHijriStr,
-         hijriToGregorian, gregorianToHijri } from './hijri-calendar.lib';
-
-hijriToGregorianStr("1446/09/01")          // "2025/03/01"
-gregorianToHijriStr("2025/03/01")          // "1446/09/01"
-
-const g = hijriToGregorian(1446, 9, 15);
-// { year:2025, month:3, day:15, formatted:"2025/03/15" }
-
-const h = gregorianToHijri(2025, 3, 15);
-// { year:1446, month:9, day:15, formatted:"15 رمضان 1446" }
-```
+## 🇸🇦 Authors
+Developed by **CoreComponents Team**.
 
 ---
-
-### اسم يوم الأسبوع / Day Name
-
-```typescript
-hijriDayName(dateStr: string): string
-// الإدخال: "1446/09/15"  →  "السبت"
-// بديل مباشر لـ: $.calendars.instance("UmmAlQura","ar").dayOfWeek(y,m,d)
-
-gregDayName(dateStr: string): string
-// الإدخال: "2025/03/15"  →  "السبت"
-
-// بالأرقام (يرجع 0–6)
-hijriDayOfWeek(year: number, month: number, day: number): number
-gregDayOfWeek(year: number, month: number, day: number): number
-// 0=الأحد  1=الاثنين  2=الثلاثاء  3=الأربعاء  4=الخميس  5=الجمعة  6=السبت
-```
-
-**مثال — بديل getDayNameHijri():**
-```typescript
-import { hijriDayName } from './hijri-calendar.lib';
-
-// قبل (jQuery):
-// weekdays[$.calendars.instance("UmmAlQura","ar").dayOfWeek(y, m, d)]
-
-// بعد:
-hijriDayName("1446/09/15")  // "السبت"
-hijriDayName("")            // ""  (safe — لا يرمي error)
-```
-
----
-
-### أيام الشهر / Days in Month
-
-```typescript
-hijriDaysInMonth(year: number, month: number): number
-// يرجع 29 أو 30 حسب جدول أم القرى الفعلي
-
-gregDaysInMonth(year: number, month: number): number
-// يرجع 28 / 29 / 30 / 31
-```
-
-**مثال:**
-```typescript
-import { hijriDaysInMonth, gregDaysInMonth } from './hijri-calendar.lib';
-
-hijriDaysInMonth(1446, 9)   // 29  (رمضان 1446)
-hijriDaysInMonth(1446, 12)  // 30  (ذو الحجة — سنة كبيسة)
-gregDaysInMonth(2024, 2)    // 29  (فبراير سنة كبيسة)
-```
-
----
-
-### السنة الكبيسة / Leap Year
-
-```typescript
-hijriIsLeapYear(year: number): boolean
-// السنة الهجرية الكبيسة: ذو الحجة يكون 30 يوماً بدل 29
-
-gregIsLeapYear(year: number): boolean
-```
-
-**مثال:**
-```typescript
-import { hijriIsLeapYear, gregIsLeapYear } from './hijri-calendar.lib';
-
-hijriIsLeapYear(1446)  // true
-hijriIsLeapYear(1445)  // false
-gregIsLeapYear(2024)   // true
-gregIsLeapYear(2025)   // false
-```
-
----
-
-### التحقق من الصحة / Validation
-
-```typescript
-hijriIsValid(year: number, month: number, day: number): boolean
-```
-
-**مثال:**
-```typescript
-import { hijriIsValid } from './hijri-calendar.lib';
-
-hijriIsValid(1446, 9, 15)   // true
-hijriIsValid(1446, 13, 1)   // false  (شهر 13 غير موجود)
-hijriIsValid(1446, 9, 31)   // false  (أكثر من أيام الشهر)
-```
-
----
-
-### الثوابت / Constants
-
-```typescript
-HIJRI_MONTH_NAMES: string[]
-// ['محرم','صفر','ربيع الأول','ربيع الآخر',
-//  'جمادى الأولى','جمادى الآخرة','رجب','شعبان',
-//  'رمضان','شوال','ذو القعدة','ذو الحجة']
-
-HIJRI_MONTH_NAMES_EN: string[]
-// ['Muharram','Safar','Rabi al-Awwal','Rabi al-Thani',
-//  'Jumada al-Ula','Jumada al-Akhira','Rajab','Shaban',
-//  'Ramadan','Shawwal','Dhul Qadah','Dhul Hijjah']
-
-GREG_MONTH_NAMES_AR: string[]
-// ['يناير','فبراير','مارس','إبريل','مايو','يونيو',
-//  'يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر']
-
-DAY_NAMES_AR: string[]
-// ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت']
-
-DAY_NAMES_SHORT_AR: string[]
-// ['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت']
-```
-
-**مثال:**
-```typescript
-import { HIJRI_MONTH_NAMES, DAY_NAMES_AR } from './hijri-calendar.lib';
-
-const monthName = HIJRI_MONTH_NAMES[8];   // "رمضان"  (index = month - 1)
-const dayName   = DAY_NAMES_AR[6];        // "السبت"
-```
-
----
-
-### دالة مساعدة / Utility
-
-```typescript
-pad2(n: number): string
-// يضيف صفر في البداية للأرقام < 10
-```
-
-**مثال:**
-```typescript
-import { pad2 } from './hijri-calendar.lib';
-
-pad2(5)   // "05"
-pad2(12)  // "12"
-
-// استخدام شائع لتكوين string تاريخ:
-const { year, month, day } = todayHijri();
-const dateStr = `${year}/${pad2(month)}/${pad2(day)}`; // "1446/09/05"
-```
-
----
-
-### Julian Day (للاستخدام المتقدم)
-
-```typescript
-hijriToJD(year: number, month: number, day: number): number
-// تحويل تاريخ هجري إلى Julian Day Number
-
-jdToHijri(jd: number): { year: number; month: number; day: number }
-// تحويل Julian Day Number إلى هجري
-
-dayOfWeekForJD(jd: number): number
-// يوم الأسبوع من Julian Day (0=الأحد)
-```
-
----
-
-### جدول المقارنة مع jQuery Calendars
-
-| jQuery (قديم) | مكتبتنا (جديد) |
-|--------------|----------------|
-| `$.calendars.instance("ummalqura","ar").newDate()` | `todayHijri()` |
-| `getCurrentHijriDate()` (custom) | `todayHijriStr()` |
-| `.dayOfWeek(y, m, d)` + array | `hijriDayName("yyyy/mm/dd")` |
-| `.daysInMonth(y, m)` | `hijriDaysInMonth(y, m)` |
-| `.leapYear(y)` | `hijriIsLeapYear(y)` |
-| `.fromJD(jd)` | `jdToHijri(jd)` |
-| `.toJD(y, m, d)` | `hijriToJD(y, m, d)` |
-
----
-
-## 4. النطاق المدعوم · Supported Range
-
-| | الهجري | الميلادي |
-|-|--------|---------|
-| من | 1276 هـ | 1859 م |
-| إلى | 1500 هـ | 2077 م |
-
----
-
-## 5. الترخيص · License
-
-MIT — بيانات الجدول من [kbwood/calendars](https://github.com/kbwood/calendars) (MIT)
+*Created with passion for clean code and high performance.*

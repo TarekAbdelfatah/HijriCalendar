@@ -1,0 +1,131 @@
+@import "@core-components/theme";
+
+/* ==========================================================================
+   Hijri / Gregorian Calendar Layout Styles
+   Component-specific styles using unique prefix 'cc-cal-'.
+   ========================================================================== */
+
+.cc-cal-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--spacing-sm) !important;
+  width: 100% !important;
+  position: relative !important;
+}
+
+.cc-cal-drop {
+  padding: 0 var(--spacing-xs) !important;
+  height: 38px !important;
+  border: 1px solid var(--gray-300) !important;
+  border-radius: var(--radius-md) !important;
+  background: white !important;
+  color: var(--gray-900) !important;
+  font-weight: 700 !important;
+  min-width: 50px !important;
+  cursor: pointer !important;
+  transition: border-color var(--transition-fast) !important;
+  outline: none !important;
+}
+
+.cc-cal-drop:focus {
+  border-color: var(--primary) !important;
+}
+
+.cc-cal-popup {
+  position: absolute !important;
+  z-index: 9999 !important;
+  background: white !important;
+  border: 1px solid var(--gray-200) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-lg) !important;
+  padding: var(--spacing-md) !important;
+  min-width: 280px !important;
+  direction: rtl !important;
+  font-family: var(--font-arabic) !important;
+}
+
+.cc-cal-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: var(--spacing-sm) !important;
+  border-bottom: 1px solid var(--gray-100) !important;
+  padding-bottom: var(--spacing-sm) !important;
+}
+
+.cc-cal-title {
+  text-align: center !important;
+}
+
+.cc-cal-main {
+  display: block !important;
+  font-weight: 700 !important;
+  color: var(--gray-900) !important;
+  font-size: 15px !important;
+}
+
+.cc-cal-sub {
+  font-size: 11px !important;
+  color: var(--gray-500) !important;
+  display: block !important;
+}
+
+.cc-cal-btn {
+  background: none !important;
+  border: none !important;
+  font-size: 24px !important;
+  cursor: pointer !important;
+  color: var(--gray-600) !important;
+  transition: all var(--transition-fast) !important;
+  padding: 0 8px !important;
+  border-radius: var(--radius-md) !important;
+}
+
+.cc-cal-btn:hover {
+  background: var(--gray-100) !important;
+  color: var(--primary) !important;
+}
+
+.cc-cal-grid {
+  width: 100% !important;
+  border-collapse: collapse !important;
+}
+
+.cc-cal-grid th {
+  padding: var(--spacing-xs) !important;
+  color: var(--gray-500) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+}
+
+.cc-cal-grid td {
+  padding: 8px !important;
+  cursor: pointer !important;
+  border-radius: 50% !important;
+  transition: all var(--transition-fast) !important;
+  text-align: center !important;
+  font-size: 14px !important;
+  color: var(--gray-800) !important;
+}
+
+.cc-cal-grid td:hover:not(:empty) {
+  background: var(--primary-light) !important;
+  color: var(--primary) !important;
+}
+
+/* Specific state classes scoped within cc-cal-grid */
+.cc-cal-grid td.today {
+  color: var(--primary) !important;
+  font-weight: bold !important;
+  background: var(--primary-light) !important;
+}
+
+.cc-cal-grid td.selected {
+  background: var(--primary) !important;
+  color: white !important;
+}
+
+.cc-cal-grid td:empty {
+  cursor: default !important;
+}
