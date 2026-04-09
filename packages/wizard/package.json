@@ -1,0 +1,6 @@
+{
+  "name": "@core-components/wizard",
+  "version": "1.0.0",
+  "description": "Standalone pure JS/TS Wizard component",
+  "main": "src/index.ts"
+}

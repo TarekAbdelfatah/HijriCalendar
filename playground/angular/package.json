@@ -1,5 +1,5 @@
 {
-  "name": "hijri-app",
+  "name": "@core-components/angular",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",

@@ -26,7 +26,7 @@ import {
   HIJRI_MONTH_NAMES, GREG_MONTH_NAMES_AR,
   DAY_NAMES_SHORT_AR,
   pad2,
-} from './hijri-calendar.lib';
+} from '@core-components/calendar';
 
 @Directive({
   selector: '[hijri-calender]',

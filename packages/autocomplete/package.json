@@ -1,0 +1,6 @@
+{
+  "name": "@core-components/autocomplete",
+  "version": "1.0.0",
+  "description": "Standalone pure JS/TS Autocomplete component",
+  "main": "src/index.ts"
+}

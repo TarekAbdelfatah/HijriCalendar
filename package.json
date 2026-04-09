@@ -1,0 +1,10 @@
+{
+  "name": "core-components",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Core Components - Standalone UI Control Suite",
+  "workspaces": [
+    "packages/*",
+    "playground/*"
+  ]
+}

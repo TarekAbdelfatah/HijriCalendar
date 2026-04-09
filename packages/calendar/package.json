@@ -1,0 +1,6 @@
+{
+  "name": "@core-components/calendar",
+  "version": "1.0.0",
+  "description": "Standalone pure JS/TS Hijri Calendar component",
+  "main": "src/hijri-calendar.lib.ts"
+}

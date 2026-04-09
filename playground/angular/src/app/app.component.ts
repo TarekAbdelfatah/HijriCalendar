@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HijriCalenderDirective } from './hijri-calendar/hijri-calender.directive';
-import { LegacyAngularComponent } from './legacy-angular/legacy-angular.component';
 import {
   hijriToGregorianStr, gregorianToHijriStr,
   todayHijri, todayGregorian,
   HIJRI_MONTH_NAMES, DAY_NAMES_AR,
-} from './hijri-calendar/hijri-calendar.lib';
+} from '@core-components/calendar';
 
 interface TestSection {
   id: string;
@@ -20,7 +19,7 @@ interface TestSection {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [FormsModule, HijriCalenderDirective, LegacyAngularComponent],
+  imports: [FormsModule, HijriCalenderDirective],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })
