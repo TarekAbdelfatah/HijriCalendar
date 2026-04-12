@@ -22,9 +22,57 @@ Opens at [http://localhost:4202](http://localhost:4202)
 npm run build
 ```
 
+Output will be in `dist/` folder.
+
 ---
 
-## 🏛️ Components
+## 🚀 Run & Deploy
+
+### Development
+```powershell
+npm run start:vanilla
+```
+Opens at [http://localhost:4202](http://localhost:4202)
+
+### Build for Production
+```powershell
+npm run build
+```
+
+### Deploy Options
+
+**1. Local Test Server**
+```powershell
+npx serve dist -p 3000
+```
+
+**2. Vercel**
+```powershell
+npm i -g vercel
+vercel
+```
+
+**3. Netlify**
+```powershell
+npm i -g netlify-cli
+netlify deploy --prod --dir=dist
+```
+
+**4. GitHub Pages**
+```powershell
+npm i -g gh-pages
+npm run build
+gh-pages -d dist
+```
+
+**5. Surge.sh**
+```powershell
+npm i -g surge
+npx vite build
+surge dist/ your-project.surge.sh
+```
+
+For more details, see [**DEPLOY_GUIDE.md**](./DEPLOY_GUIDE.md).
 
 | Component | Status | Description |
 | :--- | :--- | :--- |
