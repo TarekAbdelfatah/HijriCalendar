@@ -425,9 +425,11 @@ export interface CalendarInputOptions {
 }
 
 export interface CalendarInputEvent {
+  /** التاريخ الهجري */
   hijri: HijriDateObj;
+  /** التاريخ الميلادي */
   greg: GregDateObj;
-  formatted: string;
+  /** طريقة العرض الحالية (هجري أو ميلادي) */
   displayMode: 'hijri' | 'gregorian';
 }
 
@@ -438,26 +440,111 @@ function injectCalendarStyles(): void {
   styleInjected = true;
   
   const css = `
-.hci-wrapper { display: flex; align-items: center; gap: 6px; width: 100%; font-family: 'Cairo','Segoe UI', Tahoma, sans-serif; }
+.hci-wrapper { 
+  display: inline-flex; 
+  align-items: center; 
+  gap: 0; 
+  font-family: 'Cairo','Segoe UI', Tahoma, sans-serif; 
+  vertical-align: middle;
+}
 .hci-wrapper * { box-sizing: border-box; }
-.hci-input { flex: 1; min-width: 0; padding: 8px 12px; border: 1px solid #d0d7de; border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.15s; }
-.hci-input:focus { border-color: #1967d2; }
-.hci-select { flex-shrink: 0; padding: 0 8px; height: 36px; border: 1px solid #d0d7de; border-radius: 8px; background: #f8fafc; font-size: 13px; font-weight: 700; cursor: pointer; min-width: 44px; }
-.hci-select:focus { border-color: #1967d2; outline: none; }
-.hci-popup { position: absolute; z-index: 9999; background: #fff; border: 1px solid #d0d7de; border-radius: 12px; box-shadow: 0 8px 28px rgba(0,0,0,0.15); padding: 14px; min-width: 290px; direction: rtl; }
-.hci-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-.hci-title { text-align: center; line-height: 1.3; }
-.hci-main { display: block; font-weight: 700; font-size: 15px; color: #1a1a2e; }
-.hci-sub { display: block; font-size: 11px; color: #999; }
-.hci-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #555; padding: 2px 8px; border-radius: 6px; transition: background 0.12s; }
-.hci-btn:hover { background: #f0f4f8; }
+.hci-input { 
+  flex: 1; 
+  min-width: 120px; 
+  padding: 10px 14px; 
+  border: 1px solid #d0d7de; 
+  border-radius: 8px 0 0 8px; 
+  font-size: 14px; 
+  outline: none; 
+  transition: border-color 0.15s;
+  background: #fff;
+  color: #1a1a2e;
+}
+.hci-input:focus { border-color: #006C35; }
+.hci-input::placeholder { color: #9ca3af; }
+
+/* Dropdown styling - attached to input */
+.hci-select { 
+  flex-shrink: 0; 
+  padding: 0 10px; 
+  height: 42px; 
+  border: 1px solid #d0d7de; 
+  border-left: none; 
+  border-radius: 0 8px 8px 0; 
+  background: #f0f4f1; 
+  font-size: 14px; 
+  font-weight: 700; 
+  cursor: pointer; 
+  min-width: 48px; 
+  color: #006C35;
+}
+.hci-select:focus { outline: none; border-color: #006C35; }
+
+/* Calendar popup */
+.hci-popup { 
+  position: absolute; 
+  z-index: 9999; 
+  background: #fff; 
+  border: 1px solid #e0e5dc; 
+  border-radius: 14px; 
+  box-shadow: 0 8px 32px rgba(0, 106, 53, 0.15); 
+  padding: 16px; 
+  min-width: 300px; 
+  direction: rtl; 
+}
+
+/* Calendar header */
+.hci-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.hci-title { text-align: center; line-height: 1.4; }
+.hci-main { display: block; font-weight: 700; font-size: 16px; color: #006C35; }
+.hci-sub { display: block; font-size: 12px; color: #6b7280; }
+
+/* Navigation buttons */
+.hci-btn { background: none; border: none; font-size: 26px; cursor: pointer; color: #006C35; padding: 4px 10px; border-radius: 8px; transition: background 0.12s; }
+.hci-btn:hover { background: #e8f5e9; }
+
+/* Calendar grid */
 .hci-grid { width: 100%; border-collapse: collapse; text-align: center; }
-.hci-grid th { font-size: 11px; color: #999; padding: 4px 2px; font-weight: 600; }
-.hci-grid td { font-size: 13px; padding: 7px 3px; cursor: pointer; border-radius: 50%; color: #333; transition: background 0.12s; width: 36px; height: 36px; }
+.hci-grid th { font-size: 12px; color: #6b7280; padding: 6px 4px; font-weight: 600; }
+.hci-grid td { font-size: 14px; padding: 8px 4px; cursor: pointer; border-radius: 50%; color: #1f2937; transition: all 0.12s; width: 38px; height: 38px; }
 .hci-grid td:empty { cursor: default; }
-.hci-grid td:not(:empty):hover { background: #e8f0fe; }
-.hci-grid td.hci-today { background: #e8f0fe; color: #1967d2; font-weight: 600; }
-.hci-grid td.hci-selected { background: #1967d2 !important; color: #fff !important; font-weight: 700; }
+.hci-grid td:not(:empty):hover { background: #e8f5e9; color: #006C35; }
+.hci-grid td.hci-today { background: #dcfce7; color: #006C35; font-weight: 700; }
+.hci-grid td.hci-selected { background: #006C35 !important; color: #fff !important; font-weight: 700; }
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .hci-input { background: #1f2937; border-color: #374151; color: #f3f4f6; }
+  .hci-input:focus { border-color: #22c55e; }
+  .hci-select { background: #374151; border-color: #4b5563; color: #22c55e; }
+  .hci-select:focus { border-color: #22c55e; }
+  .hci-popup { background: #1f2937; border-color: #374151; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
+  .hci-main { color: #22c55e; }
+  .hci-sub { color: #9ca3af; }
+  .hci-btn { color: #22c55e; }
+  .hci-btn:hover { background: #374151; }
+  .hci-grid th { color: #9ca3af; }
+  .hci-grid td { color: #e5e7eb; }
+  .hci-grid td:not(:empty):hover { background: #374151; color: #22c55e; }
+  .hci-grid td.hci-today { background: #064e3b; color: #22c55e; }
+  .hci-grid td.hci-selected { background: #22c55e !important; color: #fff !important; }
+}
+
+/* Dark mode class override */
+html.dark .hci-input { background: #1f2937; border-color: #374151; color: #f3f4f6; }
+html.dark .hci-input:focus { border-color: #22c55e; }
+html.dark .hci-select { background: #374151; border-color: #4b5563; color: #22c55e; }
+html.dark .hci-select:focus { border-color: #22c55e; }
+html.dark .hci-popup { background: #1f2937; border-color: #374151; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
+html.dark .hci-main { color: #22c55e; }
+html.dark .hci-sub { color: #9ca3af; }
+html.dark .hci-btn { color: #22c55e; }
+html.dark .hci-btn:hover { background: #374151; }
+html.dark .hci-grid th { color: #9ca3af; }
+html.dark .hci-grid td { color: #e5e7eb; }
+html.dark .hci-grid td:not(:empty):hover { background: #374151; color: #22c55e; }
+html.dark .hci-grid td.hci-today { background: #064e3b; color: #22c55e; }
+html.dark .hci-grid td.hci-selected { background: #22c55e !important; color: #fff !important; }
 `;
   
   const style = document.createElement('style');
@@ -676,8 +763,10 @@ export function createCalendarInput(
     const p = gregStr.split('/').map(Number);
     const gregObj = { year: p[0], month: p[1], day: p[2], formatted: gregStr };
     
-    currentEvent = { hijri: hijriObj, greg: gregObj, formatted: hijriStr, displayMode };
-    opts.onDateSelect?.(currentEvent);
+    currentEvent = { hijri: hijriObj, greg: gregObj, displayMode };
+    if (currentEvent) {
+      opts.onDateSelect?.(currentEvent);
+    }
     closePopup();
   }
   

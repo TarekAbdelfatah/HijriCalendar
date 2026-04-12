@@ -35,27 +35,36 @@ export function renderWidget(containerId: string): void {
           <div id="input-calendar-demo" style="max-width:350px;"></div>
         </div>
 
-        ${codeBlock(`import { createCalendarInput } from './hijri-calendar.lib';
+        ${codeBlock(`<!-- HTML: حاوية فارغة للتقويم -->
+<div id="my-calendar" style="max-width:350px;"></div>
 
-// إنشاء حقل التقويم
-const calInput = createCalendarInput('my-container', {
-  bindValue: 'hijri',
+<!-- JS/TS: إنشاء حقل التقويم -->
+<script type="module">
+import { createCalendarInput } from './hijri-calendar.lib';
+
+const cal = createCalendarInput('my-calendar', {
+  bindValue: 'hijri',        // القيمة المخزنة: 'hijri' أو 'gregorian'
   placeholder: 'اختر التاريخ',
-  initialValue: '1447/10/15',
+  
+  // حدث اختيار التاريخ - يرجع كائنين
   onDateSelect: (event) => {
+    // event.hijri = { year: 1447, month: 10, day: 15, formatted: "1447/10/15" }
+    // event.greg  = { year: 2025, month: 4, day: 13, formatted: "2025/04/13" }
+    
     console.log('الهجري:', event.hijri.formatted);
     console.log('الميلادي:', event.greg.formatted);
   }
 });
 
-// الحصول على القيمة
-const currentValue = calInput.getValue();
+// الحصول على القيمة الحالية
+const value = cal.getValue();
 
 // تعيين قيمة برمجياً
-calInput.setValue('1448/01/01');
+cal.setValue('1448/01/01');
 
-// حذف المكون
-calInput.destroy();`, 'typescript')}
+// حذف المكون عند الحاجة
+cal.destroy();
+</script>`, 'typescript', 'مثال كامل')}
       </div>
     </div>
 

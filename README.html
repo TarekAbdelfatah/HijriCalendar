@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>README — CoreComponents</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="theme/src/core-theme.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #0f1219; --bg-card: #161b25; --bg-card2: #1c222e; --border: #2a3142; --border-light: #363d52; --text: #e8ecf2; --text-muted: #8b95a8; --primary: #3b82f6; --primary-glow: rgba(59, 130, 246, 0.3); }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Cairo', 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; min-height: 100vh; }
+    
+    /* Header */
+    .header { position: sticky; top: 0; z-index: 100; background: rgba(15, 18, 25, 0.9); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+    .header-brand { font-size: 1.1rem; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 0.5rem; }
+    .header-brand span { color: var(--primary); }
+    .header-links { display: flex; gap: 0.75rem; }
+    .header-link { padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; text-decoration: none; color: var(--text-muted); background: var(--bg-card); border: 1px solid var(--border); transition: all 0.2s; }
+    .header-link:hover, .header-link.active { color: var(--text); border-color: var(--primary); background: rgba(59, 130, 246, 0.1); }
+    .header-link.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .header-link.primary:hover { background: #2563eb; }
+    .back-link { text-decoration: none; color: var(--text-muted); font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; transition: color 0.2s; }
+    .back-link:hover { color: var(--primary); }
+
+    /* Main */
+    .container { max-width: 800px; margin: 0 auto; padding: 3rem 2rem; }
+    .page-title { font-size: 2.5rem; font-weight: 900; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 1rem; }
+    .page-title span { color: var(--primary); }
+    .page-subtitle { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 3rem; }
+
+    /* Sections */
+    .section { margin-bottom: 2.5rem; }
+    .section-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--primary); display: inline-block; }
+    .section-content { padding: 1.5rem; background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border); }
+
+    /* Steps */
+    .step { display: flex; gap: 1rem; margin-bottom: 1rem; align-items: flex-start; }
+    .step-num { width: 32px; height: 32px; background: var(--primary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+    .step-text { flex: 1; padding-top: 0.25rem; }
+
+    /* Cards */
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+    .card { background: var(--bg-card2); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; transition: all 0.2s; }
+    .card:hover { border-color: var(--primary); transform: translateY(-2px); }
+    .card-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .card-title { font-weight: 700; font-size: 1rem; margin-bottom: 0.25rem; }
+    .card-desc { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* Table */
+    .tbl { width: 100%; border-collapse: collapse; }
+    .tbl th, .tbl td { padding: 0.875rem 1rem; text-align: right; border-bottom: 1px solid var(--border); }
+    .tbl th { background: var(--bg-card2); font-weight: 600; color: var(--text-muted); font-size: 0.85rem; }
+    .tbl tr:hover td { background: var(--bg-card2); }
+    .badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    .badge-ready { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+    .badge-progress { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+    .badge-planned { background: rgba(107, 114, 128, 0.2); color: #9ca3af; }
+
+    /* Code */
+    .code-block { background: var(--bg-card2); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; font-family: 'Fira Code', monospace; font-size: 0.85rem; overflow-x: auto; direction: ltr; text-align: left; }
+    .code-block code { color: #e2e8f0; }
+
+    /* Folder tree */
+    .tree { font-family: 'Fira Code', monospace; font-size: 0.85rem; line-height: 2; }
+    .tree-folder { color: #fbbf24; }
+    .tree-file { color: #60a5fa; }
+    .tree-indent { padding-right: 1.5rem; }
+
+    /* Author */
+    .author { text-align: center; padding: 2rem; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1)); border-radius: 12px; border: 1px solid var(--border); margin-top: 3rem; }
+    .author-name { font-size: 1.25rem; font-weight: 700; }
+    .author-flag { font-size: 1.5rem; }
+
+    /* Footer */
+    .footer { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 4rem; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a href="index.html" class="back-link">← العودة للرئيسية</a>
+    <div class="header-links">
+      <a href="README.html" class="header-link active primary">README</a>
+      <a href="DEVELOPER_GUIDE.html" class="header-link">Developer Guide</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title"><span>📋</span> README</h1>
+    <p class="page-subtitle">دليل التشغيل السريع لمكتبة CoreComponents</p>
+
+    <!-- Quick Start -->
+    <div class="section">
+      <h2 class="section-title">🚀 التشغيل السريع</h2>
+      <div class="section-content">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text">افتح المجلد في <strong>VSCode</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text">افتح الطرفية: <code>Ctrl + ~</code></div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text">شغّل الأمر: <code>npm run dev</code></div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-text">افتح الرابط: <a href="http://localhost:4202" target="_blank" style="color: var(--primary);">http://localhost:4202</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Commands -->
+    <div class="section">
+      <h2 class="section-title">⌨️ الأوامر المتاحة</h2>
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>الأمر</th>
+            <th>الوصف</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code style="color: var(--primary);">npm run dev</code></td>
+            <td>تشغيل خادم التطوير</td>
+          </tr>
+          <tr>
+            <td><code style="color: var(--primary);">npm run build</code></td>
+            <td>بناء للمشروع</td>
+          </tr>
+          <tr>
+            <td><code style="color: var(--primary);">npm run preview</code></td>
+            <td>معاينة البناء</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Components -->
+    <div class="section">
+      <h2 class="section-title">🧩 المكونات</h2>
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-icon">📅</div>
+          <div class="card-title">Calendar</div>
+          <div class="card-desc">تقويم هجري/ميلادي</div>
+          <span class="badge badge-ready" style="margin-top: 0.5rem;">✅ جاهز</span>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔍</div>
+          <div class="card-title">Autocomplete</div>
+          <div class="card-desc">إكمال تلقائي ذكي</div>
+          <span class="badge badge-progress" style="margin-top: 0.5rem;">🔄 قيد التطوير</span>
+        </div>
+        <div class="card">
+          <div class="card-icon">🧙</div>
+          <div class="card-title">Wizard</div>
+          <div class="card-desc">معالج متعدد الخطوات</div>
+          <span class="badge badge-planned" style="margin-top: 0.5rem;">📋 مخطط</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Structure -->
+    <div class="section">
+      <h2 class="section-title">📁 هيكل الملفات</h2>
+      <div class="section-content">
+        <div class="tree">
+<div class="tree-folder">CoreComponents/</div>
+<div class="tree-indent">├── <span class="tree-file">index.html</span>            ← الصفحة الرئيسية</div>
+<div class="tree-indent">├── <span class="tree-file">vite.config.ts</span>        ← إعدادات Vite</div>
+<div class="tree-indent">├── <span class="tree-folder">calendar/</span>             ← مكون التقويم</div>
+<div class="tree-indent">│   ├── <span class="tree-folder">src/</span>                 ← الكود الأساسي</div>
+<div class="tree-indent">│   └── <span class="tree-folder">demo/</span>                ← التوثيق</div>
+<div class="tree-indent">├── <span class="tree-folder">theme/</span>                 ← نظام التصميم</div>
+<div class="tree-indent">├── <span class="tree-folder">autocomplete/</span>        ← (قيد التطوير)</div>
+<div class="tree-indent">└── <span class="tree-folder">wizard/</span>              ← (مخطط)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deploy -->
+    <div class="section">
+      <h2 class="section-title">🚀 النشر</h2>
+      <div class="section-content">
+        <div class="code-block">
+          <code># بناء للمشروع<br>npm run build<br><br># معاينة محلياً<br>npm run preview<br><br># أو انشر على Vercel / Netlify / GitHub Pages</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- Author -->
+    <div class="author">
+      <div class="author-name">فريق CoreComponents</div>
+      <div class="author-flag">🇸🇦</div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    CoreComponents v1.0.0 — Zero Dependencies — Pure TypeScript
+  </footer>
+</body>
+</html>

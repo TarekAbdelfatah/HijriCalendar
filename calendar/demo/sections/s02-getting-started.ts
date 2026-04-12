@@ -69,16 +69,13 @@ export function renderGettingStarted(containerId: string): void {
 # Then import normally:
 import { gregorianToHijri } from './lib/hijri-calendar.lib';
 const hijri = gregorianToHijri(2026, 4, 12);`,
-  angular: `# Angular 14+ project
+  angular: `# Angular - انسخ ملفي المكتبة
 src/app/hijri-calendar/
-│   ├── hijri-calendar.lib.ts    # Copy this
-│   └── hijri-calendar.directive.ts # Copy this
-└── app.component.ts`,
-  legacy: `# Angular 7-13 project
-src/app/directives/
-│   ├── hijri-calendar.lib.ts           # Copy this
-│   └── hijri-calender-ng7.directive.ts # Copy this
-└── app.module.ts`
+├── hijri-calendar.lib.ts      # المكتبة الأساسية
+└── hijri-calendar.directive.ts # الـ Directive
+# ثم استورد الـ directive في مكونك`,
+  legacy: `# Angular 7-13 - نفس الطريقة
+# انسخ الملفات واستخدم الـ directive`
 }, 'bash', 'Project Structure')}
       </div>
     </div>
@@ -106,7 +103,7 @@ import {
 # أو استيراد الكل
 import * as HijriLib from './lib/hijri-calendar.lib';
 const today = HijriLib.todayHijri();`,
-  angular: `// Angular 14+ — standalone
+  angular: `// Angular - استخدم الـ Directive
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HijriCalenderDirective } from './hijri-calendar.directive';
@@ -115,21 +112,17 @@ import { HijriCalenderDirective } from './hijri-calendar.directive';
   selector: 'app-root',
   standalone: true,
   imports: [FormsModule, HijriCalenderDirective],
-  template: \`<input type="text" hijri-calender [(ngModel)]="date" />\`,
+  template: \`
+    <input type="text" readonly hijri-calender
+           [(ngModel)]="date"
+           placeholder="اختر التاريخ" />
+  \`
 })
 export class AppComponent {
   date = '';
 }`,
-  legacy: `// Angular 7-13 — NgModule
-import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { HijriCalenderDirective } from './hijri-calender.directive';
-
-@NgModule({
-  declarations: [AppComponent, HijriCalenderDirective],
-  imports: [BrowserModule, FormsModule],
-})
-export class AppModule { }`
+  legacy: `// Angular 7-13 - نفس الطريقة
+// انسخ directive و use it in module`
 }, 'typescript', 'Import')}
 
         <!-- Clarification -->
@@ -160,50 +153,45 @@ export class AppModule { }`
 # Copy: packages/calendar/src/hijri-calendar.lib.ts
 import { gregorianToHijri } from './lib/hijri-calendar.lib';
 const hijri = gregorianToHijri(2026, 4, 12);`,
-  angular: `@Component({
+  angular: `// Angular - مثال بسيط بالـ Directive
+@Component({
   selector: 'app-root',
   standalone: true,
   imports: [FormsModule, HijriCalenderDirective],
-  template: \`<input hijri-calender [(ngModel)]="date" />\`,
+  template: \`
+    <input type="text" readonly hijri-calender
+           [(ngModel)]="visitDate"
+           placeholder="اختر التاريخ" />
+  \`
 })
 export class AppComponent {
-  date = '';
+  visitDate = '';
 }`,
-  legacy: `@Component({
-  selector: 'app-root',
-  template: \`<input hijri-calender [(ngModel)]="date" />\`
-})
-export class AppComponent {
-  date = '';
-}`
-}, 'typescript', 'Quick Example')}
+  legacy: `// Angular 7-13 - نفس الطريقة`
+}, 'typescript', 'مثال سريع')}
       </div>
     </div>
 
     <!-- Step 4: CSS import -->
     <div class="card">
-      <div class="card-hdr"><span class="card-hdr-title">الخطوة 4 — استيراد CSS (للتقويم المرئي فقط)</span></div>
+      <div class="card-hdr"><span class="card-hdr-title">الخطوة 4 — استيراد CSS (اختياري)</span></div>
       <div class="card-body">
         <p style="font-size:.88rem; color:var(--txt2); margin-bottom:.875rem; line-height:1.7;">
-          إذا أردت استخدام التقويم البصري أضف ملف CSS.
+          إذا أردت استخدام التقويم البصري في Vanilla، أضف ملف CSS.
         </p>
         ${codeBlock({
-  vanilla: `# In TypeScript / Vite
+  vanilla: `# Option 1: TypeScript / Vite
 import './lib/hijri-calendar.css';
 
-# Or in HTML
+# Option 2: HTML
 <link rel="stylesheet" href="./lib/hijri-calendar.css">`,
-  angular: `# Angular: add to angular.json styles array
+  angular: `# Angular: أضف في angular.json
 "styles": [
   "src/styles.css",
   "src/app/hijri-calendar/hijri-calendar.css"
 ]`,
-  legacy: `# Angular 7-13: add to angular.json
-"styles": [
-  "src/styles.css",
-  "src/app/hijri-calendar/hijri-calendar.css"
-]`
-}, 'html', 'CSS Import')}
+  legacy: `# Angular 7-13: نفس الطريقة`
+}, 'bash', 'CSS Import')}
       </div>
     </div>
 
