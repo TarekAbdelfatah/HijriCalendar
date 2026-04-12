@@ -6,43 +6,56 @@ A reference-grade monorepo suite for high-performance, standalone UI controls. B
 
 ## 🚀 Getting Started
 
-Since we use isolated environments for maximum compatibility, you need to install dependencies for each project:
-
-### 1. Install All Dependencies
+### 1. Install Dependencies
 ```powershell
-# In the root directory, this command runs install for all sub-projects
 npm run install:all
 ```
 
-### 2. Run the Projects
+### 2. Run Development Server
 ```powershell
 npm run start:vanilla
 ```
-Runs on [http://localhost:4202](http://localhost:4202)
+Opens at [http://localhost:4202](http://localhost:4202)
 
-## 🏛️ Project Structure
+### 3. Build for Production
+```powershell
+npm run build
+```
 
-| Component | Tech Stack | Status |
+---
+
+## 🏛️ Components
+
+| Component | Status | Description |
 | :--- | :--- | :--- |
-| **Calendar** | Vanilla JS / TypeScript | ✅ Ready |
-| **Autocomplete** | Vanilla JS / TypeScript | 🔄 In Progress |
-| **Wizard** | Vanilla JS / TypeScript | 📋 Planned |
+| **Calendar** | ✅ Ready | Hijri/Gregorian calendar with Umm al-Qura table |
+| **Autocomplete** | 🔄 In Progress | Smart search with virtual scroll |
+| **Wizard** | 📋 Planned | Multi-step form handler |
 
 ---
 
 ## 🏗️ Folder Structure
 
-*   **/calendar**: The core Hijri/Gregorian logic and demo.
-*   **/theme**: **Single Source of Truth** for CSS variables and design tokens.
-*   **/autocomplete**: (In Progress) Modern autocomplete control.
-*   **/wizard**: (Planned) Stepper/Wizard control.
+```
+CoreComponents/
+├── index.html              # Main portal page
+├── vite.config.ts          # Vite configuration
+├── package.json            # Root package.json
+├── calendar/               # Calendar component
+│   ├── src/               # Core library
+│   ├── demo/              # Documentation demo
+│   └── dist/              # Built files
+├── theme/                  # Design system
+│   └── src/core-theme.css
+├── autocomplete/           # (In Progress)
+└── wizard/                 # (Planned)
+```
 
 ---
 
-## 🎨 Centralized Design System
+## 🎨 Design System
 
-All components use the `@core-components/theme` package. Use the CSS variables defined in:
-`theme/src/core-theme.css`
+All components use CSS variables from `theme/src/core-theme.css`.
 
 Example:
 ```css
@@ -54,19 +67,25 @@ Example:
 
 ---
 
+## 📖 Documentation
+
+Each component has its own demo page:
+- **Calendar**: `calendar/demo/index.html`
+
+---
+
 ## 👨‍💻 Developer Guide
 
-For instructions on how to create new components or add new playground environments, please refer to the [**DEVELOPER_GUIDE.md**](./DEVELOPER_GUIDE.md).
-
-### Main Rules:
-1.  **Logic must be Pure TS/JS** (No frameworks in core logic).
-2.  **Styles must be Pure CSS** (Using theme variables).
-3.  **Single Source of Truth**: Always link to packages, never duplicate code.
+See [**DEVELOPER_GUIDE.md**](./DEVELOPER_GUIDE.md) for:
+- Creating new components
+- Adding demos
+- Following code standards
 
 ---
 
 ## 🇸🇦 Authors
+
 Developed by **CoreComponents Team**.
 
 ---
-*Created with passion for clean code and high performance.*
+*Built with passion for clean code and high performance.*
