@@ -239,7 +239,7 @@ const MIN_YEAR = 1276;
 const MAX_YEAR = 1500;
 
 function ummIdx(year: number, month: number): number {
-  return (12 * (year - 1)) + month - 15292;
+  return (12 * (year - 1)) + month - 15291;
 }
 
 // ─── Julian Day ↔ Gregorian ───────────────────────────────────────────────────
@@ -311,21 +311,27 @@ export function hijriToJD(year: number, month: number, day: number): number {
 }
 
 export function jdToHijri(jd: number): { year: number; month: number; day: number } {
-  const mcjdn = Math.floor(jd) - MCJDN_OFFSET;
+  // Use Math.round to handle the .5 offset in JD for solar days
+  const mcjdn = Math.round(jd - MCJDN_OFFSET);
   let index = 0;
   for (let i = 0; i < UMM_DATA.length; i++) {
     if (UMM_DATA[i] > mcjdn) break;
     index++;
   }
   const daysIntoMonth = mcjdn - UMM_DATA[index - 1];
-  const hYear = Math.floor((index - 1) / 12) + 1;
-  const hMonth = index - 12 * (hYear - 1);
-  const hDay = daysIntoMonth + 1;
+  
+  // The correct index recovery:
+  // index 1 corresponds to the first month in UMM_DATA (1300/1/1)
+  // Let's use the same base as hijriToJD
+  const totalMonths = index + 15291; // Adjusted offset
+  const hYear  = Math.floor((totalMonths - 1) / 12) + 1;
+  const hMonth = totalMonths - 12 * (hYear - 1);
+  const hDay   = daysIntoMonth + 1;
   return { year: hYear, month: hMonth, day: hDay };
 }
 
 export function dayOfWeekForJD(jd: number): number {
-  return Math.floor(jd + 1.5) % 7;
+  return Math.round(jd + 1.5) % 7;
 }
 
 export function hijriDayOfWeek(year: number, month: number, day: number): number {

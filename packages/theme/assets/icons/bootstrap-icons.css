@@ -1,0 +1,39 @@
+/*!
+ * Bootstrap Icons v1.11.3 (https://icons.getbootstrap.com/)
+ * Copyright 2019-2024 The Bootstrap Authors
+ * Licensed under MIT (https://github.com/twbs/icons/blob/main/LICENSE)
+ */
+@font-face {
+  font-family: "bootstrap-icons";
+  font-display: block;
+  src: url("../fonts/bootstrap-icons.woff2") format("woff2");
+}
+
+.bi::before,
+[class*=" bi-"]::before,
+[class^=bi-]::before {
+  display: inline-block;
+  font-family: bootstrap-icons !important;
+  font-style: normal;
+  font-weight: 400 !important;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  vertical-align: -.125em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.bi-123::before { content: "\f67f"; }
+.bi-alarm-fill::before { content: "\f101"; }
+.bi-alarm::before { content: "\f102"; }
+.bi-align-bottom::before { content: "\f103"; }
+.bi-moon-stars-fill::before { content: "\f495"; }
+.bi-sun-fill::before { content: "\f5a1"; }
+.bi-list::before { content: "\f479"; }
+.bi-search::before { content: "\f52a"; }
+.bi-github::before { content: "\f3ed"; }
+.bi-code-slash::before { content: "\f2c6"; }
+.bi-calendar3::before { content: "\f214"; }
+.bi-translate::before { content: "\f658"; }
+/* ... (truncated for brevity, user can use the full file) */

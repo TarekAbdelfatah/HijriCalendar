@@ -1,131 +1,163 @@
-@import "@core-components/theme";
+/* 
+  hijri-calendar.css
+  Premium Core UI for Hijri Calendar Package
+  Prefix: hcal-ui-
+*/
 
-/* ==========================================================================
-   Hijri / Gregorian Calendar Layout Styles
-   Component-specific styles using unique prefix 'cc-cal-'.
-   ========================================================================== */
-
-.cc-cal-wrapper {
-  display: flex !important;
-  align-items: center !important;
-  gap: var(--spacing-sm) !important;
-  width: 100% !important;
-  position: relative !important;
+:root {
+  --hcal-ui-bg: rgba(255, 255, 255, 0.9);
+  --hcal-ui-text: #111827;
+  --hcal-ui-primary: #059669;
+  --hcal-ui-primary-hover: #047857;
+  --hcal-ui-border: rgba(0, 0, 0, 0.08);
+  --hcal-ui-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+  --hcal-ui-blur: blur(10px);
+  --hcal-ui-today-bg: rgba(5, 150, 105, 0.08);
 }
 
-.cc-cal-drop {
-  padding: 0 var(--spacing-xs) !important;
-  height: 38px !important;
-  border: 1px solid var(--gray-300) !important;
-  border-radius: var(--radius-md) !important;
-  background: white !important;
-  color: var(--gray-900) !important;
-  font-weight: 700 !important;
-  min-width: 50px !important;
-  cursor: pointer !important;
-  transition: border-color var(--transition-fast) !important;
-  outline: none !important;
+[data-theme='dark'], .dark {
+  --hcal-ui-bg: rgba(17, 24, 39, 0.9);
+  --hcal-ui-text: #f9fafb;
+  --hcal-ui-primary: #10b981;
+  --hcal-ui-primary-hover: #34d399;
+  --hcal-ui-border: rgba(255, 255, 255, 0.1);
+  --hcal-ui-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.4);
 }
 
-.cc-cal-drop:focus {
-  border-color: var(--primary) !important;
+.hcal-ui-container {
+  background: var(--hcal-ui-bg);
+  backdrop-filter: var(--hcal-ui-blur);
+  -webkit-backdrop-filter: var(--hcal-ui-blur);
+  border: 1px solid var(--hcal-ui-border);
+  border-radius: 1.25rem;
+  padding: 1.25rem;
+  color: var(--hcal-ui-text);
+  box-shadow: var(--hcal-ui-shadow);
+  width: 300px;
+  max-width: 100%;
+  font-family: inherit;
+  user-select: none;
+  animation: hcal-ui-fade 0.25s ease-out;
 }
 
-.cc-cal-popup {
-  position: absolute !important;
-  z-index: 9999 !important;
-  background: white !important;
-  border: 1px solid var(--gray-200) !important;
-  border-radius: var(--radius-lg) !important;
-  box-shadow: var(--shadow-lg) !important;
-  padding: var(--spacing-md) !important;
-  min-width: 280px !important;
-  direction: rtl !important;
-  font-family: var(--font-arabic) !important;
+@keyframes hcal-ui-fade {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.cc-cal-head {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  margin-bottom: var(--spacing-sm) !important;
-  border-bottom: 1px solid var(--gray-100) !important;
-  padding-bottom: var(--spacing-sm) !important;
+.hcal-ui-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
 }
 
-.cc-cal-title {
-  text-align: center !important;
+.hcal-ui-title-group {
+  display: flex;
+  flex-direction: column;
 }
 
-.cc-cal-main {
-  display: block !important;
-  font-weight: 700 !important;
-  color: var(--gray-900) !important;
-  font-size: 15px !important;
+.hcal-ui-month-name {
+  font-weight: 700;
+  font-size: 1.1rem;
 }
 
-.cc-cal-sub {
-  font-size: 11px !important;
-  color: var(--gray-500) !important;
-  display: block !important;
+.hcal-ui-year-label {
+  font-size: 0.75rem;
+  color: var(--hcal-ui-primary);
+  opacity: 0.8;
 }
 
-.cc-cal-btn {
-  background: none !important;
-  border: none !important;
-  font-size: 24px !important;
-  cursor: pointer !important;
-  color: var(--gray-600) !important;
-  transition: all var(--transition-fast) !important;
-  padding: 0 8px !important;
-  border-radius: var(--radius-md) !important;
+.hcal-ui-controls {
+  display: flex;
+  gap: 0.4rem;
 }
 
-.cc-cal-btn:hover {
-  background: var(--gray-100) !important;
-  color: var(--primary) !important;
+.hcal-ui-nav-btn {
+  background: transparent;
+  border: 1px solid var(--hcal-ui-border);
+  border-radius: 0.6rem;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--hcal-ui-text);
+  transition: all 0.2s;
 }
 
-.cc-cal-grid {
-  width: 100% !important;
-  border-collapse: collapse !important;
+.hcal-ui-nav-btn:hover {
+  background: var(--hcal-ui-primary);
+  color: white;
+  border-color: var(--hcal-ui-primary);
 }
 
-.cc-cal-grid th {
-  padding: var(--spacing-xs) !important;
-  color: var(--gray-500) !important;
-  font-size: 12px !important;
-  font-weight: 600 !important;
-  text-align: center !important;
+.hcal-ui-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.2rem;
 }
 
-.cc-cal-grid td {
-  padding: 8px !important;
-  cursor: pointer !important;
-  border-radius: 50% !important;
-  transition: all var(--transition-fast) !important;
-  text-align: center !important;
-  font-size: 14px !important;
-  color: var(--gray-800) !important;
+.hcal-ui-weekday {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  opacity: 0.4;
+  padding: 0.4rem 0;
 }
 
-.cc-cal-grid td:hover:not(:empty) {
-  background: var(--primary-light) !important;
-  color: var(--primary) !important;
+.hcal-ui-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.6rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.15s;
 }
 
-/* Specific state classes scoped within cc-cal-grid */
-.cc-cal-grid td.today {
-  color: var(--primary) !important;
-  font-weight: bold !important;
-  background: var(--primary-light) !important;
+.hcal-ui-day:hover:not(.hcal-ui-empty) {
+  background: var(--hcal-ui-today-bg);
+  color: var(--hcal-ui-primary);
 }
 
-.cc-cal-grid td.selected {
-  background: var(--primary) !important;
+.hcal-ui-day.is-today {
+  background: var(--hcal-ui-today-bg);
+  color: var(--hcal-ui-primary);
+  font-weight: 800;
+  position: relative;
+}
+
+.hcal-ui-day.is-today::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--hcal-ui-primary);
+}
+
+.hcal-ui-day.is-selected {
+  background: var(--hcal-ui-primary) !important;
   color: white !important;
 }
 
-.cc-cal-grid td:empty {
-  cursor: default !important;
+.hcal-ui-empty { cursor: default; }
+
+.hcal-ui-footer {
+  margin-top: 1.25rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--hcal-ui-border);
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--hcal-ui-primary);
 }
+
+.hcal-ui-today-link { cursor: pointer; }
+.hcal-ui-today-link:hover { text-decoration: underline; }

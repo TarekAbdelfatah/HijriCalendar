@@ -1,0 +1,98 @@
+import { ThemeManager } from '../utils/theme';
+
+/**
+ * Sticky documentation header — shared design across all framework demos.
+ * Active framework button is determined by `activeFramework` param.
+ */
+export function renderHeader(containerId: string, activeFramework: 'vanilla' | 'angular-m' | 'angular-l' | 'nextjs' = 'vanilla'): void {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+
+  el.innerHTML = `
+    <div class="hdr-inner">
+
+      <!-- Brand -->
+      <a href="../../../index.html" class="hdr-brand" title="الصفحة الرئيسية">
+        <span class="hdr-logo">🛡️ <em>Core</em>Components</span>
+        <span class="hdr-sep">/</span>
+        <span class="hdr-comp">التقويم الهجري</span>
+      </a>
+
+      <!-- Framework switcher -->
+      <nav class="fw-switcher" aria-label="تبديل إطار العمل">
+        <a href="./index.html"
+           class="fw-btn ${activeFramework === 'vanilla' ? 'active' : ''}"
+           title="Vanilla JS / TypeScript">
+          ⚡ Vanilla
+        </a>
+        <a href="http://localhost:4200"
+           target="_blank" rel="noopener"
+           class="fw-btn ${activeFramework === 'angular-m' ? 'active' : ''}"
+           title="Angular 18+">
+          🅰️ Angular 18
+        </a>
+        <a href="http://localhost:4201"
+           target="_blank" rel="noopener"
+           class="fw-btn ${activeFramework === 'angular-l' ? 'active' : ''}"
+           title="Legacy Angular">
+          🔶 Legacy
+        </a>
+        <button class="fw-btn coming" disabled title="قريباً">
+          🔷 Next.js
+        </button>
+      </nav>
+
+      <!-- Actions -->
+      <div class="hdr-actions">
+        <button class="icon-btn" id="theme-toggle-btn" title="تبديل الوضع الليلي / النهاري" aria-label="theme toggle">
+          <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               style="display:none">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+
+        <a href="https://github.com/CoreComponents" target="_blank" rel="noopener"
+           class="icon-btn" title="GitHub" aria-label="GitHub">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+          </svg>
+        </a>
+      </div>
+
+    </div>
+  `;
+
+  // Theme toggle
+  const toggleBtn = document.getElementById('theme-toggle-btn');
+  const iconSun  = document.getElementById('icon-sun');
+  const iconMoon = document.getElementById('icon-moon');
+
+  function syncIcons(): void {
+    const dark = ThemeManager.isDark();
+    if (iconSun)  iconSun.style.display  = dark ? 'none'  : '';
+    if (iconMoon) iconMoon.style.display = dark ? ''      : 'none';
+  }
+
+  syncIcons();
+  toggleBtn?.addEventListener('click', () => {
+    ThemeManager.toggle();
+    syncIcons();
+  });
+
+  // Keep icons in sync if theme changes from elsewhere
+  document.addEventListener('themeChanged', syncIcons);
+}
