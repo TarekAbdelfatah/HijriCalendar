@@ -18,30 +18,6 @@ export function renderHeader(containerId: string, activeFramework: 'vanilla' | '
         <span class="hdr-comp">التقويم الهجري</span>
       </a>
 
-      <!-- Framework switcher -->
-      <nav class="fw-switcher" aria-label="تبديل إطار العمل">
-        <a href="./index.html"
-           class="fw-btn ${activeFramework === 'vanilla' ? 'active' : ''}"
-           title="Vanilla JS / TypeScript">
-          ⚡ Vanilla
-        </a>
-        <a href="http://localhost:4200"
-           target="_blank" rel="noopener"
-           class="fw-btn ${activeFramework === 'angular-m' ? 'active' : ''}"
-           title="Angular 18+">
-          🅰️ Angular 18
-        </a>
-        <a href="http://localhost:4201"
-           target="_blank" rel="noopener"
-           class="fw-btn ${activeFramework === 'angular-l' ? 'active' : ''}"
-           title="Legacy Angular">
-          🔶 Legacy
-        </a>
-        <button class="fw-btn coming" disabled title="قريباً">
-          🔷 Next.js
-        </button>
-      </nav>
-
       <!-- Actions -->
       <div class="hdr-actions">
         <button class="icon-btn" id="theme-toggle-btn" title="تبديل الوضع الليلي / النهاري" aria-label="theme toggle">

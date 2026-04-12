@@ -110,7 +110,8 @@ export function renderEventHandling(containerId: string): void {
           color:var(--ok);
         "></div>
 
-        ${codeBlock(`// ربط callback التقويم بحقول نموذج
+        ${codeBlock({
+  vanilla: `// ربط callback التقويم بحقول نموذج
 buildCalendar(container, year, month, {
   onDateSelect: ({ hijri, greg, dayName, jd }) => {
     document.getElementById('form-hijri').value = hijri.formatted;
@@ -118,7 +119,38 @@ buildCalendar(container, year, month, {
     document.getElementById('form-day').value   = dayName;
     document.getElementById('form-jd').value    = String(jd);
   }
-});`, 'typescript', 'ربط بالنموذج')}
+});`,
+  angular: `// في Angular - استخدم الـ signal
+@Component({ ... })
+export class HijriCalendarComponent {
+  selectedDate = signal<{ hijri: any; greg: any; dayName: string; jd: number } | null>(null);
+
+  onSelect(day: number) {
+    const greg = hijriToGregorian(this.year, this.month, day);
+    const dayName = DAY_NAMES_AR[hijriDayOfWeek(this.year, this.month, day)];
+    const jd = hijriToJD(this.year, this.month, day);
+    this.selectedDate.set({
+      hijri: { year: this.year, month: this.month, day },
+      greg, dayName, jd
+    });
+  }
+}`,
+  legacy: `// في Angular 7-13 - استخدم property
+@Component({ ... })
+export class HijriCalendarComponent {
+  selectedDate: { hijri: any; greg: any; dayName: string; jd: number } | null = null;
+
+  onSelect(day: number) {
+    const greg = hijriToGregorian(this.year, this.month, day);
+    const dayName = DAY_NAMES_AR[hijriDayOfWeek(this.year, this.month, day)];
+    const jd = hijriToJD(this.year, this.month, day);
+    this.selectedDate = {
+      hijri: { year: this.year, month: this.month, day },
+      greg, dayName, jd
+    };
+  }
+}`
+}, 'typescript', 'ربط بالنموذج')}
       </div>
     </div>
 
@@ -126,7 +158,8 @@ buildCalendar(container, year, month, {
     <div class="card">
       <div class="card-hdr"><span class="card-hdr-title">الكود الكامل — بناء تقويم مع callback</span></div>
       <div class="card-body">
-        ${codeBlock(`import {
+        ${codeBlock({
+  vanilla: `import {
   hijriDaysInMonth, hijriToJD, dayOfWeekForJD,
   hijriToGregorian, hijriDayOfWeek,
   todayHijri,
@@ -136,10 +169,10 @@ buildCalendar(container, year, month, {
 
 // ── نوع بيانات الحدث ──────────────────────────────────────────
 interface DateSelectEvent {
-  hijri:   HijriDateObj;          // { year, month, day, formatted }
-  greg:    GregDateObj;           // { year, month, day, formatted }
-  dayName: string;                // "الأحد" | "الاثنين" | ...
-  jd:      number;                // Julian Day Number
+  hijri:   HijriDateObj;
+  greg:    GregDateObj;
+  dayName: string;
+  jd:      number;
 }
 
 // ── خيارات بناء التقويم ───────────────────────────────────────
@@ -156,7 +189,7 @@ function buildCalendar(
 ): void {
   const daysCount = hijriDaysInMonth(year, month);
   const firstJD   = hijriToJD(year, month, 1);
-  const startDay  = dayOfWeekForJD(firstJD); // 0 = الأحد
+  const startDay  = dayOfWeekForJD(firstJD);
   const todayH    = todayHijri();
 
   container.innerHTML = \`
@@ -167,6 +200,132 @@ function buildCalendar(
       </div>
       <div class="hcal-ui-grid">
         \${DAY_NAMES_SHORT_AR.map(d => \`<div class="hcal-ui-weekday">\${d}</div>\`).join('')}
+        \${Array(startDay).fill('<div class="hcal-ui-day hcal-ui-empty"></div>').join('')}
+        \${Array.from({ length: daysCount }, (_, i) => {
+          const day = i + 1;
+          const isToday = todayH.year === year && todayH.month === month && todayH.day === day;
+          return \`<div class="hcal-ui-day\${isToday ? ' is-today' : ''}" data-day="\${day}">\${day}</div>\`;
+        }).join('')}
+      </div>
+    </div>
+  \`;
+
+  container.querySelectorAll('.hcal-ui-day[data-day]').forEach(cell => {
+    cell.addEventListener('click', () => {
+      const day = parseInt((cell as HTMLElement).dataset['day']!);
+      const hijri = { year, month, day, formatted: \`\${year}/\${String(month).padStart(2,'0')}/\${String(day).padStart(2,'0')}\` };
+      const greg = hijriToGregorian(year, month, day);
+      const dayIdx = hijriDayOfWeek(year, month, day);
+      const dayName = DAY_NAMES_AR[dayIdx];
+      const jd = hijriToJD(year, month, day);
+      options.onDateSelect?.({ hijri, greg, dayName, jd });
+    });
+  });
+}
+
+// استخدام:
+const container = document.getElementById('cal')!;
+buildCalendar(container, 1447, 10, {
+  onDateSelect: (e) => console.log('اختير:', e.hijri.formatted, '→', e.greg.formatted)
+});`,
+  angular: `import { Component, signal } from '@angular/core';
+import {
+  hijriDaysInMonth, hijriToJD, dayOfWeekForJD,
+  hijriToGregorian, hijriDayOfWeek, todayHijri,
+  HIJRI_MONTH_NAMES, DAY_NAMES_SHORT_AR, DAY_NAMES_AR,
+} from './hijri-calendar.lib';
+
+@Component({
+  selector: 'app-hijri-calendar',
+  standalone: true,
+  template: \`
+    <div class="hcal-ui-container">
+      <div class="hcal-ui-header">
+        <span class="hcal-ui-month-name">{{ monthName }}</span>
+        <span class="hcal-ui-year-label">{{ year }} هـ</span>
+      </div>
+      <div class="hcal-ui-grid">
+        @for (day of weekdays; track day) {
+          <div class="hcal-ui-weekday">{{ day }}</div>
+        }
+        @for (empty of emptyDays; track $index) {
+          <div class="hcal-ui-day hcal-ui-empty"></div>
+        }
+        @for (day of days; track day) {
+          <div class="hcal-ui-day" [class.is-today]="isToday(day)" (click)="onSelect(day)">{{ day }}</div>
+        }
+      </div>
+    </div>
+  \`
+})
+export class HijriCalendarComponent {
+  year = 1447; month = 10;
+  selectedDay = signal<number | null>(null);
+
+  get monthName() { return HIJRI_MONTH_NAMES[this.month - 1]; }
+  get weekdays() { return DAY_NAMES_SHORT_AR; }
+  get days() { return Array.from({ length: hijriDaysInMonth(this.year, this.month) }, (_, i) => i + 1); }
+  get emptyDays() { return Array(dayOfWeekForJD(hijriToJD(this.year, this.month, 1))); }
+
+  isToday(day: number): boolean {
+    const t = todayHijri();
+    return t.year === this.year && t.month === this.month && t.day === day;
+  }
+
+  onSelect(day: number) {
+    this.selectedDay.set(day);
+    const greg = hijriToGregorian(this.year, this.month, day);
+    const dayName = DAY_NAMES_AR[hijriDayOfWeek(this.year, this.month, day)];
+    console.log('onDateSelect:', { hijri: { year: this.year, month: this.month, day }, greg, dayName });
+  }
+}`,
+  legacy: `import { Component } from '@angular/core';
+import {
+  hijriDaysInMonth, hijriToJD, dayOfWeekForJD,
+  hijriToGregorian, hijriDayOfWeek, todayHijri,
+  HIJRI_MONTH_NAMES, DAY_NAMES_SHORT_AR, DAY_NAMES_AR,
+} from './hijri-calendar.lib';
+
+@Component({
+  selector: 'app-hijri-calendar',
+  template: \`
+    <div class="hcal-ui-container">
+      <div class="hcal-ui-header">
+        <span class="hcal-ui-month-name">{{ monthName }}</span>
+        <span class="hcal-ui-year-label">{{ year }} هـ</span>
+      </div>
+      <div class="hcal-ui-grid">
+        <div *ngFor="let day of weekdays" class="hcal-ui-weekday">{{ day }}</div>
+        <div *ngFor="let empty of emptyDays" class="hcal-ui-day hcal-ui-empty"></div>
+        <div *ngFor="let day of days" class="hcal-ui-day" [class.is-today]="isToday(day)" (click)="onSelect(day)">{{ day }}</div>
+      </div>
+    </div>
+  \`
+})
+export class HijriCalendarComponent {
+  year = 1447; month = 10;
+  selectedDay: number | null = null;
+
+  get monthName() { return HIJRI_MONTH_NAMES[this.month - 1]; }
+  get weekdays() { return DAY_NAMES_SHORT_AR; }
+  get days() { return Array.from({ length: hijriDaysInMonth(this.year, this.month) }, (_, i) => i + 1); }
+  get emptyDays() { return Array(dayOfWeekForJD(hijriToJD(this.year, this.month, 1))); }
+
+  isToday(day: number): boolean {
+    const t = todayHijri();
+    return t.year === this.year && t.month === this.month && t.day === day;
+  }
+
+  onSelect(day: number) {
+    this.selectedDay = day;
+    const greg = hijriToGregorian(this.year, this.month, day);
+    const dayName = DAY_NAMES_AR[hijriDayOfWeek(this.year, this.month, day)];
+    console.log('onDateSelect:', { hijri: { year: this.year, month: this.month, day }, greg, dayName });
+  }
+}`
+}, 'typescript', 'الكود الكامل')}
+      </div>
+    </div>
         \${Array(startDay).fill('<div class="hcal-ui-day hcal-ui-empty"></div>').join('')}
         \${Array.from({ length: daysCount }, (_, i) => {
           const day     = i + 1;
@@ -216,7 +375,7 @@ buildCalendar(container, today.year, today.month, {
       body: JSON.stringify({ hijri, greg }),
     });
   }
-});`, 'typescript', 'buildCalendar() مع onDateSelect')}
+}, 'typescript', 'buildCalendar with onDateSelect')}
       </div>
     </div>
 
@@ -228,18 +387,43 @@ buildCalendar(container, today.year, today.month, {
 
           <div style="padding:.875rem 1rem; background:var(--surf2); border:1px solid var(--bdr); border-radius:10px;">
             <div style="font-weight:700; font-size:.85rem; margin-bottom:.4rem; color:var(--txt);">1. تصفية جدول بيانات</div>
-            ${codeBlock(`onDateSelect: ({ greg }) => {
+            ${codeBlock({
+  vanilla: `onDateSelect: ({ greg }) => {
   const rows = document.querySelectorAll('tr[data-date]');
   rows.forEach(row => {
     const match = row.dataset.date === greg.formatted;
     (row as HTMLElement).style.display = match ? '' : 'none';
   });
-}`, 'typescript')}
+}`,
+  angular: `// Angular - filtering with signals
+@Component({ ... })
+export class DataTableComponent {
+  filteredDate = signal<string>('');
+
+  onDateSelect({ greg }: DateSelectEvent) {
+    this.filteredDate.set(greg.formatted);
+  }
+
+  get filteredRows() {
+    return this.rows.filter(r => r.date === this.filteredDate());
+  }
+}`,
+  legacy: `// Angular 7-13 - filtering
+@Component({ ... })
+export class DataTableComponent {
+  filteredDate: string = '';
+
+  onDateSelect({ greg }: DateSelectEvent) {
+    this.filteredDate = greg.formatted;
+  }
+}`
+})}
           </div>
 
           <div style="padding:.875rem 1rem; background:var(--surf2); border:1px solid var(--bdr); border-radius:10px;">
             <div style="font-weight:700; font-size:.85rem; margin-bottom:.4rem; color:var(--txt);">2. حساب الفرق بين تاريخين</div>
-            ${codeBlock(`let firstDate: { jd: number } | null = null;
+            ${codeBlock({
+  vanilla: `let firstDate: { jd: number } | null = null;
 
 onDateSelect: ({ hijri, jd }) => {
   if (!firstDate) {
@@ -250,7 +434,32 @@ onDateSelect: ({ hijri, jd }) => {
     showMessage(\`الفرق: \${diff} يوماً\`);
     firstDate = null;
   }
-}`, 'typescript')}
+}`,
+  angular: `// Angular - use signals
+firstDate = signal<number | null>(null);
+
+onSelect({ hijri, jd }: DateSelectEvent) {
+  if (!this.firstDate()) {
+    this.firstDate.set(jd);
+  } else {
+    const diff = Math.abs(jd - this.firstDate()!);
+    showMessage(\`الفرق: \${diff} يوماً\`);
+    this.firstDate.set(null);
+  }
+}`,
+  legacy: `// Angular 7-13
+firstDate: number | null = null;
+
+onSelect({ hijri, jd }: DateSelectEvent) {
+  if (!this.firstDate) {
+    this.firstDate = jd;
+  } else {
+    const diff = Math.abs(jd - this.firstDate);
+    showMessage(\`الفرق: \${diff} يوماً\`);
+    this.firstDate = null;
+  }
+}`
+})}
           </div>
 
 

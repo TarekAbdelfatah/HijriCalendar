@@ -62,22 +62,22 @@ export function renderWidget(containerId: string): void {
       </div>
     </div>
 
-    ${codeBlock(`import {
+    ${codeBlock({
+  vanilla: `import {
   hijriDaysInMonth, hijriToJD, dayOfWeekForJD,
   todayHijri, hijriToGregorian,
   HIJRI_MONTH_NAMES, DAY_NAMES_SHORT_AR,
-} from '@core-components/calendar';
+} from './hijri-calendar.lib';
 
-/** Build a calendar month grid */
-function buildCalendar(year: number, month: number, onSelect?: (d: number) => void) {
+/** بناء تقويم شهر هجري - Vanilla JS */
+function buildCalendar(year: number, month: number, onSelect?: (day: number) => void) {
   const daysCount  = hijriDaysInMonth(year, month);
   const firstJD    = hijriToJD(year, month, 1);
-  const startDay   = dayOfWeekForJD(firstJD); // 0=Sun
+  const startDay   = dayOfWeekForJD(firstJD);
 
   const wrapper = document.createElement('div');
   wrapper.className = 'hcal-ui-container';
 
-  // Header
   wrapper.innerHTML = \`
     <div class="hcal-ui-header">
       <span class="hcal-ui-month-name">\${HIJRI_MONTH_NAMES[month - 1]}</span>
@@ -97,7 +97,101 @@ function buildCalendar(year: number, month: number, onSelect?: (d: number) => vo
   });
 
   return wrapper;
-}`, 'typescript', 'Calendar Widget — بناء تقويم بالمكتبة')}
+}
+
+// استخدام:
+const cal = buildCalendar(1447, 10, (day) => {
+  console.log('اختير اليوم:', day);
+});
+document.body.appendChild(cal);`,
+  angular: `import { Component, signal } from '@angular/core';
+import {
+  hijriDaysInMonth, hijriToJD, dayOfWeekForJD,
+  todayHijri, hijriToGregorian,
+  HIJRI_MONTH_NAMES, DAY_NAMES_SHORT_AR,
+} from './hijri-calendar.lib';
+
+@Component({
+  selector: 'app-hijri-calendar',
+  standalone: true,
+  template: \`
+    <div class="hcal-ui-container">
+      <div class="hcal-ui-header">
+        <span class="hcal-ui-month-name">{{ monthName }}</span>
+        <span class="hcal-ui-year-label">{{ year }} هـ</span>
+      </div>
+      <div class="hcal-ui-grid">
+        @for (day of weekdays; track day) {
+          <div class="hcal-ui-weekday">{{ day }}</div>
+        }
+        @for (empty of emptyDays; track $index) {
+          <div class="hcal-ui-day hcal-ui-empty"></div>
+        }
+        @for (day of days; track day) {
+          <div class="hcal-ui-day" (click)="selectDay(day)">{{ day }}</div>
+        }
+      </div>
+    </div>
+  \`
+})
+export class HijriCalendarComponent {
+  today = todayHijri();
+  year = this.today.year;
+  month = this.today.month;
+  selectedDay = signal<number | null>(null);
+
+  get monthName() { return HIJRI_MONTH_NAMES[this.month - 1]; }
+  get weekdays() { return DAY_NAMES_SHORT_AR; }
+  get days() { return Array.from({ length: hijriDaysInMonth(this.year, this.month) }, (_, i) => i + 1); }
+  get emptyDays() { return Array(dayOfWeekForJD(hijriToJD(this.year, this.month, 1))); }
+
+  selectDay(day: number) {
+    this.selectedDay.set(day);
+    const greg = hijriToGregorian(this.year, this.month, day);
+    console.log('اختير:', day, '→', greg.formatted);
+  }
+}`,
+  legacy: `import { Component } from '@angular/core';
+import {
+  hijriDaysInMonth, hijriToJD, dayOfWeekForJD,
+  todayHijri, hijriToGregorian,
+  HIJRI_MONTH_NAMES, DAY_NAMES_SHORT_AR,
+} from './hijri-calendar.lib';
+
+@Component({
+  selector: 'app-hijri-calendar',
+  template: \`
+    <div class="hcal-ui-container">
+      <div class="hcal-ui-header">
+        <span class="hcal-ui-month-name">{{ monthName }}</span>
+        <span class="hcal-ui-year-label">{{ year }} هـ</span>
+      </div>
+      <div class="hcal-ui-grid">
+        <div *ngFor="let day of weekdays" class="hcal-ui-weekday">{{ day }}</div>
+        <div *ngFor="let empty of emptyDays" class="hcal-ui-day hcal-ui-empty"></div>
+        <div *ngFor="let day of days" class="hcal-ui-day" (click)="selectDay(day)">{{ day }}</div>
+      </div>
+    </div>
+  \`
+})
+export class HijriCalendarComponent {
+  today = todayHijri();
+  year = this.today.year;
+  month = this.today.month;
+  selectedDay: number | null = null;
+
+  get monthName() { return HIJRI_MONTH_NAMES[this.month - 1]; }
+  get weekdays() { return DAY_NAMES_SHORT_AR; }
+  get days() { return Array.from({ length: hijriDaysInMonth(this.year, this.month) }, (_, i) => i + 1); }
+  get emptyDays() { return Array(dayOfWeekForJD(hijriToJD(this.year, this.month, 1))); }
+
+  selectDay(day: number) {
+    this.selectedDay = day;
+    const greg = hijriToGregorian(this.year, this.month, day);
+    console.log('اختير:', day, '→', greg.formatted);
+  }
+}`
+}, 'typescript', 'Calendar Widget — بناء تقويم بالمكتبة')}
 
   </div>
 </section>`;

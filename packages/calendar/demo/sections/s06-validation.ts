@@ -71,7 +71,8 @@ export function renderValidation(containerId: string): void {
           </div>
         </div>
 
-        ${codeBlock(`import { hijriIsValid, hijriDaysInMonth } from '@core-components/calendar';
+        ${codeBlock({
+  vanilla: `import { hijriIsValid, hijriDaysInMonth } from './hijri-calendar.lib';
 
 // صحيح
 hijriIsValid(1447, 1, 1);    // true
@@ -86,7 +87,16 @@ hijriIsValid(1501, 1, 1);    // false — خارج نطاق الجدول (1276-1
 hijriIsValid(1447, 9, 31);   // false — عدد أيام رمضان أقل من 31
 
 // معرفة عدد أيام شهر معين
-const days = hijriDaysInMonth(1447, 9); // 29 (رمضان 1447)`, 'typescript', 'hijriIsValid()')}
+const days = hijriDaysInMonth(1447, 9); // 29 (رمضان 1447)`,
+  angular: `import { hijriIsValid, hijriDaysInMonth } from './hijri-calendar.lib';
+
+const isValid = hijriIsValid(1447, 1, 1);    // true
+const days = hijriDaysInMonth(1447, 9);     // 29`,
+  legacy: `import { hijriIsValid, hijriDaysInMonth } from './hijri-calendar.lib';
+
+const isValid = hijriIsValid(1447, 1, 1);    // true
+const days = hijriDaysInMonth(1447, 9);      // 29`
+}, 'typescript', 'hijriIsValid()')}
       </div>
     </div>
 

@@ -69,14 +69,24 @@ export function renderDayOfWeek(containerId: string): void {
           </div>
         </div>
 
-        ${codeBlock(`import { hijriDayOfWeek, DAY_NAMES_AR, DAY_NAMES_SHORT_AR } from '@core-components/calendar';
+        ${codeBlock({
+  vanilla: `import { hijriDayOfWeek, DAY_NAMES_AR, DAY_NAMES_SHORT_AR } from './hijri-calendar.lib';
 
 const idx  = hijriDayOfWeek(1447, 10, 14); // 0 (الأحد)
 const name = DAY_NAMES_AR[idx];            // "الأحد"
 const abbr = DAY_NAMES_SHORT_AR[idx];      // "أحد"
 
 // مصفوفة الأسماء الكاملة (0=أحد ... 6=سبت)
-// DAY_NAMES_AR = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت']`, 'typescript', 'hijriDayOfWeek()')}
+// DAY_NAMES_AR = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت']`,
+  angular: `import { hijriDayOfWeek, DAY_NAMES_AR, DAY_NAMES_SHORT_AR } from './hijri-calendar.lib';
+
+const idx  = hijriDayOfWeek(1447, 10, 14); // 0
+const name = DAY_NAMES_AR[idx];            // "الأحد"`,
+  legacy: `import { hijriDayOfWeek, DAY_NAMES_AR, DAY_NAMES_SHORT_AR } from './hijri-calendar.lib';
+
+const idx  = hijriDayOfWeek(1447, 10, 14); // 0
+const name = DAY_NAMES_AR[idx];            // "الأحد"`
+}, 'typescript', 'hijriDayOfWeek()')}
       </div>
     </div>
 
@@ -108,13 +118,23 @@ const abbr = DAY_NAMES_SHORT_AR[idx];      // "أحد"
           </div>
         </div>
 
-        ${codeBlock(`import { gregDayOfWeek, DAY_NAMES_AR } from '@core-components/calendar';
+        ${codeBlock({
+  vanilla: `import { gregDayOfWeek, DAY_NAMES_AR } from './hijri-calendar.lib';
 
 const idx  = gregDayOfWeek(2026, 4, 12); // 0 (الأحد)
 const name = DAY_NAMES_AR[idx];          // "الأحد"
 
 // التحقق من يوم الجمعة
-const isFriday = gregDayOfWeek(2026, 4, 17) === 5; // true`, 'typescript', 'gregDayOfWeek()')}
+const isFriday = gregDayOfWeek(2026, 4, 17) === 5; // true`,
+  angular: `import { gregDayOfWeek, DAY_NAMES_AR } from './hijri-calendar.lib';
+
+const idx  = gregDayOfWeek(2026, 4, 12); // 0
+const name = DAY_NAMES_AR[idx];          // "الأحد"`,
+  legacy: `import { gregDayOfWeek, DAY_NAMES_AR } from './hijri-calendar.lib';
+
+const idx  = gregDayOfWeek(2026, 4, 12); // 0
+const name = DAY_NAMES_AR[idx];          // "الأحد"`
+}, 'typescript', 'gregDayOfWeek()')}
       </div>
     </div>
 

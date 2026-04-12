@@ -63,50 +63,5 @@ export function renderHero(containerId: string): void {
     <span class="badge badge-type">GregDateObj</span>
   </div>
 
-<!-- Taste of code -->
-  ${codeBlock({
-  vanilla: `# Option 1: Pure HTML + JS (no build)
-# Copy: packages/calendar/src/hijri-calendar.lib.js
-<script src="hijri-calendar.lib.js"></script>
-<script>
-  var hijri = HijriCalendar.gregorianToHijri(2026, 4, 12);
-  console.log(hijri.formatted); // "1447/10/14"
-</script>
-
-# Option 2: With Vite/Build
-# Copy: packages/calendar/src/hijri-calendar.lib.ts
-import { todayHijri, gregorianToHijri } from './lib/hijri-calendar.lib';
-
-const today = todayHijri();
-const hijri = gregorianToHijri(2026, 4, 12);`,
-  angular: `// Angular 14+ Component
-import { Component } from '@angular/core';
-import { HijriCalenderDirective } from './hijri-calendar.directive';
-
-@Component({
-  selector: 'app-date',
-  standalone: true,
-  imports: [HijriCalenderDirective],
-  template: \`
-    <input hijri-calender [(ngModel)]="date" />
-    <p>Today: {{ date }}</p>
-  \`
-})
-export class DateComponent {
-  date = '';
-}`,
-legacy: `// Angular 7-13 Component
-import { Component } from '@angular/core';
-import { HijriCalenderDirective } from './hijri-calendar.directive';
-
-@Component({
-  selector: 'app-date',
-  template: '<input hijri-calender [(ngModel)]="date" />'
-})
-export class DateComponent {
-  date = '';
-}`
-}, 'typescript', 'Quick Example')}
-
 </section>`;
 }

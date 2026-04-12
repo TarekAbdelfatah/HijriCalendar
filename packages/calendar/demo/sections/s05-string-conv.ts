@@ -66,7 +66,8 @@ export function renderStringConversion(containerId: string): void {
           </div>
         </div>
 
-        ${codeBlock(`import { hijriToGregorianStr } from '@core-components/calendar';
+        ${codeBlock({
+  vanilla: `import { hijriToGregorianStr } from './hijri-calendar.lib';
 
 // تقبل صيغ متعددة
 hijriToGregorianStr('1447/10/14');  // "2026/04/12"
@@ -74,7 +75,18 @@ hijriToGregorianStr('14/10/1447');  // "2026/04/12"
 hijriToGregorianStr('1447-10-14'); // "2026/04/12"
 
 // تاريخ غير صالح
-hijriToGregorianStr('1600/01/01'); // "Invalid date"`, 'typescript', 'hijriToGregorianStr()')}
+hijriToGregorianStr('1600/01/01'); // "Invalid date"`,
+  angular: `import { hijriToGregorianStr } from './hijri-calendar.lib';
+
+// تقبل صيغ متعددة
+this.result = hijriToGregorianStr('1447/10/14');  // "2026/04/12"
+this.result = hijriToGregorianStr('1447-10-14'); // "2026/04/12"`,
+  legacy: `import { hijriToGregorianStr } from './hijri-calendar.lib';
+
+// تقبل صيغ متعددة
+this.result = hijriToGregorianStr('1447/10/14');  // "2026/04/12"
+this.result = hijriToGregorianStr('1447-10-14'); // "2026/04/12"`
+}, 'typescript', 'hijriToGregorianStr()')}
       </div>
     </div>
 
@@ -105,14 +117,24 @@ hijriToGregorianStr('1600/01/01'); // "Invalid date"`, 'typescript', 'hijriToGre
           </div>
         </div>
 
-        ${codeBlock(`import { gregorianToHijriStr } from '@core-components/calendar';
+        ${codeBlock({
+  vanilla: `import { gregorianToHijriStr } from './hijri-calendar.lib';
 
 gregorianToHijriStr('2026/04/12');  // "1447/10/14"
 gregorianToHijriStr('12/04/2026');  // "1447/10/14"
 gregorianToHijriStr('2026-04-12'); // "1447/10/14"
 
 // خارج النطاق
-gregorianToHijriStr('1800/01/01'); // "Invalid date"`, 'typescript', 'gregorianToHijriStr()')}
+gregorianToHijriStr('1800/01/01'); // "Invalid date"`,
+  angular: `import { gregorianToHijriStr } from './hijri-calendar.lib';
+
+this.result = gregorianToHijriStr('2026/04/12');  // "1447/10/14"
+this.result = gregorianToHijriStr('12/04/2026');  // "1447/10/14"`,
+  legacy: `import { gregorianToHijriStr } from './hijri-calendar.lib';
+
+this.result = gregorianToHijriStr('2026/04/12');  // "1447/10/14"
+this.result = gregorianToHijriStr('12/04/2026');  // "1447/10/14"`
+}, 'typescript', 'gregorianToHijriStr()')}
       </div>
     </div>
 

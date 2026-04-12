@@ -56,7 +56,7 @@ export function renderGettingStarted(containerId: string): void {
 
         ${codeBlock({
   vanilla: `# Option 1: Pure HTML + JS (no build)
-# Copy: packages/calendar/src/hijri-calendar.lib.js
+# Copy: packages/calendar/dist/hijri-calendar.lib.js
 # Use directly in HTML:
 <script src="hijri-calendar.lib.js"></script>
 <script>
@@ -131,6 +131,15 @@ import { HijriCalenderDirective } from './hijri-calender.directive';
 })
 export class AppModule { }`
 }, 'typescript', 'Import')}
+
+        <!-- Clarification -->
+        <div style="margin-top:1rem; padding:.875rem 1rem; background:var(--surf2); border:1px solid var(--bdr); border-radius:8px;">
+          <p style="font-size:.85rem; color:var(--txt2); margin-bottom:.5rem; font-weight:600;">💡 طريقتان للاستخدام في Angular:</p>
+          <ul style="font-size:.82rem; color:var(--txt2); margin:0; padding-right:1.25rem; line-height:1.7;">
+            <li><strong>استيراد الدالة مباشرة:</strong> <code style="color:var(--accent);">import { todayHijri } from './hijri-calendar.lib'</code> — استخدمها داخل الـ component للتعامل مع التواريخ برمجياً.</li>
+            <li><strong>استيراد الـ Directive:</strong> <code style="color:var(--accent);">import { HijriCalenderDirective } from './hijri-calendar.directive'</code> — استخدمها في الـ template للحصول على input التقويم.</li>
+          </ul>
+        </div>
       </div>
     </div>
 

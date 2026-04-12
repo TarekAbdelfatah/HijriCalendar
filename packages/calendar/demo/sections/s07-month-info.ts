@@ -61,7 +61,8 @@ export function renderMonthInfo(containerId: string): void {
           <div id="hdim-dots" style="display:flex; flex-wrap:wrap; gap:4px; margin-top:.875rem;"></div>
         </div>
 
-        ${codeBlock(`import { hijriDaysInMonth, HIJRI_MONTH_NAMES } from '@core-components/calendar';
+        ${codeBlock({
+  vanilla: `import { hijriDaysInMonth, HIJRI_MONTH_NAMES } from './hijri-calendar.lib';
 
 // عدد أيام شهر رمضان 1447
 const days = hijriDaysInMonth(1447, 9);
@@ -72,7 +73,16 @@ const name = HIJRI_MONTH_NAMES[8]; // "رمضان"
 
 // فائدة: توليد أيام شهر للتقويم
 const daysArr = Array.from({ length: days }, (_, i) => i + 1);
-// [1, 2, 3, ..., 29]`, 'typescript', 'hijriDaysInMonth()')}
+// [1, 2, 3, ..., 29]`,
+  angular: `import { hijriDaysInMonth, HIJRI_MONTH_NAMES } from './hijri-calendar.lib';
+
+const days = hijriDaysInMonth(1447, 9); // 29
+const name = HIJRI_MONTH_NAMES[8];      // "رمضان"`,
+  legacy: `import { hijriDaysInMonth, HIJRI_MONTH_NAMES } from './hijri-calendar.lib';
+
+const days = hijriDaysInMonth(1447, 9); // 29
+const name = HIJRI_MONTH_NAMES[8];      // "رمضان"`
+}, 'typescript', 'hijriDaysInMonth()')}
       </div>
     </div>
 
@@ -100,7 +110,8 @@ const daysArr = Array.from({ length: days }, (_, i) => i + 1);
           </div>
         </div>
 
-        ${codeBlock(`import { gregDaysInMonth, gregIsLeapYear } from '@core-components/calendar';
+        ${codeBlock({
+  vanilla: `import { gregDaysInMonth, gregIsLeapYear } from './hijri-calendar.lib';
 
 // أيام فبراير 2024 (سنة كبيسة)
 gregDaysInMonth(2024, 2); // 29
@@ -113,7 +124,16 @@ gregDaysInMonth(2026, 1); // 31
 
 // التحقق من السنة الكبيسة
 gregIsLeapYear(2024); // true
-gregIsLeapYear(2025); // false`, 'typescript', 'gregDaysInMonth()')}
+gregIsLeapYear(2025); // false`,
+  angular: `import { gregDaysInMonth, gregIsLeapYear } from './hijri-calendar.lib';
+
+const febDays = gregDaysInMonth(2024, 2); // 29
+const isLeap = gregIsLeapYear(2024);      // true`,
+  legacy: `import { gregDaysInMonth, gregIsLeapYear } from './hijri-calendar.lib';
+
+const febDays = gregDaysInMonth(2024, 2); // 29
+const isLeap = gregIsLeapYear(2024);       // true`
+}, 'typescript', 'gregDaysInMonth()')}
       </div>
     </div>
 
