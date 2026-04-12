@@ -440,37 +440,43 @@ function injectCalendarStyles(): void {
   styleInjected = true;
   
   const css = `
+/* Calendar Input - RTL aware with logical properties */
 .hci-wrapper { 
   display: inline-flex; 
   align-items: center; 
   gap: 0; 
   font-family: 'Cairo','Segoe UI', Tahoma, sans-serif; 
   vertical-align: middle;
+  direction: rtl;
 }
 .hci-wrapper * { box-sizing: border-box; }
+
+/* Input field - left side in RTL */
 .hci-input { 
   flex: 1; 
   min-width: 120px; 
-  padding: 10px 14px; 
+  padding: 8px 14px; 
   border: 1px solid #d0d7de; 
-  border-radius: 8px 0 0 8px; 
+  border-inline-start: none; 
+  border-radius: 0 8px 8px 0; 
   font-size: 14px; 
   outline: none; 
   transition: border-color 0.15s;
   background: #fff;
   color: #1a1a2e;
+  text-align: start;
+  height: 38px;
 }
 .hci-input:focus { border-color: #006C35; }
-.hci-input::placeholder { color: #9ca3af; }
 
-/* Dropdown styling - attached to input */
+/* Dropdown - same height as input */
 .hci-select { 
   flex-shrink: 0; 
   padding: 0 10px; 
-  height: 42px; 
+  height: 38px; 
   border: 1px solid #d0d7de; 
-  border-left: none; 
-  border-radius: 0 8px 8px 0; 
+  border-inline-end: none; 
+  border-radius: 8px 0 0 8px; 
   background: #f0f4f1; 
   font-size: 14px; 
   font-weight: 700; 
@@ -480,7 +486,7 @@ function injectCalendarStyles(): void {
 }
 .hci-select:focus { outline: none; border-color: #006C35; }
 
-/* Calendar popup */
+/* Calendar popup - same width as input+dropdown */
 .hci-popup { 
   position: absolute; 
   z-index: 9999; 
@@ -489,12 +495,12 @@ function injectCalendarStyles(): void {
   border-radius: 14px; 
   box-shadow: 0 8px 32px rgba(0, 106, 53, 0.15); 
   padding: 16px; 
-  min-width: 300px; 
-  direction: rtl; 
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* Calendar header */
-.hci-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.hci-head { display: flex; align-items: center; justify-content: space-between; margin-block-end: 12px; }
 .hci-title { text-align: center; line-height: 1.4; }
 .hci-main { display: block; font-weight: 700; font-size: 16px; color: #006C35; }
 .hci-sub { display: block; font-size: 12px; color: #6b7280; }
@@ -742,8 +748,29 @@ export function createCalendarInput(
   function positionPopup(): void {
     if (!popup) return;
     const r = wrapper.getBoundingClientRect();
-    popup.style.top = (r.bottom + window.scrollY + 4) + 'px';
-    popup.style.right = (document.documentElement.clientWidth - r.right - window.scrollX) + 'px';
+    const wrapperWidth = r.width;
+    const popupHeight = 320;
+    const spaceBelow = window.innerHeight - r.bottom;
+    const spaceAbove = r.top;
+    
+    // Set width to match wrapper
+    popup.style.width = wrapperWidth + 'px';
+    
+    // Position horizontally - directly under input
+    popup.style.left = r.left + 'px';
+    popup.style.right = 'auto';
+    
+    // Position vertically - below or above based on space
+    if (spaceBelow >= popupHeight + 10) {
+      popup.style.top = (r.bottom + window.scrollY + 4) + 'px';
+      popup.style.bottom = 'auto';
+    } else if (spaceAbove >= popupHeight + 10) {
+      popup.style.bottom = (window.innerHeight - r.top + window.scrollY + 4) + 'px';
+      popup.style.top = 'auto';
+    } else {
+      popup.style.top = (r.bottom + window.scrollY + 4) + 'px';
+      popup.style.bottom = 'auto';
+    }
   }
   
   function pickDay(day: number): void {
