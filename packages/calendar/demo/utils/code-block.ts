@@ -11,27 +11,39 @@ function highlight(raw: string): string {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
 
-  // Order matters — apply from most specific to least
-  // 1. Comments (single-line)
-  s = s.replace(/(\/\/[^\n]*)/g, '<span class="cmt">$1</span>');
-  // 2. Strings (single + double + template — simple, non-nested)
-  s = s.replace(/(`[^`]*`|'[^'\n]*'|"[^"\n]*")/g, '<span class="str">$1</span>');
-  // 3. Keywords
-  s = s.replace(/\b(import|export|from|const|let|var|function|return|if|else|true|false|null|undefined|new|type|interface|class|extends|async|await|for|of|in)\b/g, '<span class="kw">$1</span>');
-  // 4. Numbers
-  s = s.replace(/\b(\d+(?:\.\d+)?)\b/g, '<span class="num">$1</span>');
-  // 5. Types (PascalCase identifiers)
-  s = s.replace(/\b([A-Z][A-Za-z0-9]+)\b/g, '<span class="tp">$1</span>');
-  // 6. Known lib functions
+  // Known lib functions
   const fns = [
     'todayHijri','todayGregorian','hijriToGregorian','gregorianToHijri',
     'hijriToGregorianStr','gregorianToHijriStr','hijriIsValid',
     'hijriDaysInMonth','gregDaysInMonth','hijriDayOfWeek','gregDayOfWeek',
     'gregIsLeapYear','hijriToJD','jdToHijri','dayOfWeekForJD','pad2',
   ].join('|');
-  s = s.replace(new RegExp(`\\b(${fns})\\b`, 'g'), '<span class="fn">$1</span>');
 
-  return s;
+  // Define tokens with their regexes in a single array
+  // We use this to build a combined regex so tokens are processed in a single pass.
+  const tokenSpecs = [
+    { name: 'cmt', rex: /\/\/[^\n]*/ },
+    { name: 'str', rex: /`[^`]*`|'[^'\n]*'|"[^"\n]*"/ },
+    { name: 'kw',  rex: /\b(import|export|from|const|let|var|function|return|if|else|true|false|null|undefined|new|type|interface|class|extends|async|await|for|of|in)\b/ },
+    { name: 'fn',  rex: new RegExp(`\\b(${fns})\\b`) },
+    { name: 'tp',  rex: /\b[A-Z][A-Za-z0-9]+\b/ },
+    { name: 'num', rex: /\b\d+(?:\.\d+)?\b/ },
+  ];
+
+  // Build the combined regex: (rex1)|(rex2)|...
+  const combinedRex = new RegExp(tokenSpecs.map(t => `(${t.rex.source})`).join('|'), 'g');
+
+  // Replace tokens with span-wrapped versions
+  return s.replace(combinedRex, (match, ...args) => {
+    // args contains the captured groups. The first index that is not undefined (up to tokenSpecs.length)
+    // tells us which token pattern matched.
+    for (let i = 0; i < tokenSpecs.length; i++) {
+      if (args[i] !== undefined) {
+        return `<span class="${tokenSpecs[i].name}">${match}</span>`;
+      }
+    }
+    return match;
+  });
 }
 
 /** Build a single code block */

@@ -253,20 +253,7 @@ onDateSelect: ({ hijri, jd }) => {
 }`, 'typescript')}
           </div>
 
-          <div style="padding:.875rem 1rem; background:var(--surf2); border:1px solid var(--bdr); border-radius:10px;">
-            <div style="font-weight:700; font-size:.85rem; margin-bottom:.4rem; color:var(--txt);">3. Angular — إصدار حدث للمكوّن الأب</div>
-            ${codeBlock(`// في المكوّن
-@Output() dateSelected = new EventEmitter<DateSelectEvent>();
 
-onDateSelect = (event: DateSelectEvent) => {
-  this.dateSelected.emit(event);
-};
-
-// في القالب
-buildCalendar(this.calRef.nativeElement, y, m, {
-  onDateSelect: this.onDateSelect,
-});`, 'typescript')}
-          </div>
 
         </div>
       </div>

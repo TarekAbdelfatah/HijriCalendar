@@ -119,31 +119,7 @@ import './lib/hijri-calendar.css';
       </div>
     </div>
 
-    <!-- Step 5: Angular -->
-    <div class="card">
-      <div class="card-hdr"><span class="card-hdr-title">الاستخدام في Angular</span></div>
-      <div class="card-body">
-        ${codeBlock(`// 1. انسخ الملفين إلى  src/app/lib/
-//    src/app/lib/hijri-calendar.lib.ts
-//    src/app/lib/hijri-calendar.css  (إذا احتجت التقويم المرئي)
 
-// 2. أنشئ service للمكتبة
-// src/app/core/date.service.ts
-import { Injectable } from '@angular/core';
-import {
-  gregorianToHijri,
-  hijriToGregorian,
-  HijriDateObj,
-} from '../lib/hijri-calendar.lib';
-
-@Injectable({ providedIn: 'root' })
-export class DateService {
-  toHijri(year: number, month: number, day: number): HijriDateObj {
-    return gregorianToHijri(year, month, day);
-  }
-}`, 'typescript', 'Angular Service')}
-      </div>
-    </div>
 
     <!-- TypeScript types -->
     <div class="card">

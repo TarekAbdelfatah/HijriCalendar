@@ -24,18 +24,6 @@ export function renderHero(containerId: string): void {
       باستخدام جدول بيانات أم القرى الرسمي. تعمل في أي بيئة بدون أي اعتمادية خارجية.
     </p>
 
-    <!-- Install bar -->
-    <div class="install-bar">
-      <span class="install-prompt">$</span>
-      <span class="install-cmd" id="install-cmd-text">npm install @core-components/calendar</span>
-      <button class="install-copy" onclick="(function(btn){
-        navigator.clipboard.writeText(document.getElementById('install-cmd-text').textContent).then(()=>{
-          var orig=btn.textContent; btn.textContent='✓ تم'; btn.classList.add('copied');
-          setTimeout(()=>{ btn.textContent=orig; btn.classList.remove('copied'); },2000);
-        });
-      })(this)">نسخ</button>
-    </div>
-
     <!-- Stats -->
     <div class="hero-stats">
       <div>
@@ -79,7 +67,7 @@ export function renderHero(containerId: string): void {
   ${codeBlock(`import {
   todayHijri, gregorianToHijri, hijriToGregorian,
   hijriIsValid, HIJRI_MONTH_NAMES
-} from '@core-components/calendar';
+} from './lib/hijri-calendar.lib';
 
 // اليوم الحالي بالهجري
 const today = todayHijri();
