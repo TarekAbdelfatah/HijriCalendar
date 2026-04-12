@@ -56,6 +56,12 @@ const API: ApiEntry[] = [
   { kind:'type', name:'DateFormat', signature:"'yyyy/mm/dd' | 'dd/mm/yyyy' | …", returns:'type', description:'صيغ التاريخ المدعومة' },
   { kind:'type', name:'DateRange', signature:'{ hijri: string; greg: string }', returns:'interface', description:'نطاق تاريخ' },
   { kind:'type', name:'ValidationResult', signature:'{ isValid: boolean; errorMessage? }', returns:'interface', description:'نتيجة التحقق من تاريخ' },
+
+  // UI Components
+  { kind:'type', name:'CalendarInputOptions', signature:'{ bindValue, placeholder, ... }', returns:'interface', description:'خيارات حقل التقويم' },
+  { kind:'type', name:'CalendarInputEvent', signature:'{ hijri, greg, formatted, displayMode }', returns:'interface', description:'حدث اختيار التاريخ' },
+  { kind:'type', name:'HijriGregDate', signature:'{ hijri: HijriDateObj; greg: GregDateObj }', returns:'interface', description:'كائن يحتوي التاريخين' },
+  { kind:'fn', name:'createCalendarInput', signature:'(container, options): {...}', returns:'object', description:'إنشاء حقل تقويم تفاعلي' },
 ];
 
 const BADGE: Record<string, string> = {

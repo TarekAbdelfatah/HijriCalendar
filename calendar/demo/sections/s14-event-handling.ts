@@ -326,56 +326,8 @@ export class HijriCalendarComponent {
 }, 'typescript', 'الكود الكامل')}
       </div>
     </div>
-        \${Array(startDay).fill('<div class="hcal-ui-day hcal-ui-empty"></div>').join('')}
-        \${Array.from({ length: daysCount }, (_, i) => {
-          const day     = i + 1;
-          const isToday = todayH.year === year && todayH.month === month && todayH.day === day;
-          return \`<div class="hcal-ui-day\${isToday ? ' is-today' : ''}" data-day="\${day}">\${day}</div>\`;
-        }).join('')}
-      </div>
-    </div>
-  \`;
 
-  // ── ربط الحدث بكل خلية يوم ────────────────────────────────
-  container.querySelectorAll('.hcal-ui-day[data-day]').forEach(cell => {
-    cell.addEventListener('click', () => {
-      const day = parseInt((cell as HTMLElement).dataset.day!);
-
-      const hijri = { year, month, day, formatted: \`\${year}/\${String(month).padStart(2,'0')}/\${String(day).padStart(2,'0')}\` };
-      const greg  = hijriToGregorian(year, month, day);
-      const jd    = hijriToJD(year, month, day);
-      const dayName = DAY_NAMES_AR[hijriDayOfWeek(year, month, day)];
-
-      // إزالة التحديد السابق وتحديد الخلية الجديدة
-      container.querySelectorAll('.is-selected').forEach(c => c.classList.remove('is-selected'));
-      cell.classList.add('is-selected');
-
-      // استدعاء الـ callback مع بيانات التاريخ الكاملة
-      options.onDateSelect?.({ hijri, greg, dayName, jd });
-    });
-  });
-}
-
-// ── الاستخدام ─────────────────────────────────────────────────
-const container = document.getElementById('my-calendar')!;
-const today = todayHijri();
-
-buildCalendar(container, today.year, today.month, {
-  onDateSelect: ({ hijri, greg, dayName, jd }) => {
-    console.log('تم اختيار:', hijri.formatted, '→', greg.formatted);
-    console.log('اليوم:', dayName, '| JD:', jd);
-
-    // تحديث النموذج
-    document.getElementById('input-hijri')!.textContent = hijri.formatted;
-    document.getElementById('input-greg')!.textContent  = greg.formatted;
-
-    // إرسال طلب API
-    fetch('/api/save-date', {
-      method: 'POST',
-      body: JSON.stringify({ hijri, greg }),
-    });
-  }
-}, 'typescript', 'buildCalendar with onDateSelect')}
+    <!-- ─── Patterns ─── -->
       </div>
     </div>
 

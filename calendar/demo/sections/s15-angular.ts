@@ -140,6 +140,91 @@ export class AppComponent {
       </div>
     </div>
 
+    <!-- dateChange Event -->
+    <div class="card">
+      <div class="card-hdr"><span class="card-hdr-title">dateChange — حدث اختيار التاريخ</span></div>
+      <div class="card-body">
+        <p style="font-size:.88rem; color:var(--txt2); margin-bottom:1rem; line-height:1.7;">
+          حدث <code>(dateChange)</code> يُرجع <strong>كائنين</strong>: التاريخ الهجري والميلادي معاً. مفيد عند الحاجة لكلا القيمتين.
+        </p>
+        ${codeBlock(`<!-- Template: bindValue + dateChange -->
+<input type="text" readonly hijri-calender
+       [bindValue]="'hijri'"
+       [(ngModel)]="visitDate"
+       (dateChange)="onDateSelected($event)"
+       placeholder="اختر التاريخ" />
+
+<!-- أو لجعل ngModel يستقبل الميلادي: -->
+<input type="text" readonly hijri-calender
+       [bindValue]="'gregorian'"
+       [(ngModel)]="gregDate"
+       (dateChange)="onDateSelected($event)" />
+
+<!-- $event = { hijri: {year,month,day,formatted}, greg: {...} } -->`, 'html', 'Template')}
+        ${codeBlock(`// Component
+import { HijriGregDate } from './hijri-calendar/hijri-calendar.directive';
+
+export class MyComponent {
+  visitDate = '';
+  
+  onDateSelected(event: HijriGregDate) {
+    console.log('الهجري:', event.hijri.formatted);  // "1447/10/15"
+    console.log('الميلادي:', event.greg.formatted);  // "2025/04/13"
+    console.log('السنة الهجرية:', event.hijri.year);   // 1447
+    console.log('الشهر الميلادي:', event.greg.month);  // 4
+  }
+}`, 'typescript', 'Component')}
+      </div>
+    </div>
+
+    <!-- Full example with both values -->
+    <div class="card">
+      <div class="card-hdr"><span class="card-hdr-title">مثال كامل: استخدام القيمتين</span></div>
+      <div class="card-body">
+        ${codeBlock(`import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HijriCalenderDirective, HijriGregDate } from './hijri-calendar/hijri-calendar.directive';
+
+@Component({
+  selector: 'app-booking',
+  standalone: true,
+  imports: [FormsModule, HijriCalenderDirective],
+  template: \`
+    <div class="booking-form">
+      <h3>حجز موعد</h3>
+      
+      <label>اختر التاريخ:</label>
+      <input type="text" readonly hijri-calender
+             [(ngModel)]="hijriDate"
+             [bindValue]="'hijri'"
+             (dateChange)="onDateChange($event)"
+             placeholder="انقر للاختيار" />
+      
+      <div class="date-info" *ngIf="selectedDate">
+        <p>📅 التاريخ الهجري: <strong>{{ selectedDate.hijri.formatted }}</strong></p>
+        <p>📆 التاريخ الميلادي: <strong>{{ selectedDate.greg.formatted }}</strong></p>
+        <p>🏷️ اليوم: {{ getDayName(selectedDate.hijri.dayOfWeek) }}</p>
+      </div>
+    </div>
+  \`
+})
+export class BookingComponent {
+  hijriDate = '';
+  selectedDate: HijriGregDate | null = null;
+  
+  onDateChange(event: HijriGregDate) {
+    this.selectedDate = event;
+    // يمكنك استخدام event.hijri و event.greg في أي مكان
+  }
+  
+  getDayName(dayIndex: number): string {
+    const days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+    return days[dayIndex] || '';
+  }
+}`, 'typescript', 'مثال كامل')}
+      </div>
+    </div>
+
   </div>
 </section>`;
 }

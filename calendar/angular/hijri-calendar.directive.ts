@@ -2,7 +2,11 @@
  * HijriCalenderDirective — Angular 14+ Standalone
  *
  * Selector : [hijri-calender]
- * Inputs   : bindValue = 'hijri' | 'gregorian'   (default: 'hijri')
+ * Inputs   : 
+ *   - bindValue = 'hijri' | 'gregorian' (default: 'hijri')
+ *   - format    = 'yyyy/mm/dd' | 'dd/mm/yyyy' | ... (default: 'yyyy/mm/dd')
+ * Outputs   : 
+ *   - dateChange = EventEmitter<{ hijri: HijriDateObj; greg: GregDateObj }>
  *
  * ─── Setup ───────────────────────────────────────────────────────────────
  * 1. Copy this file + hijri-calendar.lib.ts into your project.
@@ -24,23 +28,36 @@
  *   <!-- ngModel receives Gregorian value -->
  *   <input type="text" readonly hijri-calender [bindValue]="'gregorian'"
  *          [(ngModel)]="model.gregDate" name="d" />
+ *
+ *   <!-- With event that returns BOTH hijri and gregorian dates -->
+ *   <input type="text" readonly hijri-calender 
+ *          [bindValue]="'hijri'"
+ *          (dateChange)="onDateSelected($event)" />
+ *
+ *   <!-- Example: onDateSelected receives { hijri: {...}, greg: {...} } -->
  */
 
 import {
-  AfterViewInit, Directive, ElementRef, HostListener,
-  Input, OnDestroy, Renderer2, forwardRef,
+  AfterViewInit, Directive, ElementRef, EventEmitter, HostListener,
+  Input, OnDestroy, Output, Renderer2, forwardRef,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
 import {
   todayHijri, todayGregorian,
   hijriToGregorianStr, gregorianToHijriStr,
+  hijriToGregorian, gregorianToHijri,
   hijriDaysInMonth, hijriDayOfWeek,
   gregDaysInMonth, gregDayOfWeek,
   HIJRI_MONTH_NAMES, GREG_MONTH_NAMES_AR,
   DAY_NAMES_SHORT_AR,
-  pad2,
+  pad2, HijriDateObj, GregDateObj,
 } from './hijri-calendar.lib';
+
+export interface HijriGregDate {
+  hijri: HijriDateObj;
+  greg: GregDateObj;
+}
 
 @Directive({
   selector: '[hijri-calender]',
@@ -59,6 +76,19 @@ export class HijriCalenderDirective implements ControlValueAccessor, AfterViewIn
    * 'gregorian' → model gets "2024/07/19"
    */
   @Input() bindValue: 'hijri' | 'gregorian' = 'hijri';
+
+  /**
+   * Date format for display (default: 'yyyy/mm/dd')
+   */
+  @Input() format: string = 'yyyy/mm/dd';
+
+  /**
+   * Emits when date is selected with BOTH hijri and gregorian objects.
+   * Usage: (dateChange)="onDateSelected($event)"
+   * $event = { hijri: { year, month, day, formatted }, 
+   *             greg: { year, month, day, formatted } }
+   */
+  @Output() dateChange = new EventEmitter<HijriGregDate>();
 
   private hijriStr   = '';
   private gregStr    = '';
@@ -271,16 +301,36 @@ export class HijriCalenderDirective implements ControlValueAccessor, AfterViewIn
   private pickDay(day: number): void {
     const ds = `${this.viewYear}/${pad2(this.viewMonth)}/${pad2(day)}`;
 
+    let hijriObj: HijriDateObj;
+    let gregObj: GregDateObj;
+
     if (this.displayMode === 'hijri') {
       this.hijriStr = ds;
       try { this.gregStr = hijriToGregorianStr(ds); } catch { this.gregStr = ''; }
+      hijriObj = { year: this.viewYear, month: this.viewMonth, day, formatted: ds };
+      if (this.gregStr) {
+        const p = this.gregStr.split('/').map(Number);
+        gregObj = { year: p[0], month: p[1], day: p[2], formatted: this.gregStr };
+      } else {
+        const converted = hijriToGregorian(this.viewYear, this.viewMonth, day);
+        gregObj = converted;
+      }
     } else {
       this.gregStr  = ds;
       try { this.hijriStr = gregorianToHijriStr(ds); } catch { this.hijriStr = ''; }
+      gregObj = { year: this.viewYear, month: this.viewMonth, day, formatted: ds };
+      if (this.hijriStr) {
+        const p = this.hijriStr.split('/').map(Number);
+        hijriObj = { year: p[0], month: p[1], day: p[2], formatted: this.hijriStr };
+      } else {
+        const converted = gregorianToHijri(this.viewYear, this.viewMonth, day);
+        hijriObj = converted;
+      }
     }
 
     this.updateDisplay();
     this.onChange(this.bindValue === 'hijri' ? this.hijriStr : this.gregStr);
+    this.dateChange.emit({ hijri: hijriObj, greg: gregObj });
     this.closePopup();
   }
 

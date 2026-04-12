@@ -402,3 +402,316 @@ function normaliseDateString(dateStr: string): string | null {
 export type DateFormat = 'yyyy/mm/dd' | 'dd/mm/yyyy' | 'yyyy-mm-dd' | 'dd-mm-yyyy' | 'yyyy-mm' | 'yyyy';
 export interface DateRange { hijri: string; greg: string }
 export interface ValidationResult { isValid: boolean; errorMessage?: string; }
+
+// ─── UI Component: Input with Calendar ───────────────────────────────────────
+
+export interface CalendarInputOptions {
+  /** Which value is bound to the input: 'hijri' (default) or 'gregorian' */
+  bindValue?: 'hijri' | 'gregorian';
+  /** Placeholder text */
+  placeholder?: string;
+  /** CSS class for the input */
+  cssClass?: string;
+  /** Initial value (string in yyyy/mm/dd format) */
+  initialValue?: string;
+  /** Callback when date is selected - returns both hijri and gregorian */
+  onDateSelect?: (event: CalendarInputEvent) => void;
+  /** Callback when input value changes */
+  onChange?: (value: string) => void;
+  /** Callback when dropdown (ه/م) changes */
+  onDisplayModeChange?: (mode: 'hijri' | 'gregorian') => void;
+  /** Custom CSS to inject */
+  customCss?: string;
+}
+
+export interface CalendarInputEvent {
+  hijri: HijriDateObj;
+  greg: GregDateObj;
+  formatted: string;
+  displayMode: 'hijri' | 'gregorian';
+}
+
+let styleInjected = false;
+
+function injectCalendarStyles(): void {
+  if (styleInjected) return;
+  styleInjected = true;
+  
+  const css = `
+.hci-wrapper { display: flex; align-items: center; gap: 6px; width: 100%; font-family: 'Cairo','Segoe UI', Tahoma, sans-serif; }
+.hci-wrapper * { box-sizing: border-box; }
+.hci-input { flex: 1; min-width: 0; padding: 8px 12px; border: 1px solid #d0d7de; border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.15s; }
+.hci-input:focus { border-color: #1967d2; }
+.hci-select { flex-shrink: 0; padding: 0 8px; height: 36px; border: 1px solid #d0d7de; border-radius: 8px; background: #f8fafc; font-size: 13px; font-weight: 700; cursor: pointer; min-width: 44px; }
+.hci-select:focus { border-color: #1967d2; outline: none; }
+.hci-popup { position: absolute; z-index: 9999; background: #fff; border: 1px solid #d0d7de; border-radius: 12px; box-shadow: 0 8px 28px rgba(0,0,0,0.15); padding: 14px; min-width: 290px; direction: rtl; }
+.hci-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.hci-title { text-align: center; line-height: 1.3; }
+.hci-main { display: block; font-weight: 700; font-size: 15px; color: #1a1a2e; }
+.hci-sub { display: block; font-size: 11px; color: #999; }
+.hci-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #555; padding: 2px 8px; border-radius: 6px; transition: background 0.12s; }
+.hci-btn:hover { background: #f0f4f8; }
+.hci-grid { width: 100%; border-collapse: collapse; text-align: center; }
+.hci-grid th { font-size: 11px; color: #999; padding: 4px 2px; font-weight: 600; }
+.hci-grid td { font-size: 13px; padding: 7px 3px; cursor: pointer; border-radius: 50%; color: #333; transition: background 0.12s; width: 36px; height: 36px; }
+.hci-grid td:empty { cursor: default; }
+.hci-grid td:not(:empty):hover { background: #e8f0fe; }
+.hci-grid td.hci-today { background: #e8f0fe; color: #1967d2; font-weight: 600; }
+.hci-grid td.hci-selected { background: #1967d2 !important; color: #fff !important; font-weight: 700; }
+`;
+  
+  const style = document.createElement('style');
+  style.id = 'hci-styles';
+  style.textContent = css;
+  document.head.appendChild(style);
+}
+
+export function createCalendarInput(
+  container: HTMLElement | string, 
+  options: CalendarInputOptions = {}
+): { 
+  getValue: () => string; 
+  setValue: (value: string) => void; 
+  destroy: () => void;
+  getEvent: () => CalendarInputEvent | null;
+} {
+  injectCalendarStyles();
+  
+  const target = typeof container === 'string' ? document.getElementById(container) : container;
+  if (!target) throw new Error('CalendarInput: container not found');
+  
+  const opts = {
+    bindValue: options.bindValue || 'hijri',
+    placeholder: options.placeholder || 'انقر للاختيار',
+    cssClass: options.cssClass || '',
+    initialValue: options.initialValue || '',
+    onDateSelect: options.onDateSelect,
+    onChange: options.onChange,
+    onDisplayModeChange: options.onDisplayModeChange,
+  };
+  
+  let hijriStr = '';
+  let gregStr = '';
+  let displayMode: 'hijri' | 'gregorian' = opts.bindValue;
+  let viewYear = 1447;
+  let viewMonth = 10;
+  let popup: HTMLElement | null = null;
+  let currentEvent: CalendarInputEvent | null = null;
+  let outsideClickHandler: ((e: MouseEvent) => void) | null = null;
+  
+  // Initialize view to today
+  const todayH = todayHijri();
+  viewYear = todayH.year;
+  viewMonth = todayH.month;
+  
+  // Parse initial value
+  if (opts.initialValue) {
+    const norm = normaliseDateString(opts.initialValue);
+    if (norm) {
+      if (opts.bindValue === 'hijri') {
+        hijriStr = norm;
+        gregStr = hijriToGregorianStr(norm);
+      } else {
+        gregStr = norm;
+        hijriStr = gregorianToHijriStr(norm);
+      }
+      const p = norm.split('/').map(Number);
+      if (p.length === 3) { viewYear = p[0]; viewMonth = p[1]; }
+    }
+  }
+  
+  // Build wrapper
+  const wrapper = document.createElement('div');
+  wrapper.className = 'hci-wrapper';
+  
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.className = 'hci-input ' + opts.cssClass;
+  input.placeholder = opts.placeholder;
+  input.readOnly = true;
+  
+  const select = document.createElement('select');
+  select.className = 'hci-select';
+  select.title = 'نوع التقويم';
+  select.innerHTML = '<option value="hijri">هـ</option><option value="gregorian">م</option>';
+  select.value = displayMode;
+  
+  wrapper.appendChild(input);
+  wrapper.appendChild(select);
+  target.appendChild(wrapper);
+  
+  function updateDisplay(): void {
+    const val = displayMode === 'hijri' ? hijriStr : gregStr;
+    input.value = val;
+    opts.onChange?.(val);
+  }
+  
+  function syncViewToValue(): void {
+    const src = displayMode === 'hijri' ? hijriStr : gregStr;
+    if (src) {
+      const p = src.split('/').map(Number);
+      if (p.length === 3 && p[0] > 100) { viewYear = p[0]; viewMonth = p[1]; return; }
+    }
+    const t = displayMode === 'hijri' ? todayHijri() : todayGregorian();
+    viewYear = t.year;
+    viewMonth = t.month;
+  }
+  
+  function buildHijriHtml(): string {
+    const today = todayHijri();
+    const totalDays = hijriDaysInMonth(viewYear, viewMonth);
+    const firstDow = hijriDayOfWeek(viewYear, viewMonth, 1);
+    const monthName = HIJRI_MONTH_NAMES[viewMonth - 1];
+    const gEquiv = hijriToGregorianStr(`${viewYear}/${pad2(viewMonth)}/01`);
+    const gParts = gEquiv.split('/');
+    const gLabel = GREG_MONTH_NAMES_AR[+gParts[1] - 1] + ' ' + gParts[0];
+    
+    return buildGridHtml(
+      `${monthName} ${viewYear}`, `${gLabel} م`,
+      totalDays, firstDow,
+      (d) => hijriStr === `${viewYear}/${pad2(viewMonth)}/${pad2(d)}`,
+      (d) => today.year === viewYear && today.month === viewMonth && today.day === d
+    );
+  }
+  
+  function buildGregHtml(): string {
+    const today = todayGregorian();
+    const totalDays = gregDaysInMonth(viewYear, viewMonth);
+    const firstDow = gregDayOfWeek(viewYear, viewMonth, 1);
+    const monthName = GREG_MONTH_NAMES_AR[viewMonth - 1];
+    const hEquiv = gregorianToHijriStr(`${viewYear}/${pad2(viewMonth)}/01`);
+    const hParts = hEquiv.split('/');
+    const hLabel = HIJRI_MONTH_NAMES[+hParts[1] - 1] + ' ' + hParts[0];
+    
+    return buildGridHtml(
+      `${monthName} ${viewYear}`, `${hLabel} هـ`,
+      totalDays, firstDow,
+      (d) => gregStr === `${viewYear}/${pad2(viewMonth)}/${pad2(d)}`,
+      (d) => today.year === viewYear && today.month === viewMonth && today.day === d
+    );
+  }
+  
+  function buildGridHtml(mainTitle: string, subTitle: string, totalDays: number, firstDow: number, isSel: (d: number) => boolean, isToday: (d: number) => boolean): string {
+    const heads = DAY_NAMES_SHORT_AR.map(h => `<th>${h}</th>`).join('');
+    let cells = '';
+    for (let i = 0; i < firstDow; i++) cells += '<td></td>';
+    for (let d = 1; d <= totalDays; d++) {
+      const cls = isSel(d) ? 'hci-selected' : isToday(d) ? 'hci-today' : '';
+      cells += `<td class="${cls}" data-d="${d}">${d}</td>`;
+      if ((firstDow + d) % 7 === 0 && d < totalDays) cells += '</tr><tr>';
+    }
+    return `
+      <div class="hci-head">
+        <button class="hci-btn hci-prev">&#8249;</button>
+        <div class="hci-title">
+          <span class="hci-main">${mainTitle}</span>
+          <span class="hci-sub">${subTitle}</span>
+        </div>
+        <button class="hci-btn hci-next">&#8250;</button>
+      </div>
+      <table class="hci-grid" dir="rtl">
+        <thead><tr>${heads}</tr></thead>
+        <tbody><tr>${cells}</tr></tbody>
+      </table>`;
+  }
+  
+  function renderPopup(): void {
+    if (!popup) return;
+    popup.innerHTML = displayMode === 'hijri' ? buildHijriHtml() : buildGregHtml();
+    
+    popup.addEventListener('mousedown', e => e.stopPropagation());
+    popup.querySelector('.hci-prev')?.addEventListener('click', () => { viewMonth--; if (viewMonth < 1) { viewMonth = 12; viewYear--; } renderPopup(); });
+    popup.querySelector('.hci-next')?.addEventListener('click', () => { viewMonth++; if (viewMonth > 12) { viewMonth = 1; viewYear++; } renderPopup(); });
+    popup.querySelectorAll<HTMLElement>('[data-d]').forEach(cell => {
+      cell.addEventListener('click', () => pickDay(+cell.dataset['d']!));
+    });
+  }
+  
+  function openPopup(): void {
+    if (popup) { closePopup(); return; }
+    popup = document.createElement('div');
+    popup.className = 'hci-popup';
+    document.body.appendChild(popup);
+    renderPopup();
+    positionPopup();
+    
+    outsideClickHandler = (e: MouseEvent) => {
+      if (!popup?.contains(e.target as Node) && e.target !== input && e.target !== select) {
+        closePopup();
+      }
+    };
+    document.addEventListener('mousedown', outsideClickHandler);
+  }
+  
+  function closePopup(): void {
+    popup?.remove();
+    popup = null;
+    if (outsideClickHandler) {
+      document.removeEventListener('mousedown', outsideClickHandler);
+      outsideClickHandler = null;
+    }
+  }
+  
+  function positionPopup(): void {
+    if (!popup) return;
+    const r = wrapper.getBoundingClientRect();
+    popup.style.top = (r.bottom + window.scrollY + 4) + 'px';
+    popup.style.right = (document.documentElement.clientWidth - r.right - window.scrollX) + 'px';
+  }
+  
+  function pickDay(day: number): void {
+    const ds = `${viewYear}/${pad2(viewMonth)}/${pad2(day)}`;
+    
+    if (displayMode === 'hijri') {
+      hijriStr = ds;
+      gregStr = hijriToGregorianStr(ds);
+    } else {
+      gregStr = ds;
+      hijriStr = gregorianToHijriStr(ds);
+    }
+    
+    updateDisplay();
+    
+    const hijriObj = { year: viewYear, month: viewMonth, day, formatted: hijriStr };
+    const p = gregStr.split('/').map(Number);
+    const gregObj = { year: p[0], month: p[1], day: p[2], formatted: gregStr };
+    
+    currentEvent = { hijri: hijriObj, greg: gregObj, formatted: hijriStr, displayMode };
+    opts.onDateSelect?.(currentEvent);
+    closePopup();
+  }
+  
+  // Event listeners
+  input.addEventListener('click', (e) => { e.stopPropagation(); openPopup(); });
+  select.addEventListener('change', () => {
+    displayMode = select.value as 'hijri' | 'gregorian';
+    syncViewToValue();
+    updateDisplay();
+    opts.onDisplayModeChange?.(displayMode);
+    if (popup) renderPopup();
+  });
+  select.addEventListener('click', (e) => e.stopPropagation());
+  
+  // Initial display
+  updateDisplay();
+  
+  return {
+    getValue: () => displayMode === 'hijri' ? hijriStr : gregStr,
+    setValue: (value: string) => {
+      const norm = normaliseDateString(value);
+      if (!norm) return;
+      if (opts.bindValue === 'hijri') {
+        hijriStr = norm;
+        gregStr = hijriToGregorianStr(norm);
+      } else {
+        gregStr = norm;
+        hijriStr = gregorianToHijriStr(norm);
+      }
+      const p = norm.split('/').map(Number);
+      if (p.length === 3) { viewYear = p[0]; viewMonth = p[1]; }
+      updateDisplay();
+    },
+    destroy: () => { closePopup(); wrapper.remove(); },
+    getEvent: () => currentEvent,
+  };
+}

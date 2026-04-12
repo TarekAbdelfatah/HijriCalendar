@@ -23,6 +23,50 @@ export function renderWidget(containerId: string): void {
 
   <div class="sec-body">
 
+    <!-- New: Input with Dropdown (ه/م) -->
+    <div class="card">
+      <div class="card-hdr"><span class="card-hdr-title">حقل إدخال مع التقويم (input + dropdown)</span></div>
+      <div class="card-body">
+        <p style="font-size:.88rem; color:var(--txt2); margin-bottom:1rem; line-height:1.7;">
+          دالة <code>createCalendarInput</code> تنشئ حقل إدخال مع قائمة منسدلة (هـ / م) وتقويم يظهر عند النقر. يرجع التاريخ الهجري والميلادي معاً.
+        </p>
+        
+        <div class="demo-zone" style="margin-bottom:1rem;">
+          <div id="input-calendar-demo" style="max-width:350px;"></div>
+        </div>
+
+        ${codeBlock(`import { createCalendarInput } from './hijri-calendar.lib';
+
+// إنشاء حقل التقويم
+const calInput = createCalendarInput('my-container', {
+  bindValue: 'hijri',
+  placeholder: 'اختر التاريخ',
+  initialValue: '1447/10/15',
+  onDateSelect: (event) => {
+    console.log('الهجري:', event.hijri.formatted);
+    console.log('الميلادي:', event.greg.formatted);
+  }
+});
+
+// الحصول على القيمة
+const currentValue = calInput.getValue();
+
+// تعيين قيمة برمجياً
+calInput.setValue('1448/01/01');
+
+// حذف المكون
+calInput.destroy();`, 'typescript')}
+      </div>
+    </div>
+
+    <!-- Original: Calendar Grid -->
+    <div class="card">
+      <div class="card-hdr"><span class="card-hdr-title">بناء التقويم يدوياً</span></div>
+      <div class="card-body">
+        <p style="font-size:.88rem; color:var(--txt2); margin-bottom:1rem; line-height:1.7;">
+          يمكنك أيضاً بناء التقويم يدوياً باستخدام دوال المكتبة.
+        </p>
+
     <div class="demo-zone">
       <div class="widget-demo-wrap">
 
@@ -195,6 +239,37 @@ export class HijriCalendarComponent {
 
   </div>
 </section>`;
+
+  // ─── Init createCalendarInput demo ───────────────────────────────────────────
+  try {
+    H.createCalendarInput('input-calendar-demo', {
+      bindValue: 'hijri',
+      placeholder: 'اختر التاريخ',
+      onDateSelect: (event) => {
+        console.log('Date selected:', event);
+        const el = document.getElementById('input-cal-result');
+        if (el) {
+          el.innerHTML = `
+            <div style="font-size:.85rem; color:var(--txt); margin-top:.5rem;">
+              <div>📅 هجري: <strong>${event.hijri.formatted}</strong></div>
+              <div>📆 ميلادي: <strong>${event.greg.formatted}</strong></div>
+            </div>
+          `;
+        }
+      }
+    });
+  } catch (e) {
+    console.error('Failed to create calendar input:', e);
+  }
+
+  // Add result display element
+  const demoContainer = document.getElementById('input-calendar-demo');
+  if (demoContainer) {
+    const resultEl = document.createElement('div');
+    resultEl.id = 'input-cal-result';
+    resultEl.style.marginTop = '0.5rem';
+    demoContainer.appendChild(resultEl);
+  }
 
   // ─── Init calendar widget ───────────────────────────────────────────────────
   const today = H.todayHijri();
