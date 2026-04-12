@@ -9,33 +9,58 @@ export function renderGettingStarted(containerId: string): void {
   <hr class="sec-divider">
 
   <div class="sec-head">
-    <div class="sec-ico">📦</div>
+    <div class="sec-ico">📂</div>
     <div class="sec-meta">
-      <h2 class="sec-title">التثبيت والاستيراد</h2>
-      <p class="sec-desc">طرق متعددة لاستخدام المكتبة في بيئات مختلفة</p>
+      <h2 class="sec-title">البدء السريع</h2>
+      <p class="sec-desc">ملفان فقط — انسخهما إلى مشروعك واستخدمهما مباشرةً، لا npm ولا إعداد معقد</p>
     </div>
   </div>
 
   <div class="sec-body">
 
-    <!-- NPM install -->
+    <!-- Step 1: Copy files -->
     <div class="card">
-      <div class="card-hdr"><span class="card-hdr-title">1 — تثبيت الحزمة</span></div>
+      <div class="card-hdr"><span class="card-hdr-title">الخطوة 1 — انسخ ملفى المكتبة إلى مشروعك</span></div>
       <div class="card-body">
-        ${codeBlock(`npm install @core-components/calendar
-# أو
-yarn add @core-components/calendar
-# أو
-pnpm add @core-components/calendar`, 'bash', 'Terminal')}
+        <p style="font-size:.88rem; color:var(--txt2); margin-bottom:1rem; line-height:1.7;">
+          المكتبة ملفان فقط — لا حزمة npm، لا تثبيت. فقط انسخهما إلى مجلد مناسب داخل مشروعك وابدأ الاستخدام.
+        </p>
+
+        <div style="display:flex; flex-direction:column; gap:.625rem; margin-bottom:1.25rem;">
+
+          <div style="display:flex; align-items:flex-start; gap:.875rem; padding:.875rem 1rem; background:var(--surf2); border:1px solid var(--bdr); border-radius:10px;">
+            <div style="font-size:1.3rem; flex-shrink:0; margin-top:.1rem;">📄</div>
+            <div>
+              <div style="font-family:'Fira Code',monospace; font-size:.87rem; font-weight:700; color:var(--accent); margin-bottom:.2rem;">hijri-calendar.lib.ts</div>
+              <div style="font-size:.82rem; color:var(--txt2); line-height:1.5;">المكتبة الأساسية — جميع الدوال والثوابت والأنواع. هذا الملف إلزامي.</div>
+            </div>
+          </div>
+
+          <div style="display:flex; align-items:flex-start; gap:.875rem; padding:.875rem 1rem; background:var(--surf2); border:1px solid var(--bdr); border-radius:10px;">
+            <div style="font-size:1.3rem; flex-shrink:0; margin-top:.1rem;">🎨</div>
+            <div>
+              <div style="font-family:'Fira Code',monospace; font-size:.87rem; font-weight:700; color:var(--txt); margin-bottom:.2rem;">hijri-calendar.css</div>
+              <div style="font-size:.82rem; color:var(--txt2); line-height:1.5;">أنماط مكوّن التقويم البصري — اختياري، فقط إذا أردت عرض التقويم المرئي.</div>
+            </div>
+          </div>
+
+        </div>
+
+        ${codeBlock(`// هيكل مشروعك بعد النسخ
+src/
+├── lib/
+│   ├── hijri-calendar.lib.ts   ← انسخ هذا (إلزامي)
+│   └── hijri-calendar.css      ← انسخ هذا (للتقويم المرئي)
+└── main.ts`, 'bash', 'هيكل المشروع')}
       </div>
     </div>
 
-    <!-- ES Module import -->
+    <!-- Step 2: Import -->
     <div class="card">
-      <div class="card-hdr"><span class="card-hdr-title">2 — الاستيراد في TypeScript / ESModule</span></div>
+      <div class="card-hdr"><span class="card-hdr-title">الخطوة 2 — استيراد الدوال</span></div>
       <div class="card-body">
-        <p style="font-size:.88rem; color:var(--txt2); margin-bottom:.875rem; line-height:1.6;">
-          استيراد الدوال التي تحتاجها فقط — tree-shaking مدعوم بالكامل.
+        <p style="font-size:.88rem; color:var(--txt2); margin-bottom:.875rem; line-height:1.7;">
+          استورد بالمسار المحلي للملف. استيراد انتقائي مدعوم بالكامل مع Vite وأي bundler حديث.
         </p>
         ${codeBlock(`// استيراد انتقائي (موصى به)
 import {
@@ -45,53 +70,71 @@ import {
   hijriToGregorian,
   hijriIsValid,
   hijriDaysInMonth,
-  hijriDayOfWeek,
   HIJRI_MONTH_NAMES,
   DAY_NAMES_AR,
-} from '@core-components/calendar';
+} from './lib/hijri-calendar.lib';
 
 // أو استيراد كل شيء كـ namespace
-import * as HijriLib from '@core-components/calendar';
-const today = HijriLib.todayHijri();`, 'typescript', 'ESModule')}
+import * as HijriLib from './lib/hijri-calendar.lib';
+const today = HijriLib.todayHijri();`, 'typescript', 'main.ts — استيراد المكتبة')}
       </div>
     </div>
 
-    <!-- Vite / Vanilla JS -->
+    <!-- Step 3: Quick example -->
     <div class="card">
-      <div class="card-hdr"><span class="card-hdr-title">3 — استخدام مع Vite (Vanilla JS)</span></div>
+      <div class="card-hdr"><span class="card-hdr-title">الخطوة 3 — مثال سريع</span></div>
       <div class="card-body">
-        ${codeBlock(`// main.ts
-import { gregorianToHijri, HIJRI_MONTH_NAMES } from '@core-components/calendar';
+        ${codeBlock(`import {
+  gregorianToHijri,
+  HIJRI_MONTH_NAMES,
+  DAY_NAMES_AR,
+  gregDayOfWeek,
+} from './lib/hijri-calendar.lib';
 
-const today = new Date();
-const hijri = gregorianToHijri(today.getFullYear(), today.getMonth() + 1, today.getDate());
+const today   = new Date();
+const y = today.getFullYear(), m = today.getMonth() + 1, d = today.getDate();
 
-document.getElementById('date-display')!.textContent =
-  \`\${hijri.day} \${HIJRI_MONTH_NAMES[hijri.month - 1]} \${hijri.year} هـ\`;`, 'typescript', 'Vite + Vanilla TS')}
+const hijri     = gregorianToHijri(y, m, d);
+const monthName = HIJRI_MONTH_NAMES[hijri.month - 1];   // "شوال"
+const dayName   = DAY_NAMES_AR[gregDayOfWeek(y, m, d)]; // "الأحد"
+
+document.getElementById('date')!.textContent =
+  \`\${dayName} \${hijri.day} \${monthName} \${hijri.year} هـ\`;
+// → "الأحد 14 شوال 1447 هـ"`, 'typescript', 'مثال عملي')}
       </div>
     </div>
 
-    <!-- CDN (script tag) -->
+    <!-- Step 4: CSS import -->
     <div class="card">
-      <div class="card-hdr"><span class="card-hdr-title">4 — استخدام مباشر بدون Bundler (CDN / Script)</span></div>
+      <div class="card-hdr"><span class="card-hdr-title">الخطوة 4 — استيراد CSS (للتقويم المرئي فقط)</span></div>
       <div class="card-body">
-        ${codeBlock(`<!-- في HTML -->
-<script type="module">
-  import { gregorianToHijri } from './hijri-calendar.lib.js';
+        <p style="font-size:.88rem; color:var(--txt2); margin-bottom:.875rem; line-height:1.7;">
+          إذا أردت استخدام مكوّن التقويم البصري أضف ملف CSS — يمكن استيراده من TypeScript أو من HTML مباشرةً.
+        </p>
+        ${codeBlock(`// في TypeScript / Vite
+import './lib/hijri-calendar.css';
 
-  const hijri = gregorianToHijri(2026, 4, 12);
-  console.log(hijri.formatted); // "1447/10/14"
-</script>`, 'html', 'HTML Script Tag')}
+// أو في HTML مباشرةً
+<link rel="stylesheet" href="./lib/hijri-calendar.css">`, 'html', 'استيراد CSS')}
       </div>
     </div>
 
-    <!-- Angular -->
+    <!-- Step 5: Angular -->
     <div class="card">
-      <div class="card-hdr"><span class="card-hdr-title">5 — استخدام في Angular</span></div>
+      <div class="card-hdr"><span class="card-hdr-title">الاستخدام في Angular</span></div>
       <div class="card-body">
-        ${codeBlock(`// date.service.ts
+        ${codeBlock(`// 1. انسخ الملفين إلى  src/app/lib/
+//    src/app/lib/hijri-calendar.lib.ts
+//    src/app/lib/hijri-calendar.css  (إذا احتجت التقويم المرئي)
+
+// 2. أنشئ service للمكتبة
+// src/app/core/date.service.ts
 import { Injectable } from '@angular/core';
-import { gregorianToHijri, hijriToGregorian, HijriDateObj } from '@core-components/calendar';
+import {
+  gregorianToHijri,
+  hijriToGregorian,
+  HijriDateObj,
+} from '../lib/hijri-calendar.lib';
 
 @Injectable({ providedIn: 'root' })
 export class DateService {
@@ -104,13 +147,14 @@ export class DateService {
 
     <!-- TypeScript types -->
     <div class="card">
-      <div class="card-hdr"><span class="card-hdr-title">6 — أنواع TypeScript المُصدَّرة</span></div>
+      <div class="card-hdr"><span class="card-hdr-title">الأنواع الرئيسية (TypeScript)</span></div>
       <div class="card-body">
-        ${codeBlock(`// الأنواع الرئيسية
+        ${codeBlock(`// الأنواع المُصدَّرة من hijri-calendar.lib.ts
+
 interface HijriDateObj {
   year: number;       // السنة الهجرية
-  month: number;      // الشهر (1-12)
-  day: number;        // اليوم (1-30)
+  month: number;      // الشهر (1–12)
+  day: number;        // اليوم (1–30)
   formatted: string;  // "yyyy/mm/dd"
 }
 
@@ -121,7 +165,7 @@ interface GregDateObj {
   formatted: string;  // "yyyy/mm/dd"
 }
 
-type DateFormat = 'yyyy/mm/dd' | 'dd/mm/yyyy' | 'yyyy-mm-dd' | 'dd-mm-yyyy';`, 'typescript', 'Types')}
+type DateFormat = 'yyyy/mm/dd' | 'dd/mm/yyyy' | 'yyyy-mm-dd' | 'dd-mm-yyyy';`, 'typescript', 'TypeScript Types')}
       </div>
     </div>
 

@@ -21,6 +21,7 @@ import { renderJulian }          from './sections/s10-julian';
 import { renderConstants }       from './sections/s11-constants';
 import { renderWidget }          from './sections/s12-widget';
 import { renderApiReference }    from './sections/s13-api-reference';
+import { renderEventHandling }   from './sections/s14-event-handling';
 
 // Init theme before any render to avoid flash
 ThemeManager.init();
@@ -42,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderJulian('s-julian');
   renderConstants('s-constants');
   renderWidget('s-widget');
+  renderEventHandling('s-event-handling');
   renderApiReference('s-api-ref');
 
   // 3. Sidebar — after sections so scrollspy can observe them

@@ -22,6 +22,7 @@ const SECTIONS: SidebarSection[] = [
   { id: 'sec-julian',       icon: '🔬', label: 'Julian Day (JD)',    group: 'الدوال الأساسية' },
   { id: 'sec-constants',    icon: '📚', label: 'الثوابت والأسماء',   group: 'المرجع' },
   { id: 'sec-widget',       icon: '🖱️', label: 'التقويم التفاعلي',   group: 'المكون' },
+  { id: 'sec-events',       icon: '📡', label: 'حدث اختيار التاريخ', group: 'المكون' },
   { id: 'sec-api-ref',      icon: '📋', label: 'مرجع API كامل',      group: 'المرجع' },
 ];
 
