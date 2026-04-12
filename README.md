@@ -15,48 +15,34 @@ npm run install:all
 ```
 
 ### 2. Run the Projects
-You can run all projects simultaneously with one command:
 ```powershell
-npm run start:all
+npm run start:vanilla
 ```
+Runs on [http://localhost:4202](http://localhost:4202)
 
-Or run them independently:
-*   **Modern Angular (v18+)**: 
-    `npm run start:angular` (Runs on [http://localhost:4200](http://localhost:4200))
-*   **Legacy Angular (v9)**: 
-    `npm run start:legacy` (Runs on [http://localhost:4201](http://localhost:4201))
+## 🏛️ Project Structure
 
-## 🏛️ Project Hub Architecture
-
-This project is structured as a monorepo containing the core library packages and multiple playground environments for testing and demonstration. Each environment runs on a dedicated port for seamless navigation.
-
-| Environment | Tech Stack | Port | Status |
-| :--- | :--- | :--- | :--- |
-| **Modern Playground** | Angular 18+ (Standalone) | `http://localhost:4200` | ✅ Active |
-| **Legacy Playground** | Angular 7/9 (NgModule) | `http://localhost:4201` | ✅ Active |
-| **Vanilla Demo** | Pure JS / HTML | `(packages/calendar/demo)` | ⏳ Planned |
-| **Next.js Hub** | Next.js 14 (App Router) | `http://localhost:3000` | ⏳ Planned |
-| **MVC Hub** | ASP.NET Core MVC | `http://localhost:5000` | ⏳ Planned |
+| Component | Tech Stack | Status |
+| :--- | :--- | :--- |
+| **Calendar** | Vanilla JS / TypeScript | ✅ Ready |
+| **Autocomplete** | Vanilla JS / TypeScript | 🔄 In Progress |
+| **Wizard** | Vanilla JS / TypeScript | 📋 Planned |
 
 ---
 
 ## 🏗️ Folder Structure
 
-*   **/packages**: Contains the source code for all UI controls.
-    *   `calendar/`: The core Hijri/Gregorian logic and directives.
-    *   `theme/`: **Single Source of Truth** for CSS variables and design tokens.
-    *   `autocomplete/`: (Planned) Modern autocomplete control.
-    *   `wizard/`: (Planned) Stepper/Wizard control.
-*   **/playground**: Technology-specific projects that import from `/packages`.
-    *   `angular/`: Modern Angular showcase.
-    *   `legacy-angular/`: Backward compatibility showcase.
+*   **/calendar**: The core Hijri/Gregorian logic and demo.
+*   **/theme**: **Single Source of Truth** for CSS variables and design tokens.
+*   **/autocomplete**: (In Progress) Modern autocomplete control.
+*   **/wizard**: (Planned) Stepper/Wizard control.
 
 ---
 
 ## 🎨 Centralized Design System
 
-All components and playgrounds use the `@core-components/theme` package. To ensure visual consistency, always use the CSS variables defined in:
-`packages/theme/src/core-theme.css`
+All components use the `@core-components/theme` package. Use the CSS variables defined in:
+`theme/src/core-theme.css`
 
 Example:
 ```css

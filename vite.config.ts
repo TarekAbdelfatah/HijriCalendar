@@ -2,17 +2,20 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
 export default defineConfig({
-  root: 'packages/calendar/demo',
+  root: '.',
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'packages/calendar/src'),
+      '@': resolve(__dirname, 'calendar/src'),
     },
   },
   build: {
-    outDir: '../../dist/calendar-demo',
+    outDir: 'dist',
     emptyOutDir: true,
     rollupOptions: {
-      input: resolve(__dirname, 'packages/calendar/demo/index.html'),
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        calendar: resolve(__dirname, 'calendar/demo/index.html'),
+      },
     },
   },
   server: {

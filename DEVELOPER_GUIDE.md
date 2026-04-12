@@ -6,7 +6,7 @@ This guide outlines the standards and methodology for contributing to the **Core
 
 ## 🏗️ 1. Creating a New Component
 
-Every component in this library must be built as a standalone package within the `packages/` directory.
+Every component in this library must be built as a standalone folder within the root directory.
 
 ### Core Principles
 1.  **Pure Logic**: Use **Pure TypeScript/JavaScript** only. **Zero external dependencies** (No jQuery, No Bootstrap, etc.).
@@ -16,7 +16,7 @@ Every component in this library must be built as a standalone package within the
 
 ### Folder Structure
 ```text
-packages/[component-name]/
+[component-name]/
 ├── src/
 │   ├── [component].lib.ts       # Core logic
 │   └── [component].styles.css   # Component-specific styles

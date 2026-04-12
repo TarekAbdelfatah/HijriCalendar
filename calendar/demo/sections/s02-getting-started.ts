@@ -56,7 +56,7 @@ export function renderGettingStarted(containerId: string): void {
 
         ${codeBlock({
   vanilla: `# Option 1: Pure HTML + JS (no build)
-# Copy: packages/calendar/dist/hijri-calendar.lib.js
+# Copy: calendar/dist/hijri-calendar.lib.js
 # Use directly in HTML:
 <script src="hijri-calendar.lib.js"></script>
 <script>
@@ -65,7 +65,7 @@ export function renderGettingStarted(containerId: string): void {
 </script>
 
 # Option 2: With Vite/Build
-# Copy: packages/calendar/src/hijri-calendar.lib.ts
+# Copy: calendar/src/hijri-calendar.lib.ts
 # Then import normally:
 import { gregorianToHijri } from './lib/hijri-calendar.lib';
 const hijri = gregorianToHijri(2026, 4, 12);`,
