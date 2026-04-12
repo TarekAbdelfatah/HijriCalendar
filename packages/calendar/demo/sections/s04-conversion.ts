@@ -76,14 +76,37 @@ export function renderConversion(containerId: string): void {
           <div style="padding:.75rem 1rem; background:var(--surf); border:1px solid var(--bdr); border-radius:8px; font-size:.84rem; color:var(--txt2);" id="g2h-details"></div>
         </div>
 
-        ${codeBlock(`import { gregorianToHijri, HIJRI_MONTH_NAMES, DAY_NAMES_AR, gregDayOfWeek } from './hijri-calendar.lib';
-
-const result = gregorianToHijri(2026, 4, 12);
+        ${codeBlock({
+  vanilla: `# Option 1: Pure JS
+var result = HijriCalendar.gregorianToHijri(2026, 4, 12);
 // { year: 1447, month: 10, day: 14, formatted: "1447/10/14" }
 
-const monthName = HIJRI_MONTH_NAMES[result.month - 1]; // "شوال"
-const dayIdx    = gregDayOfWeek(2026, 4, 12);
-const dayName   = DAY_NAMES_AR[dayIdx];                // "الأحد"`, 'typescript', 'gregorianToHijri()')}
+# Option 2: With Vite
+import { gregorianToHijri } from './lib/hijri-calendar.lib';
+const result = gregorianToHijri(2026, 4, 12);`,
+  angular: `// Convert in component
+import { Component } from '@angular/core';
+import { gregorianToHijri } from './hijri-calendar.lib';
+
+@Component({ selector: 'app-conv', template: '' })
+export class ConvComponent {
+  convert() {
+    const hijri = gregorianToHijri(2026, 4, 12);
+    console.log(hijri.formatted); // "1447/10/14"
+  }
+}`,
+  legacy: `// Angular 7-13
+import { Component } from '@angular/core';
+import { gregorianToHijri } from './hijri-calendar.lib';
+
+@Component({
+  selector: 'app-conv',
+  template: '<p>{{ hijri.formatted }}</p>'
+})
+export class ConvComponent {
+  hijri = gregorianToHijri(2026, 4, 12);
+}`
+}, 'typescript', 'Gregorian to Hijri')}
       </div>
     </div>
 

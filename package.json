@@ -7,11 +7,14 @@
     "install:all": "npm install --prefix packages/calendar && npm install --prefix packages/theme && npm install --prefix playground/angular && npm install --prefix playground/legacy-angular",
     "start:angular": "npm start --prefix playground/angular",
     "start:legacy": "npm start --prefix playground/legacy-angular",
-    "start:vanilla": "npx -y vite . --port 4202",
+    "start:vanilla": "npx vite --config vite.config.ts",
+    "build:calendar": "tsc packages/calendar/src/hijri-calendar.lib.ts --outDir packages/calendar/dist --declaration --module ES2020 --target ES2020 --moduleResolution bundler --ignoreDeprecations 6.0",
     "start:portal": "npx -y serve . -p 4000",
     "start:all": "start npm run start:angular && start npm run start:legacy && start npm run start:vanilla && start npm run start:portal"
   },
   "devDependencies": {
-    "serve": "^14.2.0"
+    "serve": "^14.2.0",
+    "typescript": "^6.0.2",
+    "vite": "^8.0.8"
   }
 }

@@ -1,121 +1,21 @@
 <nav class="project-hub" dir="rtl">
-  <div class="hub-brand">
-    <span class="icon">🛡️</span> CoreComponents Portal
-  </div>
-  <div class="hub-nav">
-    <a href="http://localhost:4000" class="hub-link portal-link">
-      <span class="icon">🏠</span> البوابة الرئيسية
-    </a>
-    <div class="nav-divider"></div>
-    <a href="http://localhost:4200" class="hub-link active">
-      <span class="icon">🅰️</span> Modern Angular
-    </a>
-    <a href="http://localhost:4201" class="hub-link">
-      <span class="icon">📜</span> Legacy Angular
-    </a>
-    <a href="http://localhost:4202/packages/calendar/demo/index.html" class="hub-link">
-      <span class="icon">🧪</span> Pure Vanilla JS
-    </a>
-  </div>
+    <div class="hub-brand">
+        <span class="icon">🚀</span>
+        CoreComponents <span style="color:var(--txt3); margin: 0 4px;">/</span> 
+        <span style="color:var(--primary)">Angular Playground</span>
+    </div>
+    <div class="hub-nav">
+        <a href="../../index.html" class="hub-link">
+            <span class="icon">🏠</span> الرئيسية
+        </a>
+        <a href="#" class="hub-link active">
+            <span class="icon">🅰️</span> توثيق Angular
+        </a>
+        <a href="https://github.com/TarekAbdelfatah/HijriCalendar" class="hub-link" target="_blank">
+            <span class="icon">📂</span> GitHub
+        </a>
+    </div>
 </nav>
 
-<div class="page" dir="rtl">
-
-  <!-- ── Page Switcher ───────────────────────────────────────────────────── -->
-  <div class="page-switcher">
-    <button [class.active]="currentPage === 'demo'" (click)="currentPage = 'demo'">
-      📋 Angular 18 Showcase
-    </button>
-    <button [class.active]="currentPage === 'docs'" (click)="currentPage = 'docs'">
-      📚 Developer API
-    </button>
-  </div>
-
-  <!-- ══════════════════════════════════════════════════════════════════════ -->
-  <!-- ── DEMO PAGE ───────────────────────────────────────────────────── -->
-  <!-- ══════════════════════════════════════════════════════════════════════ -->
-  @if (currentPage === 'demo') {
-
-    <header class="page-header">
-      <h1>التقويم الهجري - الإصدار الحديث</h1>
-      <p>Pure TypeScript · بدون jQuery · متوافق مع هوية وزارة العدل</p>
-    </header>
-
-    <!-- بطاقة اليوم -->
-    <div class="today-card">
-      <div class="today-item">
-        <span class="lbl">اليوم</span>
-        <span class="val">{{ todayDayName }}</span>
-      </div>
-      <div class="today-item">
-        <span class="lbl">هجري</span>
-        <span class="val hijri-val">{{ todayH.day }} {{ todayMonthName }} {{ todayH.year }}</span>
-      </div>
-      <div class="today-item">
-        <span class="lbl">ميلادي</span>
-        <span class="val">{{ todayG.formatted }}</span>
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <!-- نموذج تسجيل -->
-      <section class="card">
-        <h2>نموذج تسجيل طلب</h2>
-        <p class="sub">استخدام <code>hijri-calender</code> كـ Directive مستقل</p>
-
-        <form #visitForm="ngForm" (ngSubmit)="onSubmit()" novalidate>
-          <div class="field">
-            <label>اسم المتقدم <span class="req">*</span></label>
-            <input type="text" class="inp" name="PatientName" [(ngModel)]="requestModel.PatientName" required placeholder="أدخل الاسم الكامل" />
-          </div>
-
-          <div class="field">
-            <label>تاريخ الميلاد (هجري/ميلادي) <span class="req">*</span></label>
-            <input required type="text" readonly hijri-calender class="inp datePicker" name="VisitDate" [(ngModel)]="requestModel.VisitDateStr" placeholder="اختر التاريخ..." />
-            @if (requestModel.VisitDateStr) {
-              <span class="hint">المقابل ميلادياً: {{ convertToGreg(requestModel.VisitDateStr) }}</span>
-            }
-          </div>
-
-          <div class="btn-row">
-            <button type="submit" class="btn-p" [disabled]="visitForm.invalid">إرسال الطلب</button>
-            <button type="button" class="btn-s" (click)="resetForm()">إلغاء</button>
-          </div>
-        </form>
-      </section>
-
-      <!-- الجانب الأيسر: معلومات وشرح -->
-      <div class="col-right">
-         <section class="card">
-            <h2>إعدادات العرض</h2>
-            <p class="sub">يقرأ من <code>&#64;core-components/calendar</code></p>
-            <ul style="padding-inline-start: 20px; color: var(--gray-600); font-size: 0.9rem;">
-              <li>دعم كامل لتقويم أم القرى الرسمي.</li>
-              <li>تبديل فوري بين الهجري والميلادي.</li>
-              <li>دعم الوضع الداكن (Dark Mode) آلياً.</li>
-            </ul>
-         </section>
-      </div>
-    </div>
-
-  } @else if (currentPage === 'docs') {
-
-    <header class="page-header docs-header">
-      <h1>📚 Developer API</h1>
-      <p>دليل الاستيراد للحزم المشتركة</p>
-    </header>
-
-    <section class="docs-section">
-      <div class="docs-title">1️⃣ التثبيت</div>
-      <pre class="docs-code">import {{ '{' }} todayHijri {{ '}' }} from '&#64;core-components/calendar';</pre>
-    </section>
-
-    <section class="docs-section">
-      <div class="docs-title">2️⃣ نظام الألوان</div>
-      <pre class="docs-code">:root {{ '{' }}
-  --primary: #006C35;
-{{ '}' }}</pre>
-    </section>
-
-  }
-</div>
+<!-- Main App Content -->
+<app-documentation></app-documentation>

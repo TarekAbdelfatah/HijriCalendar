@@ -501,11 +501,44 @@ body {
   border-bottom: 1px solid var(--code-bdr);
   background: rgba(255,255,255,.025);
 }
+.code-fw-tabs {
+  display: flex;
+  gap: 4px;
+}
+.code-fw-tab {
+  padding: 4px 10px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--code-cmt);
+  font-size: .7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+}
+.code-fw-tab:hover {
+  background: rgba(255,255,255,.05);
+  color: var(--code-txt);
+}
+.code-fw-tab.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
 .code-lang-tag {
   font-size: .7rem;
   font-family: 'Fira Code', monospace;
   color: var(--code-cmt);
   letter-spacing: .05em;
+}
+.code-versions {
+  position: relative;
+}
+.code-fw-content {
+  display: none;
+}
+.code-fw-content.active {
+  display: block;
 }
 .code-copy-btn {
   font-size: .7rem;

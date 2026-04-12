@@ -61,21 +61,40 @@ export function renderToday(containerId: string): void {
     </div>
 
     <!-- Code snippet -->
-    ${codeBlock(`import { todayHijri, todayGregorian, HIJRI_MONTH_NAMES, DAY_NAMES_AR, hijriDayOfWeek } from '@core-components/calendar';
+    ${codeBlock({
+  vanilla: `# Option 1: Pure JS - no import needed
+var h = HijriCalendar.todayHijri();
+console.log(h.formatted);               // "1447/10/14"
 
-// التاريخ الهجري اليوم
-const h = todayHijri();
-console.log(h.formatted);                    // "1447/10/14"
-console.log(h.year, h.month, h.day);         // 1447  10  14
-console.log(HIJRI_MONTH_NAMES[h.month - 1]); // "شوال"
+var g = HijriCalendar.todayGregorian();
+console.log(g.formatted);               // "2026/04/12"
 
-// يوم الأسبوع
-const dayIdx = hijriDayOfWeek(h.year, h.month, h.day);
-console.log(DAY_NAMES_AR[dayIdx]);           // "الأحد"
+# Option 2: With Vite
+import { todayHijri, todayGregorian } from './lib/hijri-calendar.lib';
+const h = todayHijri();`,
+  angular: `// In Angular component
+import { Component } from '@angular/core';
+import { todayHijri, HIJRI_MONTH_NAMES } from './hijri-calendar.lib';
 
-// التاريخ الميلادي اليوم
-const g = todayGregorian();
-console.log(g.formatted);                    // "2026/04/12"`, 'typescript', 'todayHijri() — todayGregorian()')}
+@Component({
+  selector: 'app-today',
+  template: \`<p>Today: {{ hijri.formatted }}</p>\`
+})
+export class TodayComponent {
+  hijri = todayHijri();
+}`,
+  legacy: `// Angular 7-13
+import { Component } from '@angular/core';
+import { todayHijri, HIJRI_MONTH_NAMES } from './hijri-calendar.lib';
+
+@Component({
+  selector: 'app-today',
+  template: \`<p>Today: {{ hijri.formatted }}</p>\`
+})
+export class TodayComponent {
+  hijri = todayHijri();
+}`
+}, 'typescript', 'Today')}
 
   </div>
 </section>`;

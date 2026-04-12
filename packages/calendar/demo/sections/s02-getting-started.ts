@@ -23,7 +23,7 @@ export function renderGettingStarted(containerId: string): void {
       <div class="card-hdr"><span class="card-hdr-title">الخطوة 1 — انسخ ملفى المكتبة إلى مشروعك</span></div>
       <div class="card-body">
         <p style="font-size:.88rem; color:var(--txt2); margin-bottom:1rem; line-height:1.7;">
-          المكتبة ملفان فقط — لا حزمة npm، لا تثبيت. فقط انسخهما إلى مجلد مناسب داخل مشروعك وابدأ الاستخدام.
+          اختر الطريقة المناسبة لمشروعك:
         </p>
 
         <div style="display:flex; flex-direction:column; gap:.625rem; margin-bottom:1.25rem;">
@@ -31,8 +31,16 @@ export function renderGettingStarted(containerId: string): void {
           <div style="display:flex; align-items:flex-start; gap:.875rem; padding:.875rem 1rem; background:var(--surf2); border:1px solid var(--bdr); border-radius:10px;">
             <div style="font-size:1.3rem; flex-shrink:0; margin-top:.1rem;">📄</div>
             <div>
+              <div style="font-family:'Fira Code',monospace; font-size:.87rem; font-weight:700; color:var(--accent); margin-bottom:.2rem;">hijri-calendar.lib.js</div>
+              <div style="font-size:.82rem; color:var(--txt2); line-height:1.5;">للإضافة مباشرة في HTML — انسخ هذا الملف وجربه فوراً بدون أي إعداد.</div>
+            </div>
+          </div>
+
+          <div style="display:flex; align-items:flex-start; gap:.875rem; padding:.875rem 1rem; background:var(--surf2); border:1px solid var(--bdr); border-radius:10px;">
+            <div style="font-size:1.3rem; flex-shrink:0; margin-top:.1rem;">📄</div>
+            <div>
               <div style="font-family:'Fira Code',monospace; font-size:.87rem; font-weight:700; color:var(--accent); margin-bottom:.2rem;">hijri-calendar.lib.ts</div>
-              <div style="font-size:.82rem; color:var(--txt2); line-height:1.5;">المكتبة الأساسية — جميع الدوال والثوابت والأنواع. هذا الملف إلزامي.</div>
+              <div style="font-size:.82rem; color:var(--txt2); line-height:1.5;">مع Vite أو أي bundler — للاستيراد كـ module مع دعم TypeScript.</div>
             </div>
           </div>
 
@@ -40,18 +48,38 @@ export function renderGettingStarted(containerId: string): void {
             <div style="font-size:1.3rem; flex-shrink:0; margin-top:.1rem;">🎨</div>
             <div>
               <div style="font-family:'Fira Code',monospace; font-size:.87rem; font-weight:700; color:var(--txt); margin-bottom:.2rem;">hijri-calendar.css</div>
-              <div style="font-size:.82rem; color:var(--txt2); line-height:1.5;">أنماط مكوّن التقويم البصري — اختياري، فقط إذا أردت عرض التقويم المرئي.</div>
+              <div style="font-size:.82rem; color:var(--txt2); line-height:1.5;">أنماط التقويم البصري — اختياري.</div>
             </div>
           </div>
 
         </div>
 
-        ${codeBlock(`// هيكل مشروعك بعد النسخ
-src/
-├── lib/
-│   ├── hijri-calendar.lib.ts   ← انسخ هذا (إلزامي)
-│   └── hijri-calendar.css      ← انسخ هذا (للتقويم المرئي)
-└── main.ts`, 'bash', 'هيكل المشروع')}
+        ${codeBlock({
+  vanilla: `# Option 1: Pure HTML + JS (no build)
+# Copy: packages/calendar/src/hijri-calendar.lib.js
+# Use directly in HTML:
+<script src="hijri-calendar.lib.js"></script>
+<script>
+  var date = HijriCalendar.gregorianToHijri(2026, 4, 12);
+  console.log(date.formatted); // "1447/10/14"
+</script>
+
+# Option 2: With Vite/Build
+# Copy: packages/calendar/src/hijri-calendar.lib.ts
+# Then import normally:
+import { gregorianToHijri } from './lib/hijri-calendar.lib';
+const hijri = gregorianToHijri(2026, 4, 12);`,
+  angular: `# Angular 14+ project
+src/app/hijri-calendar/
+│   ├── hijri-calendar.lib.ts    # Copy this
+│   └── hijri-calendar.directive.ts # Copy this
+└── app.component.ts`,
+  legacy: `# Angular 7-13 project
+src/app/directives/
+│   ├── hijri-calendar.lib.ts           # Copy this
+│   └── hijri-calender-ng7.directive.ts # Copy this
+└── app.module.ts`
+}, 'bash', 'Project Structure')}
       </div>
     </div>
 
@@ -60,23 +88,49 @@ src/
       <div class="card-hdr"><span class="card-hdr-title">الخطوة 2 — استيراد الدوال</span></div>
       <div class="card-body">
         <p style="font-size:.88rem; color:var(--txt2); margin-bottom:.875rem; line-height:1.7;">
-          استورد بالمسار المحلي للملف. استيراد انتقائي مدعوم بالكامل مع Vite وأي bundler حديث.
+          حسب اختيارك في الخطوة 1:
         </p>
-        ${codeBlock(`// استيراد انتقائي (موصى به)
+        ${codeBlock({
+  vanilla: `# Option 1: Pure JS - لا حاجة لاستيراد
+# استخدم HijriCalendar مباشرة
+var hijri = HijriCalendar.gregorianToHijri(2026, 4, 12);
+var name = HijriCalendar.HIJRI_MONTH_NAMES[5];
+
+# Option 2: With Vite - استيراد انتقائي
 import {
   todayHijri,
-  todayGregorian,
   gregorianToHijri,
-  hijriToGregorian,
-  hijriIsValid,
-  hijriDaysInMonth,
   HIJRI_MONTH_NAMES,
-  DAY_NAMES_AR,
 } from './lib/hijri-calendar.lib';
 
-// أو استيراد كل شيء كـ namespace
+# أو استيراد الكل
 import * as HijriLib from './lib/hijri-calendar.lib';
-const today = HijriLib.todayHijri();`, 'typescript', 'main.ts — استيراد المكتبة')}
+const today = HijriLib.todayHijri();`,
+  angular: `// Angular 14+ — standalone
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HijriCalenderDirective } from './hijri-calendar.directive';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [FormsModule, HijriCalenderDirective],
+  template: \`<input type="text" hijri-calender [(ngModel)]="date" />\`,
+})
+export class AppComponent {
+  date = '';
+}`,
+  legacy: `// Angular 7-13 — NgModule
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HijriCalenderDirective } from './hijri-calender.directive';
+
+@NgModule({
+  declarations: [AppComponent, HijriCalenderDirective],
+  imports: [BrowserModule, FormsModule],
+})
+export class AppModule { }`
+}, 'typescript', 'Import')}
       </div>
     </div>
 
@@ -84,23 +138,36 @@ const today = HijriLib.todayHijri();`, 'typescript', 'main.ts — استيراد
     <div class="card">
       <div class="card-hdr"><span class="card-hdr-title">الخطوة 3 — مثال سريع</span></div>
       <div class="card-body">
-        ${codeBlock(`import {
-  gregorianToHijri,
-  HIJRI_MONTH_NAMES,
-  DAY_NAMES_AR,
-  gregDayOfWeek,
-} from './lib/hijri-calendar.lib';
+        ${codeBlock({
+  vanilla: `# Option 1: Use ready JS file
+# Copy: packages/calendar/src/hijri-calendar.lib.js
+<script src="hijri-calendar.lib.js"></script>
+<script>
+  var hijri = HijriCalendar.gregorianToHijri(2026, 4, 12);
+  console.log(hijri.formatted); // "1447/10/14"
+</script>
 
-const today   = new Date();
-const y = today.getFullYear(), m = today.getMonth() + 1, d = today.getDate();
-
-const hijri     = gregorianToHijri(y, m, d);
-const monthName = HIJRI_MONTH_NAMES[hijri.month - 1];   // "شوال"
-const dayName   = DAY_NAMES_AR[gregDayOfWeek(y, m, d)]; // "الأحد"
-
-document.getElementById('date')!.textContent =
-  \`\${dayName} \${hijri.day} \${monthName} \${hijri.year} هـ\`;
-// → "الأحد 14 شوال 1447 هـ"`, 'typescript', 'مثال عملي')}
+# Option 2: With Vite/Build
+# Copy: packages/calendar/src/hijri-calendar.lib.ts
+import { gregorianToHijri } from './lib/hijri-calendar.lib';
+const hijri = gregorianToHijri(2026, 4, 12);`,
+  angular: `@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [FormsModule, HijriCalenderDirective],
+  template: \`<input hijri-calender [(ngModel)]="date" />\`,
+})
+export class AppComponent {
+  date = '';
+}`,
+  legacy: `@Component({
+  selector: 'app-root',
+  template: \`<input hijri-calender [(ngModel)]="date" />\`
+})
+export class AppComponent {
+  date = '';
+}`
+}, 'typescript', 'Quick Example')}
       </div>
     </div>
 
@@ -109,13 +176,25 @@ document.getElementById('date')!.textContent =
       <div class="card-hdr"><span class="card-hdr-title">الخطوة 4 — استيراد CSS (للتقويم المرئي فقط)</span></div>
       <div class="card-body">
         <p style="font-size:.88rem; color:var(--txt2); margin-bottom:.875rem; line-height:1.7;">
-          إذا أردت استخدام مكوّن التقويم البصري أضف ملف CSS — يمكن استيراده من TypeScript أو من HTML مباشرةً.
+          إذا أردت استخدام التقويم البصري أضف ملف CSS.
         </p>
-        ${codeBlock(`// في TypeScript / Vite
+        ${codeBlock({
+  vanilla: `# In TypeScript / Vite
 import './lib/hijri-calendar.css';
 
-// أو في HTML مباشرةً
-<link rel="stylesheet" href="./lib/hijri-calendar.css">`, 'html', 'استيراد CSS')}
+# Or in HTML
+<link rel="stylesheet" href="./lib/hijri-calendar.css">`,
+  angular: `# Angular: add to angular.json styles array
+"styles": [
+  "src/styles.css",
+  "src/app/hijri-calendar/hijri-calendar.css"
+]`,
+  legacy: `# Angular 7-13: add to angular.json
+"styles": [
+  "src/styles.css",
+  "src/app/hijri-calendar/hijri-calendar.css"
+]`
+}, 'html', 'CSS Import')}
       </div>
     </div>
 

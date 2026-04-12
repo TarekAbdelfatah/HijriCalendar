@@ -27,6 +27,13 @@
       color: var(--accent);
       font-weight: 700;
     }
+    .hidden { display: none !important; }
+    .tab-content { display: block; }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 2px 8px var(--accent-glow);
+    }
   </style>
 </head>
 <body>
@@ -58,7 +65,7 @@
       <main id="doc-main">
         <div class="doc-content">
 
-          <!-- Sections are injected here by demo-app.ts -->
+          <!-- Vanilla sections -->
           <div id="s-hero"></div>
           <div id="s-getting-started"></div>
           <div id="s-today"></div>
