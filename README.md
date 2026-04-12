@@ -1,139 +1,68 @@
 # CoreComponents 🚀
 
-A reference-grade monorepo suite for high-performance, standalone UI controls. Built with **Zero Dependencies**, **Pure TypeScript**, and a **Centralized Design System**.
+High-performance UI components with **Zero Dependencies** and **Pure TypeScript**.
 
 ---
 
-## 🚀 Getting Started
+## Quick Start (VSCode)
 
-### 1. Install Dependencies
-```powershell
-npm run install:all
-```
-
-### 2. Run Development Server
-```powershell
-npm run start:vanilla
-```
-Opens at [http://localhost:4202](http://localhost:4202)
-
-### 3. Build for Production
-```powershell
-npm run build
-```
-
-Output will be in `dist/` folder.
+1. Open folder in VSCode
+2. Open terminal: `Ctrl + ~`
+3. Run: `npm run dev`
+4. Open: http://localhost:4202
 
 ---
 
-## 🚀 Run & Deploy
+## Commands
 
-### Development
-```powershell
-npm run start:vanilla
-```
-Opens at [http://localhost:4202](http://localhost:4202)
+| Command | Description |
+| :--- | :--- |
+| `npm run dev` | Start dev server |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build |
 
-### Build for Production
-```powershell
-npm run build
-```
+---
 
-### Deploy Options
-
-**1. Local Test Server**
-```powershell
-npx serve dist -p 3000
-```
-
-**2. Vercel**
-```powershell
-npm i -g vercel
-vercel
-```
-
-**3. Netlify**
-```powershell
-npm i -g netlify-cli
-netlify deploy --prod --dir=dist
-```
-
-**4. GitHub Pages**
-```powershell
-npm i -g gh-pages
-npm run build
-gh-pages -d dist
-```
-
-**5. Surge.sh**
-```powershell
-npm i -g surge
-npx vite build
-surge dist/ your-project.surge.sh
-```
-
-For more details, see [**DEPLOY_GUIDE.md**](./DEPLOY_GUIDE.md).
+## Components
 
 | Component | Status | Description |
 | :--- | :--- | :--- |
-| **Calendar** | ✅ Ready | Hijri/Gregorian calendar with Umm al-Qura table |
-| **Autocomplete** | 🔄 In Progress | Smart search with virtual scroll |
-| **Wizard** | 📋 Planned | Multi-step form handler |
+| **Calendar** | ✅ Ready | Hijri/Gregorian calendar |
+| **Autocomplete** | 🔄 In Progress | Smart search |
+| **Wizard** | 📋 Planned | Multi-step form |
 
 ---
 
-## 🏗️ Folder Structure
+## Folder Structure
 
 ```
 CoreComponents/
-├── index.html              # Main portal page
-├── vite.config.ts          # Vite configuration
-├── package.json            # Root package.json
-├── calendar/               # Calendar component
-│   ├── src/               # Core library
-│   ├── demo/              # Documentation demo
-│   └── dist/              # Built files
-├── theme/                  # Design system
-│   └── src/core-theme.css
-├── autocomplete/           # (In Progress)
-└── wizard/                 # (Planned)
+├── index.html            # Portal page
+├── vite.config.ts        # Vite config
+├── calendar/             # Calendar component
+│   ├── src/             # Core library
+│   └── demo/            # Documentation
+├── theme/                # Design system
+├── autocomplete/         # (In Progress)
+└── wizard/              # (Planned)
 ```
 
 ---
 
-## 🎨 Design System
+## Deploy
 
-All components use CSS variables from `theme/src/core-theme.css`.
+```powershell
+# Build
+npm run build
 
-Example:
-```css
-.my-card {
-  background: var(--primary);
-  border-radius: var(--radius-md);
-}
+# Preview locally
+npm run preview
+
+# Or deploy to Vercel/Netlify/GitHub Pages
 ```
 
 ---
 
-## 📖 Documentation
+## Author
 
-Each component has its own demo page:
-- **Calendar**: `calendar/demo/index.html`
-
----
-
-## 👨‍💻 Developer Guide
-
-See [**DEVELOPER_GUIDE.md**](./DEVELOPER_GUIDE.md) for:
-- Creating new components
-- Adding demos
-- Following code standards
-
----
-
-## 🇸🇦 Authors
-
-Developed by **CoreComponents Team**.
-
----
-*Built with passion for clean code and high performance.*
+**CoreComponents Team** 🇸🇦
