@@ -73,55 +73,7 @@ export function renderEventHandling(containerId: string): void {
       </div>
     </div>
 
-    <!-- ─── Form integration demo ─── -->
-    <div class="card">
-      <div class="card-hdr"><span class="card-hdr-title">مثال — ربط التقويم بحقول نموذج</span></div>
-      <div class="card-body">
-        <p style="font-size:.87rem; color:var(--txt2); margin-bottom:1rem; line-height:1.7;">
-          اختر تاريخاً من التقويم أعلاه لترى الحقول تتعبأ تلقائياً.
-        </p>
 
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:.75rem; margin-bottom:1rem;">
-          <div class="inp-grp">
-            <label class="inp-lbl">التاريخ الهجري</label>
-            <input class="inp" id="form-hijri" readonly placeholder="اختر من التقويم" style="background:var(--surf2);">
-          </div>
-          <div class="inp-grp">
-            <label class="inp-lbl">التاريخ الميلادي</label>
-            <input class="inp" id="form-greg" readonly placeholder="اختر من التقويم" style="background:var(--surf2);">
-          </div>
-          <div class="inp-grp">
-            <label class="inp-lbl">يوم الأسبوع</label>
-            <input class="inp" id="form-day" readonly placeholder="—" style="background:var(--surf2);">
-          </div>
-          <div class="inp-grp">
-            <label class="inp-lbl">رقم اليوم الجولياني (JD)</label>
-            <input class="inp" id="form-jd" readonly placeholder="—" style="background:var(--surf2); font-family:monospace;">
-          </div>
-        </div>
-
-        <div id="form-status" style="
-          padding:.625rem 1rem;
-          border-radius:8px;
-          font-size:.83rem;
-          display:none;
-          background:var(--ok-bg);
-          border:1px solid var(--ok-bdr);
-          color:var(--ok);
-        "></div>
-
-        ${codeBlock(`// Vanilla JS - استخدام createCalendarInput
-const cal = createCalendarInput('my-container', {
-  onDateSelect: (event) => {
-    // event.hijri = { year, month, day, formatted }
-    // event.greg  = { year, month, day, formatted }
-    
-    console.log('الهجري:', event.hijri.formatted);
-    console.log('الميلادي:', event.greg.formatted);
-  }
-});`, 'typescript', 'مثال بسيط')}
-      </div>
-    </div>
 
     <!-- ─── Code: how to build the callback calendar ─── -->
     <div class="card">
@@ -427,17 +379,7 @@ onDateSelected(event: any) {
     setText('evt-selected-greg',  `${greg.day} ${gregMons[greg.month - 1]} ${greg.year} م`);
     setText('evt-selected-day',   `يوم الأسبوع: ${dayName}`);
 
-    // Update form fields
-    setVal('form-hijri', hijri.formatted);
-    setVal('form-greg',  greg.formatted);
-    setVal('form-day',   dayName);
-    setVal('form-jd',    String(jd));
 
-    const statusEl = document.getElementById('form-status');
-    if (statusEl) {
-      statusEl.style.display = 'block';
-      statusEl.textContent = `✓ تم تعبئة النموذج بتاريخ ${hijri.formatted} — ${dayName}`;
-    }
 
     // Add to log
     addLogEntry(payload);
