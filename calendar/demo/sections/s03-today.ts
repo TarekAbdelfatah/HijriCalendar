@@ -74,25 +74,33 @@ import { todayHijri, todayGregorian } from './lib/hijri-calendar.lib';
 const h = todayHijri();`,
   angular: `// In Angular component
 import { Component } from '@angular/core';
-import { todayHijri, HIJRI_MONTH_NAMES } from './hijri-calendar.lib';
+import { todayHijri, todayGregorian, HIJRI_MONTH_NAMES } from './hijri-calendar.lib';
 
 @Component({
   selector: 'app-today',
-  template: \`<p>Today: {{ hijri.formatted }}</p>\`
+  template: \`
+    <p>اليوم الهجري: {{ hijri.formatted }}</p>
+    <p>اليوم الميلادي: {{ greg.formatted }}</p>
+  \`
 })
 export class TodayComponent {
   hijri = todayHijri();
+  greg = todayGregorian();
 }`,
   legacy: `// Angular 7-13
 import { Component } from '@angular/core';
-import { todayHijri, HIJRI_MONTH_NAMES } from './hijri-calendar.lib';
+import { todayHijri, todayGregorian, HIJRI_MONTH_NAMES } from './hijri-calendar.lib';
 
 @Component({
   selector: 'app-today',
-  template: \`<p>Today: {{ hijri.formatted }}</p>\`
+  template: \`
+    <p>اليوم الهجري: {{ hijri.formatted }}</p>
+    <p>اليوم الميلادي: {{ greg.formatted }}</p>
+  \`
 })
 export class TodayComponent {
   hijri = todayHijri();
+  greg = todayGregorian();
 }`
 }, 'typescript', 'Today')}
 

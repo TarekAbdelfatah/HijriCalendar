@@ -35,7 +35,8 @@ export function renderWidget(containerId: string): void {
           <div id="input-calendar-demo" style="max-width:350px;"></div>
         </div>
 
-        ${codeBlock(`<!-- HTML: حاوية فارغة للتقويم -->
+        ${codeBlock({
+  vanilla: `<!-- HTML: حاوية فارغة للتقويم -->
 <div id="my-calendar" style="max-width:350px;"></div>
 
 <!-- JS/TS: إنشاء حقل التقويم -->
@@ -64,7 +65,59 @@ cal.setValue('1448/01/01');
 
 // حذف المكون عند الحاجة
 cal.destroy();
-</script>`, 'typescript', 'مثال كامل')}
+</script>`,
+  angular: `import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HijriCalenderDirective } from './hijri-calendar.directive';
+
+@Component({
+  selector: 'app-date-picker',
+  standalone: true,
+  imports: [FormsModule, HijriCalenderDirective],
+  template: \`
+    <!-- استخدم directive على أي input -->
+    <input type="text" readonly hijri-calender
+           [(ngModel)]="selectedDate"
+           (dateChange)="onDateSelected($event)"
+           placeholder="اختر التاريخ" />
+    
+    <p>التاريخ المختار: {{ selectedDate }}</p>
+  \`
+})
+export class DatePickerComponent {
+  selectedDate = '';
+  
+  onDateSelected(event: any) {
+    // event = { hijri: {...}, greg: {...} }
+    console.log('الهجري:', event.hijri.formatted);
+    console.log('الميلادي:', event.greg.formatted);
+  }
+}`,
+  legacy: `import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HijriCalenderDirective } from './hijri-calendar.directive';
+
+@Component({
+  selector: 'app-date-picker',
+  imports: [FormsModule, HijriCalenderDirective],
+  template: \`
+    <input type="text" readonly hijri-calender
+           [(ngModel)]="selectedDate"
+           (dateChange)="onDateSelected($event)"
+           placeholder="اختر التاريخ" />
+    
+    <p>التاريخ المختار: {{ selectedDate }}</p>
+  \`
+})
+export class DatePickerComponent {
+  selectedDate = '';
+  
+  onDateSelected(event: any) {
+    console.log('الهجري:', event.hijri.formatted);
+    console.log('الميلادي:', event.greg.formatted);
+  }
+}`
+}, 'typescript', 'مثال كامل')}
       </div>
     </div>
 

@@ -195,20 +195,54 @@ export class HijriCalendarComponent {
             <p style="font-size:.8rem; color:var(--txt2); margin-bottom:.75rem;">
               في Angular، استخدم directive مع (dateChange):
             </p>
-            ${codeBlock(`// Template
-<input type="text" readonly hijri-calender
-       [(ngModel)]="filterDate"
-       (dateChange)="filterByDate($event)" />
+            ${codeBlock({
+  vanilla: `// Vanilla JS
+let filterDate = '';
+let rows = [...]; // بيانات الجدول
+let filteredRows = [];
 
-// Component
-filterDate = '';
-rows = [...]; // بيانات الجدول
-
-filterByDate(event: any) {
+function filterByDate(event) {
   const gregDate = event.greg.formatted; // "2025/04/13"
   // استخدم gregDate للتصفية
-  this.filteredRows = this.rows.filter(r => r.date === gregDate);
-}`, 'typescript')}
+  filteredRows = rows.filter(r => r.date === gregDate);
+}`,
+  angular: `// Angular
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HijriCalenderDirective } from './hijri-calendar.directive';
+
+@Component({
+  selector: 'app-data-filter',
+  standalone: true,
+  imports: [FormsModule, HijriCalenderDirective],
+  template: \`
+    <input type="text" readonly hijri-calender
+           [(ngModel)]="filterDate"
+           (dateChange)="filterByDate($event)"
+           placeholder="تصفية حسب التاريخ" />
+    
+    <table>
+      <tr *ngFor="let row of filteredRows">
+        <td>{{ row.name }}</td>
+        <td>{{ row.date }}</td>
+      </tr>
+    </table>
+  \`
+})
+export class DataFilterComponent {
+  filterDate = '';
+  rows = [...]; // بيانات الجدول
+  filteredRows = [];
+  
+  filterByDate(event: any) {
+    const gregDate = event.greg.formatted; // "2025/04/13"
+    // استخدم gregDate للتصفية
+    this.filteredRows = this.rows.filter(r => r.date === gregDate);
+  }
+}`,
+  legacy: `// Angular 7-13
+// نفس الكود مع تعديل imports حسب الإصدار`
+}, 'typescript')}
           </div>
           </div>
 
@@ -217,21 +251,61 @@ filterByDate(event: any) {
             <p style="font-size:.8rem; color:var(--txt2); margin-bottom:.75rem;">
               في Angular، احسب JD باستخدام دالة <code>hijriToJD</code> من المكتبة:
             </p>
-            ${codeBlock(`// Component
-firstDate: { hijri: string; jd: number } | null = null;
+            ${codeBlock({
+  vanilla: `// Vanilla JS
+let firstDate = null;
 
-onDateSelected(event: any) {
-  const jd = H.hijriToJD(event.hijri.year, event.hijri.month, event.hijri.day);
+function onDateSelected(event) {
+  const jd = hijriToJD(event.hijri.year, event.hijri.month, event.hijri.day);
   
-  if (!this.firstDate) {
-    this.firstDate = { hijri: event.hijri.formatted, jd };
+  if (!firstDate) {
+    firstDate = { hijri: event.hijri.formatted, jd };
     console.log('التاريخ الأول:', event.hijri.formatted);
   } else {
-    const diff = Math.abs(jd - this.firstDate.jd);
+    const diff = Math.abs(jd - firstDate.jd);
     console.log('الفرق:', diff, 'يوم');
-    this.firstDate = null;
+    firstDate = null;
   }
-}`, 'typescript')}
+}`,
+  angular: `// Angular
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { HijriCalenderDirective } from './hijri-calendar.directive';
+
+@Component({
+  selector: 'app-date-diff',
+  standalone: true,
+  imports: [FormsModule, HijriCalenderDirective],
+  template: \`
+    <input type="text" readonly hijri-calender
+           [(ngModel)]="selectedDate"
+           (dateChange)="onDateSelected($event)"
+           placeholder="اختر التاريخ" />
+    
+    <p *ngIf="firstDate">التاريخ الأول: {{ firstDate.hijri }}</p>
+    <p *ngIf="diffDays !== null">الفرق: {{ diffDays }} يوم</p>
+  \`
+})
+export class DateDiffComponent {
+  selectedDate = '';
+  firstDate: { hijri: string; jd: number } | null = null;
+  diffDays: number | null = null;
+  
+  onDateSelected(event: any) {
+    const jd = hijriToJD(event.hijri.year, event.hijri.month, event.hijri.day);
+    
+    if (!this.firstDate) {
+      this.firstDate = { hijri: event.hijri.formatted, jd };
+      this.diffDays = null;
+    } else {
+      this.diffDays = Math.abs(jd - this.firstDate.jd);
+      this.firstDate = null;
+    }
+  }
+}`,
+  legacy: `// Angular 7-13
+// نفس الكود مع تعديل imports حسب الإصدار`
+}, 'typescript')}
           </div>
           </div>
 

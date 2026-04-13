@@ -88,12 +88,15 @@ const result = gregorianToHijri(2026, 4, 12);`,
 import { Component } from '@angular/core';
 import { gregorianToHijri } from './hijri-calendar.lib';
 
-@Component({ selector: 'app-conv', template: '' })
+@Component({ 
+  selector: 'app-conv', 
+  template: \`
+    <p>الميلادي: 2026/04/12</p>
+    <p>الهجري: {{ hijri.formatted }}</p>
+  \`
+})
 export class ConvComponent {
-  convert() {
-    const hijri = gregorianToHijri(2026, 4, 12);
-    console.log(hijri.formatted); // "1447/10/14"
-  }
+  hijri = gregorianToHijri(2026, 4, 12);
 }`,
   legacy: `// Angular 7-13
 import { Component } from '@angular/core';
@@ -144,13 +147,33 @@ export class ConvComponent {
           <div style="padding:.75rem 1rem; background:var(--surf); border:1px solid var(--bdr); border-radius:8px; font-size:.84rem; color:var(--txt2);" id="h2g-details"></div>
         </div>
 
-        ${codeBlock(`import { hijriToGregorian, DAY_NAMES_AR, hijriDayOfWeek } from './hijri-calendar.lib';
+        ${codeBlock({
+  vanilla: `import { hijriToGregorian, DAY_NAMES_AR, hijriDayOfWeek } from './hijri-calendar.lib';
 
 const result  = hijriToGregorian(1447, 10, 14);
 // { year: 2026, month: 4, day: 12, formatted: "2026/04/12" }
 
 const dayIdx  = hijriDayOfWeek(1447, 10, 14);
-const dayName = DAY_NAMES_AR[dayIdx]; // "الأحد"`, 'typescript', 'hijriToGregorian()')}
+const dayName = DAY_NAMES_AR[dayIdx]; // "الأحد"`,
+  angular: `import { Component } from '@angular/core';
+import { hijriToGregorian, DAY_NAMES_AR, hijriDayOfWeek } from './hijri-calendar.lib';
+
+@Component({
+  selector: 'app-conversion',
+  template: \`
+    <p>الهجري: 1447/10/14</p>
+    <p>الميلادي: {{ greg.formatted }}</p>
+    <p>يوم الأسبوع: {{ dayName }}</p>
+  \`
+})
+export class ConversionComponent {
+  greg = hijriToGregorian(1447, 10, 14);
+  dayIdx = hijriDayOfWeek(1447, 10, 14);
+  dayName = DAY_NAMES_AR[this.dayIdx];
+}`,
+  legacy: `// Angular 7-13
+// نفس الكود مع تعديل imports حسب الإصدار`
+}, 'typescript', 'hijriToGregorian()')}
       </div>
     </div>
 

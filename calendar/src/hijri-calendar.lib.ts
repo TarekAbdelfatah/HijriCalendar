@@ -466,6 +466,7 @@ function injectCalendarStyles(): void {
   color: #1a1a2e;
   text-align: start;
   height: 38px;
+  cursor: pointer;
 }
 .hci-input:focus { border-color: #006C35; }
 
@@ -483,6 +484,8 @@ function injectCalendarStyles(): void {
   cursor: pointer; 
   min-width: 48px; 
   color: #006C35;
+  border-right: 1px solid #e0e5dc;
+  border-left: 1px solid #e0e5dc;
 }
 .hci-select:focus { outline: none; border-color: #006C35; }
 
@@ -760,15 +763,21 @@ export function createCalendarInput(
     popup.style.left = r.left + 'px';
     popup.style.right = 'auto';
     
-    // Position vertically - below or above based on space
-    if (spaceBelow >= popupHeight + 10) {
-      popup.style.top = (r.bottom + window.scrollY + 4) + 'px';
-      popup.style.bottom = 'auto';
-    } else if (spaceAbove >= popupHeight + 10) {
-      popup.style.bottom = (window.innerHeight - r.top + window.scrollY + 4) + 'px';
-      popup.style.top = 'auto';
+    // Position vertically - choose the side with more space
+    if (spaceBelow >= popupHeight + 10 || spaceAbove >= popupHeight + 10) {
+      // Show in the side with more space
+      if (spaceBelow >= spaceAbove) {
+        // Below input
+        popup.style.top = (r.bottom + window.scrollY + 8) + 'px';
+        popup.style.bottom = 'auto';
+      } else {
+        // Above input
+        popup.style.top = (r.top + window.scrollY - popupHeight - 8) + 'px';
+        popup.style.bottom = 'auto';
+      }
     } else {
-      popup.style.top = (r.bottom + window.scrollY + 4) + 'px';
+      // Not enough space in either direction - show below anyway
+      popup.style.top = (r.bottom + window.scrollY + 8) + 'px';
       popup.style.bottom = 'auto';
     }
   }
