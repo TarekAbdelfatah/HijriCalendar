@@ -478,17 +478,18 @@ function injectCalendarStyles(): void {
 .hci-wrapper * { box-sizing: border-box; }
 
 /* Input field - left side in RTL */
-.hci-input { 
-  flex: 1; 
-  min-width: 120px; 
-  padding: 8px 14px; 
-  border: 1px solid #d0d7de; 
-  border-inline-start: none; 
-  border-radius: 0 8px 8px 0; 
-  font-size: 14px; 
-  outline: none; 
+.hci-input {
+  flex: 1;
+  min-width: 120px;
+  padding: 8px 14px;
+  padding-inline-end: 32px;
+  border: 1px solid #d0d7de;
+  border-inline-start: none;
+  border-radius: 0 8px 8px 0;
+  font-size: 14px;
+  outline: none;
   transition: border-color 0.15s;
-  background: #fff;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23006C35' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E") no-repeat 10px center;
   color: #1a1a2e;
   text-align: start;
   height: 38px;
@@ -549,7 +550,7 @@ function injectCalendarStyles(): void {
 
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
-  .hci-input { background: #1f2937; border-color: #374151; color: #f3f4f6; }
+  .hci-input { background: #1f2937 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2322c55e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E") no-repeat 10px center; border-color: #374151; color: #f3f4f6; }
   .hci-input:focus { border-color: #22c55e; }
   .hci-select { background: #374151; border-color: #4b5563; color: #22c55e; }
   .hci-select:focus { border-color: #22c55e; }
@@ -566,7 +567,7 @@ function injectCalendarStyles(): void {
 }
 
 /* Dark mode class override */
-html.dark .hci-input { background: #1f2937; border-color: #374151; color: #f3f4f6; }
+html.dark .hci-input { background: #1f2937 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2322c55e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E") no-repeat 10px center; border-color: #374151; color: #f3f4f6; }
 html.dark .hci-input:focus { border-color: #22c55e; }
 html.dark .hci-select { background: #374151; border-color: #4b5563; color: #22c55e; }
 html.dark .hci-select:focus { border-color: #22c55e; }

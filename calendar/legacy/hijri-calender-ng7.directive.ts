@@ -159,7 +159,7 @@ export class HijriCalenderDirective implements ControlValueAccessor, OnInit, Aft
     if (this.popup) { this.closePopup(); return; }
     this.onTouched();
     this.popup = document.createElement('div');
-    this.popup.className = 'hcal-popup';
+    this.popup.className = 'hci-popup';
     document.body.appendChild(this.popup);
     this.renderCalendar();
     this.positionPopup();
@@ -191,6 +191,7 @@ export class HijriCalenderDirective implements ControlValueAccessor, OnInit, Aft
     const parent = this.el.nativeElement.parentNode;
     this.renderer.insertBefore(parent, this.wrapper, this.el.nativeElement);
     this.renderer.appendChild(this.wrapper, this.el.nativeElement);
+    this.renderer.addClass(this.el.nativeElement, 'hcal-has-icon');
 
     this.dropEl = this.renderer.createElement('select');
     this.renderer.addClass(this.dropEl, 'hcal-drop');
@@ -231,10 +232,10 @@ export class HijriCalenderDirective implements ControlValueAccessor, OnInit, Aft
     const self = this;
     this.popup.addEventListener('mousedown', function(e: Event) { e.stopPropagation(); });
 
-    const prevBtn = this.popup.querySelector('.hcal-prev');
+    const prevBtn = this.popup.querySelector('.hci-prev');
     if (prevBtn) { prevBtn.addEventListener('click', function() { self.navigate(-1); }); }
 
-    const nextBtn = this.popup.querySelector('.hcal-next');
+    const nextBtn = this.popup.querySelector('.hci-next');
     if (nextBtn) { nextBtn.addEventListener('click', function() { self.navigate(+1); }); }
 
     const cells = this.popup.querySelectorAll('[data-d]');
@@ -305,20 +306,20 @@ export class HijriCalenderDirective implements ControlValueAccessor, OnInit, Aft
     let cells = '';
     for (let i = 0; i < firstDow; i++) { cells += '<td></td>'; }
     for (let d = 1; d <= totalDays; d++) {
-      const cls = isSel(d) ? 'sel' : isToday(d) ? 'tod' : '';
+      const cls = isSel(d) ? 'hci-selected' : isToday(d) ? 'hci-today' : '';
       cells += '<td class="' + cls + '" data-d="' + d + '">' + d + '</td>';
       if ((firstDow + d) % 7 === 0 && d < totalDays) { cells += '</tr><tr>'; }
     }
     return (
-      '<div class="hcal-head">' +
-        '<button class="hcal-btn hcal-prev">&#8249;</button>' +
-        '<div class="hcal-title">' +
-          '<span class="hcal-main">' + mainTitle + '</span>' +
-          '<span class="hcal-sub">' + subTitle + '</span>' +
+      '<div class="hci-head">' +
+        '<button class="hci-btn hci-prev">&#8249;</button>' +
+        '<div class="hci-title">' +
+          '<span class="hci-main">' + mainTitle + '</span>' +
+          '<span class="hci-sub">' + subTitle + '</span>' +
         '</div>' +
-        '<button class="hcal-btn hcal-next">&#8250;</button>' +
+        '<button class="hci-btn hci-next">&#8250;</button>' +
       '</div>' +
-      '<table class="hcal-grid" dir="rtl">' +
+      '<table class="hci-grid" dir="rtl">' +
         '<thead><tr>' + heads + '</tr></thead>' +
         '<tbody><tr>' + cells + '</tr></tbody>' +
       '</table>'
@@ -390,8 +391,9 @@ export class HijriCalenderDirective implements ControlValueAccessor, OnInit, Aft
     if (!this.popup) { return; }
     const ref = this.wrapper || this.el.nativeElement;
     const r = ref.getBoundingClientRect();
-    this.popup.style.top   = (r.bottom + window.scrollY + 4) + 'px';
-    this.popup.style.right = (document.documentElement.clientWidth - r.right - window.scrollX) + 'px';
+    this.popup.style.top      = (r.bottom + window.scrollY + 4) + 'px';
+    this.popup.style.right    = (document.documentElement.clientWidth - r.right - window.scrollX) + 'px';
+    this.popup.style.minWidth = r.width + 'px';
   }
 
   private normalise(s: string): string | null {
@@ -421,64 +423,88 @@ const STYLES = `
   align-items: center;
   gap: 6px;
   width: 100%;
+  font-family: 'Cairo','Segoe UI',Tahoma,sans-serif;
 }
-.hcal-wrapper > input {
-  flex: 1;
-  min-width: 0;
-}
+
 .hcal-drop {
   flex-shrink: 0;
-  padding: 0 6px;
+  padding: 0 10px;
   height: 38px;
   border: 1px solid #d0d7de;
   border-radius: 8px;
-  background: #f8fafc;
-  color: #333;
-  font-size: 13px;
+  background: #f0f4f1;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
+  min-width: 48px;
+  color: #006C35;
   outline: none;
   transition: border-color .15s;
-  min-width: 46px;
 }
-.hcal-drop:focus { border-color: #1967d2; }
-.hcal-popup {
+.hcal-drop:focus { border-color: #006C35; }
+
+.hcal-has-icon {
+  padding-inline-end: 32px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23006C35' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 10px center;
+  background-size: 15px 15px;
+}
+
+.hci-popup {
   position: absolute;
   z-index: 9999;
   background: #fff;
-  border: 1px solid #d0d7de;
-  border-radius: 12px;
-  box-shadow: 0 8px 28px rgba(0,0,0,.15);
-  padding: 14px;
-  min-width: 292px;
+  border: 1px solid #e0e5dc;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0,106,53,0.15);
+  padding: 16px;
+  min-width: 300px;
+  box-sizing: border-box;
+  overflow: hidden;
   font-family: 'Cairo','Segoe UI',Tahoma,sans-serif;
   direction: rtl;
 }
-.hcal-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
+.hci-head { display: flex; align-items: center; justify-content: space-between; margin-block-end: 12px; }
+.hci-title { text-align: center; line-height: 1.4; flex: 1; }
+.hci-main { display: block; font-weight: 700; font-size: 16px; color: #006C35; }
+.hci-sub { display: block; font-size: 12px; color: #6b7280; }
+.hci-btn { background: none; border: none; font-size: 26px; cursor: pointer; color: #006C35; padding: 4px 10px; border-radius: 8px; transition: background .12s; line-height: 1; }
+.hci-btn:hover { background: #e8f5e9; }
+.hci-grid { width: 100%; border-collapse: collapse; text-align: center; }
+.hci-grid th { font-size: 12px; color: #6b7280; padding: 6px 4px; font-weight: 600; }
+.hci-grid td { font-size: 14px; padding: 8px 4px; cursor: pointer; border-radius: 50%; color: #1f2937; transition: all .12s; width: 38px; height: 38px; }
+.hci-grid td:empty { cursor: default; }
+.hci-grid td:not(:empty):hover { background: #e8f5e9; color: #006C35; }
+.hci-grid td.hci-today { background: #dcfce7; color: #006C35; font-weight: 700; }
+.hci-grid td.hci-selected { background: #006C35 !important; color: #fff !important; font-weight: 700; }
+
+@media (prefers-color-scheme: dark) {
+  .hcal-drop { background: #374151; border-color: #4b5563; color: #22c55e; }
+  .hcal-drop:focus { border-color: #22c55e; }
+  .hcal-has-icon { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2322c55e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E"); }
+  .hci-popup { background: #1f2937; border-color: #374151; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+  .hci-main { color: #22c55e; }
+  .hci-sub { color: #9ca3af; }
+  .hci-btn { color: #22c55e; }
+  .hci-btn:hover { background: #374151; }
+  .hci-grid th { color: #9ca3af; }
+  .hci-grid td { color: #e5e7eb; }
+  .hci-grid td:not(:empty):hover { background: #374151; color: #22c55e; }
+  .hci-grid td.hci-today { background: #064e3b; color: #22c55e; }
+  .hci-grid td.hci-selected { background: #22c55e !important; color: #fff !important; }
 }
-.hcal-title   { text-align: center; line-height: 1.3; }
-.hcal-main    { display: block; font-weight: 700; font-size: 15px; color: #1a1a2e; }
-.hcal-sub     { display: block; font-size: 11px; color: #999; }
-.hcal-btn {
-  background: none; border: none; font-size: 24px;
-  cursor: pointer; color: #555; padding: 2px 8px;
-  border-radius: 6px; line-height: 1; transition: background .12s;
-}
-.hcal-btn:hover { background: #f0f4f8; }
-.hcal-grid { width: 100%; border-collapse: collapse; text-align: center; }
-.hcal-grid th { font-size: 11px; color: #999; padding: 4px 2px; font-weight: 600; }
-.hcal-grid td {
-  font-size: 13px; padding: 7px 3px;
-  cursor: pointer; border-radius: 50%;
-  color: #333; transition: background .12s, color .12s;
-  width: 36px; height: 36px;
-}
-.hcal-grid td:empty { cursor: default; }
-.hcal-grid td:not(:empty):hover { background: #e8f0fe; }
-.hcal-grid td.tod { background: #e8f0fe; color: #1967d2; font-weight: 600; }
-.hcal-grid td.sel { background: #1967d2 !important; color: #fff !important; font-weight: 700; }
+html.dark .hcal-drop { background: #374151; border-color: #4b5563; color: #22c55e; }
+html.dark .hcal-drop:focus { border-color: #22c55e; }
+html.dark .hcal-has-icon { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2322c55e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E"); }
+html.dark .hci-popup { background: #1f2937; border-color: #374151; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+html.dark .hci-main { color: #22c55e; }
+html.dark .hci-sub { color: #9ca3af; }
+html.dark .hci-btn { color: #22c55e; }
+html.dark .hci-btn:hover { background: #374151; }
+html.dark .hci-grid th { color: #9ca3af; }
+html.dark .hci-grid td { color: #e5e7eb; }
+html.dark .hci-grid td:not(:empty):hover { background: #374151; color: #22c55e; }
+html.dark .hci-grid td.hci-today { background: #064e3b; color: #22c55e; }
+html.dark .hci-grid td.hci-selected { background: #22c55e !important; color: #fff !important; }
 `;

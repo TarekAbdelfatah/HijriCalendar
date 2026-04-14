@@ -40,6 +40,15 @@ export declare function hijriToGregorianStr(hijriStr: string): string;
 export declare function gregorianToHijriStr(gregStr: string): string;
 export declare function todayHijri(): HijriDateObj;
 export declare function todayGregorian(): GregDateObj;
+/** Returns the Arabic day name for a Hijri date string (yyyy/mm/dd format).
+ *  e.g. getDayNameHijri('1446/01/15') → 'الأربعاء'
+ */
+export declare function getDayNameHijri(hijriStr: string): string;
+/** Returns Arabic day name for a Hijri date string "yyyy/mm/dd".
+ *  Direct replacement for $.calendars.instance("UmmAlQura","ar").dayOfWeek() */
+export declare function hijriDayName(dateStr: string): string;
+/** Returns today's Hijri date as "yyyy/mm/dd" — direct replacement for $.calendars getCurrentHijriDate() */
+export declare function todayHijriStr(): string;
 export type DateFormat = 'yyyy/mm/dd' | 'dd/mm/yyyy' | 'yyyy-mm-dd' | 'dd-mm-yyyy' | 'yyyy-mm' | 'yyyy';
 export interface DateRange {
     hijri: string;
@@ -49,3 +58,35 @@ export interface ValidationResult {
     isValid: boolean;
     errorMessage?: string;
 }
+export interface CalendarInputOptions {
+    /** Which value is bound to the input: 'hijri' (default) or 'gregorian' */
+    bindValue?: 'hijri' | 'gregorian';
+    /** Placeholder text */
+    placeholder?: string;
+    /** CSS class for the input */
+    cssClass?: string;
+    /** Initial value (string in yyyy/mm/dd format) */
+    initialValue?: string;
+    /** Callback when date is selected - returns both hijri and gregorian */
+    onDateSelect?: (event: CalendarInputEvent) => void;
+    /** Callback when input value changes */
+    onChange?: (value: string) => void;
+    /** Callback when dropdown (ه/م) changes */
+    onDisplayModeChange?: (mode: 'hijri' | 'gregorian') => void;
+    /** Custom CSS to inject */
+    customCss?: string;
+}
+export interface CalendarInputEvent {
+    /** التاريخ الهجري */
+    hijri: HijriDateObj;
+    /** التاريخ الميلادي */
+    greg: GregDateObj;
+    /** طريقة العرض الحالية (هجري أو ميلادي) */
+    displayMode: 'hijri' | 'gregorian';
+}
+export declare function createCalendarInput(container: HTMLElement | string, options?: CalendarInputOptions): {
+    getValue: () => string;
+    setValue: (value: string) => void;
+    destroy: () => void;
+    getEvent: () => CalendarInputEvent | null;
+};
