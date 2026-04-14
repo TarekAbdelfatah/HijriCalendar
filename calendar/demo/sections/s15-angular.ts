@@ -65,11 +65,50 @@ export function renderAngularSection(containerId: string): void {
 ├── hijri-calendar.lib.ts        ← انسخ هذا
 └── hijri-calendar.directive.ts ← انسخ هذا`, 'bash', 'هيكل الملفات')}
 
-        <div style="margin-top:.75rem; padding:.75rem 1rem; background:var(--surf2); border:1px solid var(--bdr); border-radius:8px; font-size:.84rem; line-height:1.75; color:var(--txt2);">
-          <strong>🎨 CSS مُدمج — لا حاجة لاستيراده</strong><br>
-          الـ Directive يحقن أنماطه تلقائياً عند التهيئة الأولى. <em>لا تحتاج</em> إلى إضافة <code>hijri-calendar.css</code> في <code>angular.json</code> أو <code>styles.css</code>.<br>
-          ملف CSS مطلوب فقط إذا استخدمت <code>createCalendarInput</code> مباشرةً (نادراً في Angular).
+      </div>
+    </div>
+
+    <!-- CSS setup -->
+    <div class="card">
+      <div class="card-hdr"><span class="card-hdr-title">إعداد CSS</span></div>
+      <div class="card-body">
+
+        <div style="padding:.75rem 1rem; background:var(--surf2); border:1px solid var(--bdr); border-radius:8px; font-size:.84rem; line-height:1.8; color:var(--txt2); margin-bottom:1rem;">
+          <strong>🎨 الـ Directive يحقن CSS خاصه تلقائياً</strong><br>
+          أنماط النافذة المنبثقة (الـ popup) والـ dropdown مُضمَّنة داخل الـ Directive ويتم حقنها في <code>&lt;head&gt;</code> عند أول تشغيل —
+          <strong>لا تحتاج أي إعداد إضافي</strong> لاستخدام <code>hijri-calender</code> كـ directive.
         </div>
+
+        <p style="font-size:.85rem; font-weight:600; color:var(--txt2); margin-bottom:.5rem;">
+          متى تحتاج <code>hijri-calendar.css</code>؟
+        </p>
+        <p style="font-size:.84rem; color:var(--txt2); margin-bottom:.75rem; line-height:1.7;">
+          فقط إذا استخدمت <code>createCalendarInput</code> مباشرةً في Angular (غير شائع).
+          في هذه الحالة أضفه في <code>angular.json</code>:
+        </p>
+
+        ${codeBlock(`// angular.json  ←  في مقطع "styles" لمشروعك
+{
+  "projects": {
+    "your-app": {
+      "architect": {
+        "build": {
+          "options": {
+            "styles": [
+              "src/styles.css",
+              "src/app/hijri-calendar/hijri-calendar.css"
+            ]
+          }
+        }
+      }
+    }
+  }
+}`, 'typescript', 'angular.json — إضافة CSS')}
+
+        <p style="font-size:.84rem; color:var(--txt2); margin:.75rem 0 .5rem; font-weight:600;">أو في <code>src/styles.css</code>:</p>
+        ${codeBlock(`/* src/styles.css */
+@import './app/hijri-calendar/hijri-calendar.css';`, 'typescript', 'styles.css')}
+
       </div>
     </div>
 

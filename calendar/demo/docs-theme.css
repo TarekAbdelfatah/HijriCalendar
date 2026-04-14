@@ -260,7 +260,10 @@ body {
   min-width: 0;
   padding: 2.5rem 2.75rem 5rem;
 }
-.doc-content { max-width: var(--content-max); }
+.doc-content {
+  max-width: var(--content-max);
+  margin-inline: auto;   /* center content — prevents RTL start-edge bias */
+}
 
 /* ─────────────────────────────────────────────────────────────
    SECTIONS
