@@ -23,15 +23,15 @@ export function renderLegacySection(containerId: string): void {
       <div class="card-hdr"><span class="card-hdr-title">تحميل الملفات</span></div>
       <div class="card-body">
         <div style="display:flex; flex-wrap:wrap; gap:.625rem;">
-          <a href="../../legacy/hijri-calender-ng7.directive.ts" download
+          <a href="../legacy/hijri-calender-ng7.directive.ts" download
              style="display:inline-flex; align-items:center; gap:.4rem; padding:.5rem .9rem; background:var(--accent-bg); border:1px solid var(--accent-bdr); border-radius:8px; font-size:.82rem; font-weight:700; color:var(--accent); text-decoration:none;">
             ⬇ hijri-calender-ng7.directive.ts
           </a>
-          <a href="../../src/hijri-calendar.lib.ts" download
+          <a href="../src/hijri-calendar.lib.ts" download
              style="display:inline-flex; align-items:center; gap:.4rem; padding:.5rem .9rem; background:var(--accent-bg); border:1px solid var(--accent-bdr); border-radius:8px; font-size:.82rem; font-weight:700; color:var(--accent); text-decoration:none;">
             ⬇ hijri-calendar.lib.ts
           </a>
-          <a href="../../src/hijri-calendar.css" download
+          <a href="../src/hijri-calendar.css" download
              style="display:inline-flex; align-items:center; gap:.4rem; padding:.5rem .9rem; background:var(--accent-bg); border:1px solid var(--accent-bdr); border-radius:8px; font-size:.82rem; font-weight:700; color:var(--accent); text-decoration:none;">
             ⬇ hijri-calendar.css
           </a>
@@ -67,6 +67,10 @@ export function renderLegacySection(containerId: string): void {
         <p style="font-size:.82rem; color:var(--txt3); margin-top:.5rem;">
           ⚠️ انتبه: اسم الملف هو <code>hijri-calender-ng7.directive.ts</code> وليس <code>hijri-calendar.directive.ts</code> — فالملف مختلف عن نسخة Angular 14+
         </p>
+        <div style="margin-top:.75rem; padding:.75rem 1rem; background:var(--surf2); border:1px solid var(--bdr); border-radius:8px; font-size:.84rem; line-height:1.75; color:var(--txt2);">
+          <strong>🎨 CSS مُدمج — لا حاجة لاستيراده</strong><br>
+          الـ Directive يحقن أنماطه تلقائياً. لا تحتاج لإضافة <code>hijri-calendar.css</code> في <code>angular.json</code>.
+        </div>
       </div>
     </div>
 

@@ -39,15 +39,15 @@ export function renderGettingStarted(containerId: string): void {
       <div class="card-body">
 
         <div style="display:flex; flex-wrap:wrap; gap:.625rem; margin-bottom:1rem;">
-          <a href="../../dist/hijri-calendar.lib.js" download
+          <a href="../dist/hijri-calendar.lib.js" download
              style="display:inline-flex; align-items:center; gap:.4rem; padding:.5rem .9rem; background:var(--accent-bg); border:1px solid var(--accent-bdr); border-radius:8px; font-size:.82rem; font-weight:700; color:var(--accent); text-decoration:none;">
             ⬇ hijri-calendar.lib.js &nbsp;<span style="opacity:.6; font-weight:400;">(compiled JS)</span>
           </a>
-          <a href="../../src/hijri-calendar.lib.ts" download
+          <a href="../src/hijri-calendar.lib.ts" download
              style="display:inline-flex; align-items:center; gap:.4rem; padding:.5rem .9rem; background:var(--accent-bg); border:1px solid var(--accent-bdr); border-radius:8px; font-size:.82rem; font-weight:700; color:var(--accent); text-decoration:none;">
             ⬇ hijri-calendar.lib.ts &nbsp;<span style="opacity:.6; font-weight:400;">(TypeScript source)</span>
           </a>
-          <a href="../../src/hijri-calendar.css" download
+          <a href="../src/hijri-calendar.css" download
              style="display:inline-flex; align-items:center; gap:.4rem; padding:.5rem .9rem; background:var(--surf2); border:1px solid var(--bdr); border-radius:8px; font-size:.82rem; font-weight:700; color:var(--txt); text-decoration:none;">
             ⬇ hijri-calendar.css &nbsp;<span style="opacity:.6; font-weight:400;">(اختياري)</span>
           </a>

@@ -401,6 +401,21 @@ export function getDayNameHijri(hijriStr: string): string {
   return DAY_NAMES_AR[dow] || '';
 }
 
+/** Returns Arabic day name for a Hijri date string "yyyy/mm/dd".
+ *  Direct replacement for $.calendars.instance("UmmAlQura","ar").dayOfWeek() */
+export function hijriDayName(dateStr: string): string {
+  if (!dateStr) return '';
+  const p = dateStr.split('/').map(Number);
+  if (p.length !== 3 || p.some(isNaN)) return '';
+  return DAY_NAMES_AR[hijriDayOfWeek(p[0], p[1], p[2])];
+}
+
+/** Returns today's Hijri date as "yyyy/mm/dd" — direct replacement for $.calendars getCurrentHijriDate() */
+export function todayHijriStr(): string {
+  const h = todayHijri();
+  return h.year + '/' + pad2(h.month) + '/' + pad2(h.day);
+}
+
 function normaliseDateString(dateStr: string): string | null {
   if (!dateStr) return null;
   const p = dateStr.split(/[\/\-\\]/).map(Number);

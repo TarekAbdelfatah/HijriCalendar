@@ -37,7 +37,7 @@
 
 import {
   AfterViewInit, Directive, ElementRef, EventEmitter, HostListener,
-  Input, OnDestroy, Output, Renderer2, forwardRef,
+  Input, OnDestroy, OnInit, Output, Renderer2, forwardRef,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
@@ -67,7 +67,7 @@ export interface HijriGregDate {
     multi: true,
   }],
 })
-export class HijriCalenderDirective implements ControlValueAccessor, AfterViewInit, OnDestroy {
+export class HijriCalenderDirective implements ControlValueAccessor, OnInit, AfterViewInit, OnDestroy {
 
   @Input() bindValue: 'hijri' | 'gregorian' = 'hijri';
 
@@ -98,11 +98,21 @@ export class HijriCalenderDirective implements ControlValueAccessor, AfterViewIn
     this.viewMonth = t.month;
   }
 
+  ngOnInit(): void {
+    // Set displayMode as early as possible so writeValue() uses the correct mode
+    // if it is called (by Angular Forms) before ngAfterViewInit.
+    this.displayMode = this.bindValue;
+  }
+
   ngAfterViewInit(): void {
     this.buildWrapper();
     // Sync displayMode and dropdown to bindValue so Gregorian dates load correctly
     this.displayMode = this.bindValue;
     if (this.dropEl) { this.dropEl.value = this.bindValue; }
+    // Re-sync viewYear/viewMonth now that displayMode is correct.
+    // writeValue() may have already run (Angular calls it before ngAfterViewInit),
+    // so we must re-sync here — otherwise the popup opens on the wrong month.
+    this.syncViewToCurrentValue();
     this.updateDisplay();
   }
 
@@ -192,6 +202,9 @@ export class HijriCalenderDirective implements ControlValueAccessor, AfterViewIn
       const opt = self.renderer.createElement('option');
       self.renderer.setProperty(opt, 'value', item[0]);
       self.renderer.setProperty(opt, 'textContent', item[1]);
+      if (item[0] === self.bindValue) {
+        self.renderer.setProperty(opt, 'selected', true);
+      }
       self.renderer.appendChild(self.dropEl, opt);
     });
 

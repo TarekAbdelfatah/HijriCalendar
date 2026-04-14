@@ -23,15 +23,15 @@ export function renderAngularSection(containerId: string): void {
       <div class="card-hdr"><span class="card-hdr-title">تحميل الملفات</span></div>
       <div class="card-body">
         <div style="display:flex; flex-wrap:wrap; gap:.625rem;">
-          <a href="../../angular/hijri-calendar.directive.ts" download
+          <a href="../angular/hijri-calendar.directive.ts" download
              style="display:inline-flex; align-items:center; gap:.4rem; padding:.5rem .9rem; background:var(--accent-bg); border:1px solid var(--accent-bdr); border-radius:8px; font-size:.82rem; font-weight:700; color:var(--accent); text-decoration:none;">
             ⬇ hijri-calendar.directive.ts
           </a>
-          <a href="../../src/hijri-calendar.lib.ts" download
+          <a href="../src/hijri-calendar.lib.ts" download
              style="display:inline-flex; align-items:center; gap:.4rem; padding:.5rem .9rem; background:var(--accent-bg); border:1px solid var(--accent-bdr); border-radius:8px; font-size:.82rem; font-weight:700; color:var(--accent); text-decoration:none;">
             ⬇ hijri-calendar.lib.ts
           </a>
-          <a href="../../src/hijri-calendar.css" download
+          <a href="../src/hijri-calendar.css" download
              style="display:inline-flex; align-items:center; gap:.4rem; padding:.5rem .9rem; background:var(--accent-bg); border:1px solid var(--accent-bdr); border-radius:8px; font-size:.82rem; font-weight:700; color:var(--accent); text-decoration:none;">
             ⬇ hijri-calendar.css
           </a>
@@ -64,6 +64,12 @@ export function renderAngularSection(containerId: string): void {
         ${codeBlock(`src/app/hijri-calendar/
 ├── hijri-calendar.lib.ts        ← انسخ هذا
 └── hijri-calendar.directive.ts ← انسخ هذا`, 'bash', 'هيكل الملفات')}
+
+        <div style="margin-top:.75rem; padding:.75rem 1rem; background:var(--surf2); border:1px solid var(--bdr); border-radius:8px; font-size:.84rem; line-height:1.75; color:var(--txt2);">
+          <strong>🎨 CSS مُدمج — لا حاجة لاستيراده</strong><br>
+          الـ Directive يحقن أنماطه تلقائياً عند التهيئة الأولى. <em>لا تحتاج</em> إلى إضافة <code>hijri-calendar.css</code> في <code>angular.json</code> أو <code>styles.css</code>.<br>
+          ملف CSS مطلوب فقط إذا استخدمت <code>createCalendarInput</code> مباشرةً (نادراً في Angular).
+        </div>
       </div>
     </div>
 
