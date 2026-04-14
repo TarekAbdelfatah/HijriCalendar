@@ -177,9 +177,30 @@ export class HijriCalendarComponent {
     console.log('الميلادي:', event.greg.formatted);
   }
 }`,
-  legacy: `// Angular 7-13 - نفس الطريقة
-// انسخ directive والتقنيةidentical للـ standalone
-// استخدم [(ngModel)] و (dateChange) بنفس الطريقة`
+  legacy: `// Angular 7-13 - استخدم الـ Directive في NgModule
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-hijri-calendar',
+  template: \`
+    <!-- استخدم directive على أي input -->
+    <input type="text" readonly hijri-calender
+           [(ngModel)]="selectedDate"
+           (dateChange)="onDateSelected($event)"
+           placeholder="اختر التاريخ" />
+    
+    <p>التاريخ المختار: {{ selectedDate }}</p>
+  \`
+})
+export class HijriCalendarComponent {
+  selectedDate = '';
+  
+  onDateSelected(event: any) {
+    // event = { hijri: {...}, greg: {...} }
+    console.log('الهجري:', event.hijri.formatted);
+    console.log('الميلادي:', event.greg.formatted);
+  }
+}`
 }, 'typescript', 'الكود الكامل')}
       </div>
     </div>
@@ -241,7 +262,35 @@ export class DataFilterComponent {
   }
 }`,
   legacy: `// Angular 7-13
-// نفس الكود مع تعديل imports حسب الإصدار`
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-data-filter',
+  template: \`
+    <input type="text" readonly hijri-calender
+           [(ngModel)]="filterDate"
+           (dateChange)="filterByDate($event)"
+           placeholder="تصفية حسب التاريخ" />
+    
+    <table>
+      <tr *ngFor="let row of filteredRows">
+        <td>{{ row.name }}</td>
+        <td>{{ row.date }}</td>
+      </tr>
+    </table>
+  \`
+})
+export class DataFilterComponent {
+  filterDate = '';
+  rows = [...]; // بيانات الجدول
+  filteredRows = [];
+  
+  filterByDate(event: any) {
+    const gregDate = event.greg.formatted; // "2025/04/13"
+    // استخدم gregDate للتصفية
+    this.filteredRows = this.rows.filter(r => r.date === gregDate);
+  }
+}`
 }, 'typescript')}
           </div>
           </div>
@@ -304,7 +353,37 @@ export class DateDiffComponent {
   }
 }`,
   legacy: `// Angular 7-13
-// نفس الكود مع تعديل imports حسب الإصدار`
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-date-diff',
+  template: \`
+    <input type="text" readonly hijri-calender
+           [(ngModel)]="selectedDate"
+           (dateChange)="onDateSelected($event)"
+           placeholder="اختر التاريخ" />
+    
+    <p *ngIf="firstDate">التاريخ الأول: {{ firstDate.hijri }}</p>
+    <p *ngIf="diffDays !== null">الفرق: {{ diffDays }} يوم</p>
+  \`
+})
+export class DateDiffComponent {
+  selectedDate = '';
+  firstDate: { hijri: string; jd: number } | null = null;
+  diffDays: number | null = null;
+  
+  onDateSelected(event: any) {
+    const jd = hijriToJD(event.hijri.year, event.hijri.month, event.hijri.day);
+    
+    if (!this.firstDate) {
+      this.firstDate = { hijri: event.hijri.formatted, jd };
+      this.diffDays = null;
+    } else {
+      this.diffDays = Math.abs(jd - this.firstDate.jd);
+      this.firstDate = null;
+    }
+  }
+}`
 }, 'typescript')}
           </div>
           </div>

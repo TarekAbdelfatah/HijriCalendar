@@ -52,6 +52,8 @@ import {
   pad2, HijriDateObj, GregDateObj,
 } from './hijri-calendar.lib';
 
+export { getDayNameHijri } from './hijri-calendar.lib';
+
 export interface HijriGregDate {
   hijri: HijriDateObj;
   greg: GregDateObj;
@@ -98,6 +100,9 @@ export class HijriCalenderDirective implements ControlValueAccessor, AfterViewIn
 
   ngAfterViewInit(): void {
     this.buildWrapper();
+    // Sync displayMode and dropdown to bindValue so Gregorian dates load correctly
+    this.displayMode = this.bindValue;
+    if (this.dropEl) { this.dropEl.value = this.bindValue; }
     this.updateDisplay();
   }
 
@@ -210,18 +215,20 @@ export class HijriCalenderDirective implements ControlValueAccessor, AfterViewIn
       ? this.buildHijriHtml()
       : this.buildGregHtml();
 
+    const self = this;
     this.popup.addEventListener('mousedown', function(e: Event) { e.stopPropagation(); });
 
     const prevBtn = this.popup.querySelector('.hcal-prev');
-    if (prevBtn) { prevBtn.addEventListener('click', function() { self.navigate(-1); }.bind(this)); }
+    if (prevBtn) { prevBtn.addEventListener('click', function() { self.navigate(-1); }); }
 
     const nextBtn = this.popup.querySelector('.hcal-next');
-    if (nextBtn) { nextBtn.addEventListener('click', function() { self.navigate(+1); }.bind(this)); }
+    if (nextBtn) { nextBtn.addEventListener('click', function() { self.navigate(+1); }); }
 
     const cells = this.popup.querySelectorAll('[data-d]');
     for (let i = 0; i < cells.length; i++) {
-      const cell = cells[i] as HTMLElement;
-      cell.addEventListener('click', function() { self.pickDay(+cell.getAttribute('data-d')); }.bind(this));
+      (function(cell: HTMLElement) {
+        cell.addEventListener('click', function() { self.pickDay(+(cell.getAttribute('data-d') || '0')); });
+      })(cells[i] as HTMLElement);
     }
   }
 

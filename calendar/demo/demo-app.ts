@@ -23,6 +23,8 @@ import { renderLeapYear }        from './sections/s09-leap-year';
 import { renderJulian }         from './sections/s10-julian';
 import { renderConstants }       from './sections/s11-constants';
 import { renderApiReference }   from './sections/s13-api-reference';
+import { renderAngularSection } from './sections/s15-angular';
+import { renderLegacySection }  from './sections/s16-legacy';
 
 // Init theme before any render to avoid flash
 ThemeManager.init();
@@ -46,6 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
   renderJulian('s-julian');
   renderConstants('s-constants');
   renderApiReference('s-api-ref');
+  renderAngularSection('s-angular');
+  renderLegacySection('s-legacy');
 
   // 3. Sidebar
   renderSidebar('doc-sidebar');

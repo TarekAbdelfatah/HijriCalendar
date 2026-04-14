@@ -1,7 +1,9 @@
+
 import {
   hijriDayOfWeek, gregDayOfWeek,
   DAY_NAMES_AR, DAY_NAMES_SHORT_AR,
   HIJRI_MONTH_NAMES, todayHijri, todayGregorian,
+  getDayNameHijri
 } from '../../src/hijri-calendar.lib';
 import { codeBlock } from '../utils/code-block';
 
@@ -28,7 +30,7 @@ export function renderDayOfWeek(containerId: string): void {
         <code style="font-family:monospace;font-size:.85em;background:var(--surf2);padding:1px 6px;border-radius:4px;border:1px solid var(--bdr)">hijriDayOfWeek()</code>
         و
         <code style="font-family:monospace;font-size:.85em;background:var(--surf2);padding:1px 6px;border-radius:4px;border:1px solid var(--bdr)">gregDayOfWeek()</code>
-        — يُرجعان رقم اليوم (0=الأحد) مع دعم الأسماء العربية
+        و
       </p>
     </div>
   </div>

@@ -99,7 +99,6 @@ import { HijriCalenderDirective } from './hijri-calendar.directive';
 
 @Component({
   selector: 'app-date-picker',
-  imports: [FormsModule, HijriCalenderDirective],
   template: \`
     <input type="text" readonly hijri-calender
            [(ngModel)]="selectedDate"

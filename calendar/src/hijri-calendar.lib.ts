@@ -390,6 +390,17 @@ export function todayGregorian(): GregDateObj {
            formatted: `${now.getFullYear()}/${pad2(now.getMonth()+1)}/${pad2(now.getDate())}` };
 }
 
+/** Returns the Arabic day name for a Hijri date string (yyyy/mm/dd format).
+ *  e.g. getDayNameHijri('1446/01/15') → 'الأربعاء'
+ */
+export function getDayNameHijri(hijriStr: string): string {
+  const norm = normaliseDateString(hijriStr);
+  if (!norm) return '';
+  const parts = norm.split('/').map(Number);
+  const dow = hijriDayOfWeek(parts[0], parts[1], parts[2]);
+  return DAY_NAMES_AR[dow] || '';
+}
+
 function normaliseDateString(dateStr: string): string | null {
   if (!dateStr) return null;
   const p = dateStr.split(/[\/\-\\]/).map(Number);
@@ -639,7 +650,7 @@ export function createCalendarInput(
   function updateDisplay(): void {
     const val = displayMode === 'hijri' ? hijriStr : gregStr;
     input.value = val;
-    opts.onChange?.(val);
+    if (opts.onChange) { opts.onChange(val); }
   }
   
   function syncViewToValue(): void {
@@ -715,12 +726,17 @@ export function createCalendarInput(
     if (!popup) return;
     popup.innerHTML = displayMode === 'hijri' ? buildHijriHtml() : buildGregHtml();
     
-    popup.addEventListener('mousedown', e => e.stopPropagation());
-    popup.querySelector('.hci-prev')?.addEventListener('click', () => { viewMonth--; if (viewMonth < 1) { viewMonth = 12; viewYear--; } renderPopup(); });
-    popup.querySelector('.hci-next')?.addEventListener('click', () => { viewMonth++; if (viewMonth > 12) { viewMonth = 1; viewYear++; } renderPopup(); });
-    popup.querySelectorAll<HTMLElement>('[data-d]').forEach(cell => {
-      cell.addEventListener('click', () => pickDay(+cell.dataset['d']!));
-    });
+    popup.addEventListener('mousedown', function(e: Event) { e.stopPropagation(); });
+    const prevBtn = popup.querySelector('.hci-prev');
+    if (prevBtn) { prevBtn.addEventListener('click', function() { viewMonth--; if (viewMonth < 1) { viewMonth = 12; viewYear--; } renderPopup(); }); }
+    const nextBtn = popup.querySelector('.hci-next');
+    if (nextBtn) { nextBtn.addEventListener('click', function() { viewMonth++; if (viewMonth > 12) { viewMonth = 1; viewYear++; } renderPopup(); }); }
+    const dayCells = popup.querySelectorAll('[data-d]');
+    for (let ci = 0; ci < dayCells.length; ci++) {
+      (function(cell: HTMLElement) {
+        cell.addEventListener('click', function() { pickDay(+(cell.getAttribute('data-d') || '0')); });
+      })(dayCells[ci] as HTMLElement);
+    }
   }
   
   function openPopup(): void {
@@ -731,8 +747,8 @@ export function createCalendarInput(
     renderPopup();
     positionPopup();
     
-    outsideClickHandler = (e: MouseEvent) => {
-      if (!popup?.contains(e.target as Node) && e.target !== input && e.target !== select) {
+    outsideClickHandler = function(e: MouseEvent) {
+      if ((!popup || !popup.contains(e.target as Node)) && e.target !== input && e.target !== select) {
         closePopup();
       }
     };
@@ -740,7 +756,7 @@ export function createCalendarInput(
   }
   
   function closePopup(): void {
-    popup?.remove();
+    if (popup) { popup.remove(); }
     popup = null;
     if (outsideClickHandler) {
       document.removeEventListener('mousedown', outsideClickHandler);
@@ -800,9 +816,7 @@ export function createCalendarInput(
     const gregObj = { year: p[0], month: p[1], day: p[2], formatted: gregStr };
     
     currentEvent = { hijri: hijriObj, greg: gregObj, displayMode };
-    if (currentEvent) {
-      opts.onDateSelect?.(currentEvent);
-    }
+    if (opts.onDateSelect) { opts.onDateSelect(currentEvent); }
     closePopup();
   }
   
@@ -812,7 +826,7 @@ export function createCalendarInput(
     displayMode = select.value as 'hijri' | 'gregorian';
     syncViewToValue();
     updateDisplay();
-    opts.onDisplayModeChange?.(displayMode);
+    if (opts.onDisplayModeChange) { opts.onDisplayModeChange(displayMode); }
     if (popup) renderPopup();
   });
   select.addEventListener('click', (e) => e.stopPropagation());

@@ -11,12 +11,33 @@ export function renderAngularSection(containerId: string): void {
   <div class="sec-head">
     <div class="sec-ico">🅰️</div>
     <div class="sec-meta">
-      <h2 class="sec-title">Angular Directive</h2>
+      <h2 class="sec-title">Angular Directive (14+)</h2>
       <p class="sec-desc">مكوّن Angular 14+ standalone — انسخه إلى مشروعك</p>
     </div>
   </div>
 
   <div class="sec-body">
+
+    <!-- Download links -->
+    <div class="card">
+      <div class="card-hdr"><span class="card-hdr-title">تحميل الملفات</span></div>
+      <div class="card-body">
+        <div style="display:flex; flex-wrap:wrap; gap:.625rem;">
+          <a href="../../angular/hijri-calendar.directive.ts" download
+             style="display:inline-flex; align-items:center; gap:.4rem; padding:.5rem .9rem; background:var(--accent-bg); border:1px solid var(--accent-bdr); border-radius:8px; font-size:.82rem; font-weight:700; color:var(--accent); text-decoration:none;">
+            ⬇ hijri-calendar.directive.ts
+          </a>
+          <a href="../../src/hijri-calendar.lib.ts" download
+             style="display:inline-flex; align-items:center; gap:.4rem; padding:.5rem .9rem; background:var(--accent-bg); border:1px solid var(--accent-bdr); border-radius:8px; font-size:.82rem; font-weight:700; color:var(--accent); text-decoration:none;">
+            ⬇ hijri-calendar.lib.ts
+          </a>
+          <a href="../../src/hijri-calendar.css" download
+             style="display:inline-flex; align-items:center; gap:.4rem; padding:.5rem .9rem; background:var(--accent-bg); border:1px solid var(--accent-bdr); border-radius:8px; font-size:.82rem; font-weight:700; color:var(--accent); text-decoration:none;">
+            ⬇ hijri-calendar.css
+          </a>
+        </div>
+      </div>
+    </div>
 
     <!-- Files to copy -->
     <div class="card">
@@ -123,20 +144,43 @@ export class AppComponent {
 
     <!-- bindValue explanation -->
     <div class="card">
-      <div class="card-hdr"><span class="card-hdr-title">bindValue — التحكم في صيغة القيمة</span></div>
+      <div class="card-hdr"><span class="card-hdr-title">bindValue — سلوك الاستقبال والإرسال</span></div>
       <div class="card-body">
-        <table class="api-table">
+
+        <table class="api-table" style="margin-bottom:1rem;">
           <thead>
-            <tr><th>bindValue</th><th>ما يُخزَّن في ngModel</th><th>ما يعرضه التقويم</th></tr>
+            <tr><th>bindValue</th><th>يُرسَل لـ ngModel / الباكاند</th><th>يُستقبَل من الباكاند</th><th>القائمة تبدأ بـ</th></tr>
           </thead>
           <tbody>
-            <tr><td><code>'hijri'</code> (افتراضي)</td><td><code>"1446/09/15"</code></td><td>التقويم الهجري</td></tr>
-            <tr><td><code>'gregorian'</code></td><td><code>"2025/03/15"</code></td><td>التقويم الميلادي</td></tr>
+            <tr>
+              <td><code>'hijri'</code> <small>(افتراضي)</small></td>
+              <td>هجري <code>"1446/09/15"</code></td>
+              <td>قيمة هجرية → تُعرض في وضع <strong>هـ</strong></td>
+              <td>هـ</td>
+            </tr>
+            <tr>
+              <td><code>'gregorian'</code></td>
+              <td>ميلادي <code>"2025/03/15"</code></td>
+              <td>قيمة ميلادية → تُعرض في وضع <strong>م</strong></td>
+              <td>م</td>
+            </tr>
           </tbody>
         </table>
-        <p style="font-size:.85rem; color:var(--txt2); margin-top:1rem;">
-          ملاحظة: القائمة المنسدلة (هـ / م) بجانب الحقل تتحكم في <strong>طريقة العرض</strong> فقط، وليس في القيمة المُخزَّنة.
-        </p>
+
+        <div style="padding:.75rem 1rem; background:var(--surf2); border:1px solid var(--bdr); border-radius:8px; font-size:.84rem; line-height:1.75; color:var(--txt2);">
+          <strong>القائمة (هـ / م) = طريقة العرض فقط</strong> — لا تُغيّر القيمة المُخزَّنة.<br>
+          مثال: الحقل <code>[bindValue]="'gregorian'"</code> مع الباكاند يُرسل ويستقبل <strong>ميلادي دائماً</strong>، حتى لو اختار المستخدم عرض هجري من القائمة.
+        </div>
+
+        ${codeBlock(`// مثال: استقبال تاريخ ميلادي من الباكاند
+export class VisitFormComponent {
+  // الباكاند يُرسل "2025/03/15" → يُعرض في وضع م تلقائياً
+  visitDate = '2025/03/15';
+
+  // عند اختيار تاريخ جديد → ngModel يُخزَّن دائماً كميلادي
+  // حتى لو اختار المستخدم عرض هجري من القائمة
+}`, 'typescript', 'مثال bindValue gregorian')}
+
       </div>
     </div>
 
@@ -184,6 +228,7 @@ export class MyComponent {
         ${codeBlock(`import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HijriCalenderDirective, HijriGregDate } from './hijri-calendar/hijri-calendar.directive';
+import { getDayNameHijri } from './hijri-calendar/hijri-calendar.lib';
 
 @Component({
   selector: 'app-booking',
@@ -192,34 +237,32 @@ import { HijriCalenderDirective, HijriGregDate } from './hijri-calendar/hijri-ca
   template: \`
     <div class="booking-form">
       <h3>حجز موعد</h3>
-      
+
       <label>اختر التاريخ:</label>
       <input type="text" readonly hijri-calender
              [(ngModel)]="hijriDate"
              [bindValue]="'hijri'"
              (dateChange)="onDateChange($event)"
              placeholder="انقر للاختيار" />
-      
-      <div class="date-info" *ngIf="selectedDate">
-        <p>📅 التاريخ الهجري: <strong>{{ selectedDate.hijri.formatted }}</strong></p>
-        <p>📆 التاريخ الميلادي: <strong>{{ selectedDate.greg.formatted }}</strong></p>
-        <p>🏷️ اليوم: {{ getDayName(selectedDate.hijri.dayOfWeek) }}</p>
-      </div>
+
+      @if (selectedDate) {
+        <div class="date-info">
+          <p>📅 التاريخ الهجري: <strong>{{ selectedDate.hijri.formatted }}</strong></p>
+          <p>📆 التاريخ الميلادي: <strong>{{ selectedDate.greg.formatted }}</strong></p>
+          <p>🏷️ اليوم: {{ dayName }}</p>
+        </div>
+      }
     </div>
   \`
 })
 export class BookingComponent {
   hijriDate = '';
   selectedDate: HijriGregDate | null = null;
-  
+  dayName = '';
+
   onDateChange(event: HijriGregDate) {
     this.selectedDate = event;
-    // يمكنك استخدام event.hijri و event.greg في أي مكان
-  }
-  
-  getDayName(dayIndex: number): string {
-    const days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-    return days[dayIndex] || '';
+    this.dayName = getDayNameHijri(event.hijri.formatted);
   }
 }`, 'typescript', 'مثال كامل')}
       </div>

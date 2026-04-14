@@ -1,3 +1,5 @@
+
+
 /**
  * HijriCalenderDirective — Angular 14+ Standalone
  *
@@ -53,6 +55,8 @@ import {
   DAY_NAMES_SHORT_AR,
   pad2, HijriDateObj, GregDateObj,
 } from './hijri-calendar.lib';
+
+export { getDayNameHijri } from './hijri-calendar.lib';
 
 export interface HijriGregDate {
   hijri: HijriDateObj;
@@ -115,6 +119,9 @@ export class HijriCalenderDirective implements ControlValueAccessor, AfterViewIn
 
   ngAfterViewInit(): void {
     this.buildWrapper();
+    // Sync displayMode and dropdown to bindValue so Gregorian dates load correctly
+    this.displayMode = this.bindValue;
+    if (this.dropEl) this.dropEl.value = this.bindValue;
     this.updateDisplay();
   }
 

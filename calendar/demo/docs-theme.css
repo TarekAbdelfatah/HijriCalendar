@@ -531,6 +531,13 @@ body {
   color: var(--code-cmt);
   letter-spacing: .05em;
 }
+.code-title-top {
+  font-size: .7rem;
+  font-family: 'Fira Code', monospace;
+  color: var(--code-cmt);
+  letter-spacing: .04em;
+  opacity: .8;
+}
 .code-versions {
   position: relative;
 }

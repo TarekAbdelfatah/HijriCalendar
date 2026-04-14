@@ -41,14 +41,7 @@ const API: ApiEntry[] = [
   { kind:'fn', name:'jdToHijri', signature:'(jd: number): {year, month, day}', returns:'object', description:'تحويل رقم Julian Day إلى تاريخ هجري' },
 
   // Utility
-  { kind:'fn', name:'pad2', signature:'(n: number): string', returns:'string', description:'تنسيق رقم بصفر بادئ (1 → "01")' },
-
-  // Constants
-  { kind:'const', name:'HIJRI_MONTH_NAMES', signature:'string[12]', returns:'string[]', description:'أسماء الأشهر الهجرية بالعربية (المحرم … ذو الحجة)' },
-  { kind:'const', name:'HIJRI_MONTH_NAMES_EN', signature:'string[12]', returns:'string[]', description:'أسماء الأشهر الهجرية بالإنجليزية' },
-  { kind:'const', name:'DAY_NAMES_AR', signature:'string[7]', returns:'string[]', description:'أسماء أيام الأسبوع الكاملة (الأحد … السبت)' },
-  { kind:'const', name:'DAY_NAMES_SHORT_AR', signature:'string[7]', returns:'string[]', description:'أسماء أيام الأسبوع المختصرة (أحد … سبت)' },
-  { kind:'const', name:'GREG_MONTH_NAMES_AR', signature:'string[12]', returns:'string[]', description:'أسماء الأشهر الميلادية بالعربية (يناير … ديسمبر)' },
+  { kind:'fn', name:'getDayNameHijri', signature:'(hijriStr: string): string', returns:'string', description:'اسم يوم الأسبوع بالعربية من تاريخ هجري — مثال: "1446/01/15" ← "الأربعاء"' },
 
   // Types
   { kind:'type', name:'HijriDateObj', signature:'{ year, month, day, formatted }', returns:'interface', description:'كائن نتيجة التاريخ الهجري' },

@@ -10,20 +10,22 @@ export interface SidebarSection {
 }
 
 const SECTIONS: SidebarSection[] = [
-  { id: 'sec-hero',         icon: '🚀', label: 'مقدمة',            group: 'البداية' },
-  { id: 'sec-start',        icon: '📦', label: 'التثبيت والاستيراد', group: 'البداية' },
-  { id: 'sec-widget',       icon: '🖱️', label: 'التقويم التفاعلي',   group: 'المكون' },
-  { id: 'sec-events',       icon: '📡', label: 'حدث اختيار التاريخ', group: 'المكون' },
-  { id: 'sec-today',        icon: '📅', label: 'اليوم الحالي',       group: 'الدوال الأساسية' },
-  { id: 'sec-conversion',   icon: '🔄', label: 'تحويل التواريخ',     group: 'الدوال الأساسية' },
-  { id: 'sec-string-conv',  icon: '🔤', label: 'تحويل النصوص',       group: 'الدوال الأساسية' },
-  { id: 'sec-validation',   icon: '✅', label: 'التحقق من الصحة',    group: 'الدوال الأساسية' },
-  { id: 'sec-month-info',   icon: '🗓️', label: 'معلومات الشهر',      group: 'الدوال الأساسية' },
-  { id: 'sec-day-of-week',  icon: '📆', label: 'يوم الأسبوع',        group: 'الدوال الأساسية' },
-  { id: 'sec-leap-year',    icon: '🔢', label: 'السنة الكبيسة',      group: 'الدوال الأساسية' },
-  { id: 'sec-julian',       icon: '🔬', label: 'Julian Day (JD)',    group: 'الدوال الأساسية' },
-  { id: 'sec-constants',    icon: '📚', label: 'الثوابت والأنام',   group: 'المرجع' },
-  { id: 'sec-api-ref',      icon: '📋', label: 'مرجع API كامل',      group: 'المرجع' },
+  { id: 'sec-hero',         icon: '🚀', label: 'مقدمة',              group: 'البداية' },
+  { id: 'sec-start',        icon: '📦', label: 'التثبيت والاستيراد',  group: 'البداية' },
+  { id: 'sec-widget',       icon: '🖱️', label: 'التقويم التفاعلي',     group: 'المكون' },
+  { id: 'sec-events',       icon: '📡', label: 'حدث اختيار التاريخ',  group: 'المكون' },
+  { id: 'sec-today',        icon: '📅', label: 'اليوم الحالي',         group: 'الدوال الأساسية' },
+  { id: 'sec-conversion',   icon: '🔄', label: 'تحويل التواريخ',       group: 'الدوال الأساسية' },
+  { id: 'sec-string-conv',  icon: '🔤', label: 'تحويل النصوص',         group: 'الدوال الأساسية' },
+  { id: 'sec-validation',   icon: '✅', label: 'التحقق من الصحة',      group: 'الدوال الأساسية' },
+  { id: 'sec-month-info',   icon: '🗓️', label: 'معلومات الشهر',        group: 'الدوال الأساسية' },
+  { id: 'sec-day-of-week',  icon: '📆', label: 'يوم الأسبوع',          group: 'الدوال الأساسية' },
+  { id: 'sec-leap-year',    icon: '🔢', label: 'السنة الكبيسة',        group: 'الدوال الأساسية' },
+  { id: 'sec-julian',       icon: '🔬', label: 'Julian Day (JD)',      group: 'الدوال الأساسية' },
+  { id: 'sec-constants',    icon: '📚', label: 'الثوابت والأسماء',     group: 'المرجع' },
+  { id: 'sec-api-ref',      icon: '📋', label: 'مرجع API كامل',        group: 'المرجع' },
+  { id: 'sec-angular',      icon: '🅰️', label: 'Angular 14+ Directive', group: 'تكامل Angular' },
+  { id: 'sec-legacy',       icon: '🔶', label: 'Legacy Angular (7–13)', group: 'تكامل Angular' },
 ];
 
 export function renderSidebar(containerId: string): void {
