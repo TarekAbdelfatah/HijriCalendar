@@ -123,23 +123,31 @@ export class HijriCalenderDirective implements ControlValueAccessor, OnInit, Aft
     }
   }
 
-  writeValue(val: string): void {
+  writeValue(val: any): void {
     if (!val) {
       this.hijriStr = '';
       this.gregStr  = '';
-      this.el.nativeElement.value = '';
+      this.updateDisplay();
       return;
     }
 
     const norm = normaliseDateString(val);
-    if (!norm) { return; }
+    if (!norm) { 
+      this.updateDisplay();
+      return; 
+    }
 
-    if (this.bindValue === 'hijri') {
+    // Smart detection: determine if input is Gregorian or Hijri based on the year.
+    // Hijri range is 1276-1500, so >1600 is definitely Gregorian.
+    const parts = norm.split('/').map(Number);
+    const isGreg = parts[0] > 1600;
+
+    if (isGreg) {
+      this.gregStr = norm;
+      try { this.hijriStr = gregorianToHijriStr(norm); } catch (e) { this.hijriStr = ''; }
+    } else {
       this.hijriStr = norm;
       try { this.gregStr = hijriToGregorianStr(norm); } catch (e) { this.gregStr = ''; }
-    } else {
-      this.gregStr  = norm;
-      try { this.hijriStr = gregorianToHijriStr(norm); } catch (e) { this.hijriStr = ''; }
     }
 
     this.updateDisplay();

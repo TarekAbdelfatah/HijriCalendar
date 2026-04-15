@@ -416,13 +416,23 @@ export function todayHijriStr(): string {
   return h.year + '/' + pad2(h.month) + '/' + pad2(h.day);
 }
 
-export function normaliseDateString(dateStr: string): string | null {
+export function normaliseDateString(dateStr: any): string | null {
   if (!dateStr) return null;
-  // Strip ISO time component (e.g. "2024-03-15T10:30:00Z" → "2024-03-15")
-  const datePart = dateStr.split('T')[0].trim();
+
+  // Handle JS Date objects
+  if (dateStr instanceof Date && !isNaN(dateStr.getTime())) {
+    return `${dateStr.getFullYear()}/${pad2(dateStr.getMonth() + 1)}/${pad2(dateStr.getDate())}`;
+  }
+
+  if (typeof dateStr !== 'string') return null;
+
+  // Strip ISO time component (e.g. "2024-03-15T10:30:00Z" or "2024-03-15 10:30:00" → "2024-03-15")
+  const datePart = dateStr.split(/[T\s]/)[0].trim();
   const p = datePart.split(/[\/\-\\]/).map(Number);
   if (p.length !== 3 || p.some(isNaN)) return null;
+
   const [a, b, c] = p;
+  // Heuristic: year is the part > 100. Supports yyyy/mm/dd and dd/mm/yyyy
   const [y, m, d] = a > 100 ? [a, b, c] : [c, b, a];
   return `${y}/${String(m).padStart(2, '0')}/${String(d).padStart(2, '0')}`;
 }
