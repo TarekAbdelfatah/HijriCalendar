@@ -52,8 +52,8 @@ import {
   hijriDaysInMonth, hijriDayOfWeek,
   gregDaysInMonth, gregDayOfWeek,
   HIJRI_MONTH_NAMES, GREG_MONTH_NAMES_AR,
-  DAY_NAMES_SHORT_AR,
-  pad2, HijriDateObj, GregDateObj,
+  DAY_NAMES_SHORT_AR, pad2,
+  HijriDateObj, GregDateObj,
 } from './hijri-calendar.lib';
 
 export { getDayNameHijri } from './hijri-calendar.lib';
@@ -112,7 +112,6 @@ export class HijriCalenderDirective implements ControlValueAccessor, OnInit, Aft
     private el: ElementRef<HTMLInputElement>,
     private renderer: Renderer2,
   ) {
-    this.injectStyles();
     const t = todayHijri();
     this.viewYear = t.year; this.viewMonth = t.month;
   }
@@ -125,12 +124,7 @@ export class HijriCalenderDirective implements ControlValueAccessor, OnInit, Aft
 
   ngAfterViewInit(): void {
     this.buildWrapper();
-    // Sync displayMode and dropdown to bindValue so Gregorian dates load correctly
     this.displayMode = this.bindValue;
-    if (this.dropEl) this.dropEl.value = this.bindValue;
-    // Re-sync viewYear/viewMonth now that displayMode is correct.
-    // writeValue() may have already run (Angular calls it before ngAfterViewInit),
-    // so we must re-sync here — otherwise the popup opens on the wrong month.
     this.syncViewToCurrentValue();
     this.updateDisplay();
   }
@@ -159,6 +153,10 @@ export class HijriCalenderDirective implements ControlValueAccessor, OnInit, Aft
       try { this.hijriStr = gregorianToHijriStr(norm); } catch { this.hijriStr = ''; }
     }
 
+    if (this.dropEl) {
+      this.dropEl.value = this.bindValue;
+    }
+    this.displayMode = this.bindValue;
     this.updateDisplay();
     this.syncViewToCurrentValue();
   }
@@ -385,104 +383,4 @@ export class HijriCalenderDirective implements ControlValueAccessor, OnInit, Aft
     const [y, m, d] = a > 100 ? [a, b, c] : [c, b, a];
     return `${y}/${pad2(m)}/${pad2(d)}`;
   }
-
-  private injectStyles(): void {
-    if (document.getElementById('hcal-css')) return;
-    const s = document.createElement('style');
-    s.id = 'hcal-css';
-    s.textContent = STYLES;
-    document.head.appendChild(s);
-  }
-}
-
-const STYLES = `
-.hcal-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  width: 100%;
-  font-family: 'Cairo','Segoe UI',Tahoma,sans-serif;
-}
-
-.hcal-drop {
-  flex-shrink: 0;
-  padding: 0 10px;
-  height: 38px;
-  border: 1px solid #d0d7de;
-  border-radius: 8px;
-  background: #f0f4f1;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  min-width: 48px;
-  color: #006C35;
-  outline: none;
-  transition: border-color .15s;
-}
-.hcal-drop:focus { border-color: #006C35; }
-
-.hcal-has-icon {
-  padding-inline-end: 32px !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23006C35' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: 10px center;
-  background-size: 15px 15px;
-}
-
-.hci-popup {
-  position: absolute;
-  z-index: 9999;
-  background: #fff;
-  border: 1px solid #e0e5dc;
-  border-radius: 14px;
-  box-shadow: 0 8px 32px rgba(0,106,53,0.15);
-  padding: 16px;
-  min-width: 300px;
-  box-sizing: border-box;
-  overflow: hidden;
-  font-family: 'Cairo','Segoe UI',Tahoma,sans-serif;
-  direction: rtl;
-}
-.hci-head { display: flex; align-items: center; justify-content: space-between; margin-block-end: 12px; }
-.hci-title { text-align: center; line-height: 1.4; flex: 1; }
-.hci-main { display: block; font-weight: 700; font-size: 16px; color: #006C35; }
-.hci-sub { display: block; font-size: 12px; color: #6b7280; }
-.hci-btn { background: none; border: none; font-size: 26px; cursor: pointer; color: #006C35; padding: 4px 10px; border-radius: 8px; transition: background .12s; line-height: 1; }
-.hci-btn:hover { background: #e8f5e9; }
-.hci-grid { width: 100%; border-collapse: collapse; text-align: center; }
-.hci-grid th { font-size: 12px; color: #6b7280; padding: 6px 4px; font-weight: 600; }
-.hci-grid td { font-size: 14px; padding: 8px 4px; cursor: pointer; border-radius: 50%; color: #1f2937; transition: all .12s; width: 38px; height: 38px; }
-.hci-grid td:empty { cursor: default; }
-.hci-grid td:not(:empty):hover { background: #e8f5e9; color: #006C35; }
-.hci-grid td.hci-today { background: #dcfce7; color: #006C35; font-weight: 700; }
-.hci-grid td.hci-selected { background: #006C35 !important; color: #fff !important; font-weight: 700; }
-
-@media (prefers-color-scheme: dark) {
-  .hcal-drop { background: #374151; border-color: #4b5563; color: #22c55e; }
-  .hcal-drop:focus { border-color: #22c55e; }
-  .hcal-has-icon { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2322c55e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E"); }
-  .hci-popup { background: #1f2937; border-color: #374151; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
-  .hci-main { color: #22c55e; }
-  .hci-sub { color: #9ca3af; }
-  .hci-btn { color: #22c55e; }
-  .hci-btn:hover { background: #374151; }
-  .hci-grid th { color: #9ca3af; }
-  .hci-grid td { color: #e5e7eb; }
-  .hci-grid td:not(:empty):hover { background: #374151; color: #22c55e; }
-  .hci-grid td.hci-today { background: #064e3b; color: #22c55e; }
-  .hci-grid td.hci-selected { background: #22c55e !important; color: #fff !important; }
-}
-html.dark .hcal-drop { background: #374151; border-color: #4b5563; color: #22c55e; }
-html.dark .hcal-drop:focus { border-color: #22c55e; }
-html.dark .hcal-has-icon { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2322c55e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E"); }
-html.dark .hci-popup { background: #1f2937; border-color: #374151; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
-html.dark .hci-main { color: #22c55e; }
-html.dark .hci-sub { color: #9ca3af; }
-html.dark .hci-btn { color: #22c55e; }
-html.dark .hci-btn:hover { background: #374151; }
-html.dark .hci-grid th { color: #9ca3af; }
-html.dark .hci-grid td { color: #e5e7eb; }
-html.dark .hci-grid td:not(:empty):hover { background: #374151; color: #22c55e; }
-html.dark .hci-grid td.hci-today { background: #064e3b; color: #22c55e; }
-html.dark .hci-grid td.hci-selected { background: #22c55e !important; color: #fff !important; }
-`;
+}`;

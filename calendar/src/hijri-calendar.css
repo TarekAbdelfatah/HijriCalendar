@@ -1,163 +1,202 @@
 /* 
   hijri-calendar.css
-  Premium Core UI for Hijri Calendar Package
-  Prefix: hcal-ui-
+  Styles for HijriCalendarDirective
 */
 
 :root {
-  --hcal-ui-bg: rgba(255, 255, 255, 0.9);
-  --hcal-ui-text: #111827;
-  --hcal-ui-primary: #059669;
-  --hcal-ui-primary-hover: #047857;
-  --hcal-ui-border: rgba(0, 0, 0, 0.08);
-  --hcal-ui-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
-  --hcal-ui-blur: blur(10px);
-  --hcal-ui-today-bg: rgba(5, 150, 105, 0.08);
+  --hcal-primary: #006C35;
+  --hcal-primary-light: #22c55e;
+  --hcal-bg: #f0f4f1;
+  --hcal-border: #d0d7de;
+  --hcal-popup-bg: #ffffff;
+  --hcal-popup-border: #e0e5dc;
+  --hcal-text: #1f2937;
+  --hcal-text-secondary: #6b7280;
+  --hcal-today-bg: #dcfce7;
+  --hcal-selected-bg: #006C35;
+  --hcal-selected-color: #ffffff;
 }
 
-[data-theme='dark'], .dark {
-  --hcal-ui-bg: rgba(17, 24, 39, 0.9);
-  --hcal-ui-text: #f9fafb;
-  --hcal-ui-primary: #10b981;
-  --hcal-ui-primary-hover: #34d399;
-  --hcal-ui-border: rgba(255, 255, 255, 0.1);
-  --hcal-ui-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.4);
+[data-theme="dark"], .dark, html.dark {
+  --hcal-primary: #22c55e;
+  --hcal-bg: #374151;
+  --hcal-border: #4b5563;
+  --hcal-popup-bg: #1f2937;
+  --hcal-popup-border: #374151;
+  --hcal-text: #e5e7eb;
+  --hcal-text-secondary: #9ca3af;
+  --hcal-today-bg: #064e3b;
+  --hcal-selected-bg: #22c55e;
 }
 
-.hcal-ui-container {
-  background: var(--hcal-ui-bg);
-  backdrop-filter: var(--hcal-ui-blur);
-  -webkit-backdrop-filter: var(--hcal-ui-blur);
-  border: 1px solid var(--hcal-ui-border);
-  border-radius: 1.25rem;
-  padding: 1.25rem;
-  color: var(--hcal-ui-text);
-  box-shadow: var(--hcal-ui-shadow);
-  width: 300px;
-  max-width: 100%;
-  font-family: inherit;
-  user-select: none;
-  animation: hcal-ui-fade 0.25s ease-out;
-}
-
-@keyframes hcal-ui-fade {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.hcal-ui-header {
+.hcal-wrapper {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.25rem;
+  gap: 6px;
+  width: 100%;
+  font-family: 'Cairo','Segoe UI', Tahoma, sans-serif;
 }
 
-.hcal-ui-title-group {
-  display: flex;
-  flex-direction: column;
-}
-
-.hcal-ui-month-name {
+.hcal-drop {
+  flex-shrink: 0;
+  padding: 0 10px;
+  height: 38px;
+  border: 1px solid var(--hcal-border);
+  border-radius: 8px;
+  background: var(--hcal-bg);
+  font-size: 14px;
   font-weight: 700;
-  font-size: 1.1rem;
-}
-
-.hcal-ui-year-label {
-  font-size: 0.75rem;
-  color: var(--hcal-ui-primary);
-  opacity: 0.8;
-}
-
-.hcal-ui-controls {
-  display: flex;
-  gap: 0.4rem;
-}
-
-.hcal-ui-nav-btn {
-  background: transparent;
-  border: 1px solid var(--hcal-ui-border);
-  border-radius: 0.6rem;
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   cursor: pointer;
-  color: var(--hcal-ui-text);
-  transition: all 0.2s;
+  min-width: 48px;
+  color: var(--hcal-primary);
+  outline: none;
+  transition: border-color 0.15s;
 }
 
-.hcal-ui-nav-btn:hover {
-  background: var(--hcal-ui-primary);
-  color: white;
-  border-color: var(--hcal-ui-primary);
+.hcal-drop:focus {
+  border-color: var(--hcal-primary);
 }
 
-.hcal-ui-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 0.2rem;
+.hcal-has-icon {
+  padding-inline-end: 32px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23006C35' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 10px center;
+  background-size: 15px 15px;
 }
 
-.hcal-ui-weekday {
-  text-align: center;
-  font-size: 0.7rem;
-  font-weight: 700;
-  opacity: 0.4;
-  padding: 0.4rem 0;
+[data-theme="dark"] .hcal-has-icon,
+.dark .hcal-has-icon,
+html.dark .hcal-has-icon {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2322c55e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cline x1='16' y1='2' x2='16' y2='6'/%3E%3Cline x1='8' y1='2' x2='8' y2='6'/%3E%3Cline x1='3' y1='10' x2='21' y2='10'/%3E%3C/svg%3E");
 }
 
-.hcal-ui-day {
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.6rem;
-  cursor: pointer;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: all 0.15s;
-}
-
-.hcal-ui-day:hover:not(.hcal-ui-empty) {
-  background: var(--hcal-ui-today-bg);
-  color: var(--hcal-ui-primary);
-}
-
-.hcal-ui-day.is-today {
-  background: var(--hcal-ui-today-bg);
-  color: var(--hcal-ui-primary);
-  font-weight: 800;
-  position: relative;
-}
-
-.hcal-ui-day.is-today::after {
-  content: '';
+.hci-popup {
   position: absolute;
-  bottom: 5px;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: var(--hcal-ui-primary);
+  z-index: 9999;
+  background: var(--hcal-popup-bg);
+  border: 1px solid var(--hcal-popup-border);
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0, 106, 53, 0.15);
+  padding: 16px;
+  min-width: 300px;
+  box-sizing: border-box;
+  overflow: hidden;
+  font-family: 'Cairo','Segoe UI', Tahoma, sans-serif;
+  direction: rtl;
 }
 
-.hcal-ui-day.is-selected {
-  background: var(--hcal-ui-primary) !important;
-  color: white !important;
-}
-
-.hcal-ui-empty { cursor: default; }
-
-.hcal-ui-footer {
-  margin-top: 1.25rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--hcal-ui-border);
+.hci-head {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--hcal-ui-primary);
+  margin-block-end: 12px;
 }
 
-.hcal-ui-today-link { cursor: pointer; }
-.hcal-ui-today-link:hover { text-decoration: underline; }
+.hci-title {
+  text-align: center;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.hci-main {
+  display: block;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--hcal-primary);
+}
+
+.hci-sub {
+  display: block;
+  font-size: 12px;
+  color: var(--hcal-text-secondary);
+}
+
+.hci-btn {
+  background: none;
+  border: none;
+  font-size: 26px;
+  cursor: pointer;
+  color: var(--hcal-primary);
+  padding: 4px 10px;
+  border-radius: 8px;
+  transition: background 0.12s;
+  line-height: 1;
+}
+
+.hci-btn:hover {
+  background: #e8f5e9;
+}
+
+[data-theme="dark"] .hci-btn:hover,
+.dark .hci-btn:hover,
+html.dark .hci-btn:hover {
+  background: #374151;
+}
+
+.hci-grid {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.hci-grid th {
+  font-size: 12px;
+  color: var(--hcal-text-secondary);
+  padding: 6px 4px;
+  font-weight: 600;
+}
+
+.hci-grid td {
+  font-size: 14px;
+  padding: 8px 4px;
+  cursor: pointer;
+  border-radius: 50%;
+  color: var(--hcal-text);
+  transition: all 0.12s;
+  width: 38px;
+  height: 38px;
+}
+
+.hci-grid td:empty {
+  cursor: default;
+}
+
+.hci-grid td:not(:empty):hover {
+  background: #e8f5e9;
+  color: var(--hcal-primary);
+}
+
+[data-theme="dark"] .hci-grid td:not(:empty):hover,
+.dark .hci-grid td:not(:empty):hover,
+html.dark .hci-grid td:not(:empty):hover {
+  background: #374151;
+  color: var(--hcal-primary-light);
+}
+
+.hci-grid td.hci-today {
+  background: var(--hcal-today-bg);
+  color: var(--hcal-primary);
+  font-weight: 700;
+}
+
+.hci-grid td.hci-selected {
+  background: var(--hcal-selected-bg) !important;
+  color: var(--hcal-selected-color) !important;
+  font-weight: 700;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hcal-drop { background: #374151; border-color: #4b5563; color: #22c55e; }
+  .hcal-drop:focus { border-color: #22c55e; }
+  .hci-popup { background: #1f2937; border-color: #374151; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+  .hci-main { color: #22c55e; }
+  .hci-sub { color: #9ca3af; }
+  .hci-btn { color: #22c55e; }
+  .hci-btn:hover { background: #374151; }
+  .hci-grid th { color: #9ca3af; }
+  .hci-grid td { color: #e5e7eb; }
+  .hci-grid td:not(:empty):hover { background: #374151; color: #22c55e; }
+  .hci-grid td.hci-today { background: #064e3b; color: #22c55e; }
+  .hci-grid td.hci-selected { background: #22c55e !important; color: #fff !important; }
+}
