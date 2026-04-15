@@ -416,9 +416,11 @@ export function todayHijriStr(): string {
   return h.year + '/' + pad2(h.month) + '/' + pad2(h.day);
 }
 
-function normaliseDateString(dateStr: string): string | null {
+export function normaliseDateString(dateStr: string): string | null {
   if (!dateStr) return null;
-  const p = dateStr.split(/[\/\-\\]/).map(Number);
+  // Strip ISO time component (e.g. "2024-03-15T10:30:00Z" → "2024-03-15")
+  const datePart = dateStr.split('T')[0].trim();
+  const p = datePart.split(/[\/\-\\]/).map(Number);
   if (p.length !== 3 || p.some(isNaN)) return null;
   const [a, b, c] = p;
   const [y, m, d] = a > 100 ? [a, b, c] : [c, b, a];

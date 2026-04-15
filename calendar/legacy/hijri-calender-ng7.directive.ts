@@ -49,7 +49,7 @@ import {
   gregDaysInMonth, gregDayOfWeek,
   HIJRI_MONTH_NAMES, GREG_MONTH_NAMES_AR,
   DAY_NAMES_SHORT_AR,
-  pad2, HijriDateObj, GregDateObj,
+  pad2, normaliseDateString, HijriDateObj, GregDateObj,
 } from './hijri-calendar.lib';
 
 export { getDayNameHijri } from './hijri-calendar.lib';
@@ -131,7 +131,7 @@ export class HijriCalenderDirective implements ControlValueAccessor, OnInit, Aft
       return;
     }
 
-    const norm = this.normalise(val);
+    const norm = normaliseDateString(val);
     if (!norm) { return; }
 
     if (this.bindValue === 'hijri') {
@@ -396,17 +396,6 @@ export class HijriCalenderDirective implements ControlValueAccessor, OnInit, Aft
     this.popup.style.minWidth = r.width + 'px';
   }
 
-  private normalise(s: string): string | null {
-    const parts = s.split(/[\/\-\\]/);
-    if (parts.length !== 3) { return null; }
-    const nums = parts.map(function(x) { return +x; });
-    if (nums.some(isNaN)) { return null; }
-    const a = nums[0], b = nums[1], c = nums[2];
-    const y = a > 100 ? a : c;
-    const m = b;
-    const d = a > 100 ? c : a;
-    return y + '/' + pad2(m) + '/' + pad2(d);
-  }
 
   private injectStyles(): void {
     if (document.getElementById('hcal-css')) { return; }
