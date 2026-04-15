@@ -426,6 +426,10 @@ export function normaliseDateString(dateStr: any): string | null {
 
   if (typeof dateStr !== 'string') return null;
 
+  // Clean hidden Unicode characters like RLM (Right-to-Left Mark) and LRM
+  // these characters are often added by Arabic formatting but break Number() conversion.
+  dateStr = dateStr.replace(/[\u200E\u200F\u202A-\u202E]/g, '');
+
   // Strip ISO time component (e.g. "2024-03-15T10:30:00Z" or "2024-03-15 10:30:00" → "2024-03-15")
   const datePart = dateStr.split(/[T\s]/)[0].trim();
   const p = datePart.split(/[\/\-\\]/).map(Number);
